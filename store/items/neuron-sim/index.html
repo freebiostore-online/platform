@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Neuron Simulator - FreeBioStore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e0e0e0;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{color:#10b981;margin:18px 0 6px;font-size:1.4rem}
+.desc{color:#999;font-size:.85rem;margin-bottom:12px}
+canvas{background:#111;border:1px solid #333;border-radius:6px}
+.controls{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.controls label{font-size:.8rem;color:#aaa}
+.controls input[type=range]{width:80px;accent-color:#10b981}
+.controls button{background:#10b981;color:#000;border:none;padding:5px 12px;border-radius:4px;font-size:.8rem;cursor:pointer;font-weight:600}
+.legend{display:flex;gap:14px;font-size:.75rem;margin:4px}
+footer{margin-top:auto;padding:12px;font-size:.7rem;color:#555}
+footer a{color:#10b981;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>Hodgkin-Huxley Neuron</h1>
+<p class="desc">Inject current to trigger action potentials. Adjust ion conductances.</p>
+<canvas id="c" width="740" height="360"></canvas>
+<div class="controls">
+<label>I_inject <input type="range" id="Iinj" min="0" max="30" step="0.5" value="10"><span id="IinjV">10</span> uA</label>
+<label>g_Na <input type="range" id="gNa" min="10" max="200" value="120"><span id="gNaV">120</span></label>
+<label>g_K <input type="range" id="gK" min="5" max="80" value="36"><span id="gKV">36</span></label>
+<button id="stim">Inject Pulse</button>
+<button id="toggle">Continuous</button>
+<button id="reset">Reset</button>
+</div>
+<div class="legend">
+<span style="color:#10b981">Voltage (mV)</span>
+<span style="color:#ef4444">m (Na+ act.)</span>
+<span style="color:#3b82f6">h (Na+ inact.)</span>
+<span style="color:#f59e0b">n (K+ act.)</span>
+</div>
+<footer><a href="/items/">FreeBioStore</a></footer>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+const W=740,H=360;
+// HH parameters
+let gNa=120,gK=36,gL=0.3,ENa=50,EK=-77,EL=-54.4,Cm=1;
+let V=-65,m=0.05,h=0.6,n=0.32;
+let Iinj=10,injecting=false,continuous=false;
+let vHist=[],mHist=[],hHist=[],nHist=[];
+const maxHist=W;
+
+function bind(id,sp,cb){document.getElementById(id).addEventListener('input',e=>{cb(+e.value);document.getElementById(sp).textContent=e.value});}
+bind('Iinj','IinjV',v=>Iinj=v);
+bind('gNa','gNaV',v=>gNa=v);
+bind('gK','gKV',v=>gK=v);
+
+document.getElementById('stim').addEventListener('click',()=>{injecting=true;setTimeout(()=>injecting=false,50);});
+document.getElementById('toggle').addEventListener('click',function(){continuous=!continuous;this.textContent=continuous?'Stop':'Continuous';});
+document.getElementById('reset').addEventListener('click',()=>{V=-65;m=0.05;h=0.6;n=0.32;vHist=[];mHist=[];hHist=[];nHist=[];});
+
+function alphaM(V){return 0.1*(V+40)/(1-Math.exp(-(V+40)/10));}
+function betaM(V){return 4*Math.exp(-(V+65)/18);}
+function alphaH(V){return 0.07*Math.exp(-(V+65)/20);}
+function betaH(V){return 1/(1+Math.exp(-(V+35)/10));}
+function alphaN(V){return 0.01*(V+55)/(1-Math.exp(-(V+55)/10));}
+function betaN(V){return 0.125*Math.exp(-(V+65)/80);}
+
+function step(dt){
+  const I=(injecting||continuous)?Iinj:0;
+  const INa=gNa*m*m*m*h*(V-ENa);
+  const IK=gK*n*n*n*n*(V-EK);
+  const IL=gL*(V-EL);
+  const dV=(I-INa-IK-IL)/Cm;
+  const am=alphaM(V),bm=betaM(V);
+  const ah=alphaH(V),bh=betaH(V);
+  const an=alphaN(V),bn=betaN(V);
+  V+=dV*dt;
+  m+=((am*(1-m))-(bm*m))*dt;
+  h+=((ah*(1-h))-(bh*h))*dt;
+  n+=((an*(1-n))-(bn*n))*dt;
+  m=Math.max(0,Math.min(1,m));
+  h=Math.max(0,Math.min(1,h));
+  n=Math.max(0,Math.min(1,n));
+  vHist.push(V);mHist.push(m);hHist.push(h);nHist.push(n);
+  if(vHist.length>maxHist){vHist.shift();mHist.shift();hHist.shift();nHist.shift();}
+}
+
+function drawLine(arr,color,minV,maxV,yOff,height){
+  if(arr.length<2) return;
+  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();
+  for(let i=0;i<arr.length;i++){
+    const x=i;const y=yOff+height-(arr[i]-minV)/(maxV-minV)*height;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+
+function draw(){
+  ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='#1a1a1a';ctx.lineWidth=0.5;
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // voltage trace (top 60%)
+  const vH=H*0.6;
+  drawLine(vHist,'#10b981',-90,60,10,vH-20);
+  // gate variables (bottom 30%)
+  const gY=vH+10,gH=H-gY-20;
+  drawLine(mHist,'#ef4444',0,1,gY,gH);
+  drawLine(hHist,'#3b82f6',0,1,gY,gH);
+  drawLine(nHist,'#f59e0b',0,1,gY,gH);
+  // divider
+  ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,vH+5);ctx.lineTo(W,vH+5);ctx.stroke();
+  // scale
+  ctx.fillStyle='#666';ctx.font='10px system-ui';
+  ctx.fillText('60mV',2,20);ctx.fillText('-90mV',2,vH-10);
+  ctx.fillText('1.0',2,gY+6);ctx.fillText('0.0',2,H-16);
+  // current value
+  ctx.fillStyle='#10b981';ctx.font='bold 12px system-ui';
+  ctx.fillText(`V = ${V.toFixed(1)} mV`,W-140,20);
+  ctx.fillStyle='#888';ctx.font='10px system-ui';
+  ctx.fillText(`m=${m.toFixed(3)} h=${h.toFixed(3)} n=${n.toFixed(3)}`,W-200,38);
+  // injection indicator
+  if(injecting||continuous){
+    ctx.fillStyle='#10b98144';ctx.fillRect(W-20,0,20,H);
+    ctx.fillStyle='#10b981';ctx.font='bold 10px system-ui';ctx.fillText('INJ',W-18,H/2);
+  }
+  requestAnimationFrame(draw);
+}
+
+function loop(){
+  for(let i=0;i<10;i++) step(0.05);
+  draw();requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>

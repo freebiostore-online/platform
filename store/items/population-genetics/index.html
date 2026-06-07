@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hardy-Weinberg - FreeBioStore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e0e0e0;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{color:#10b981;margin:18px 0 6px;font-size:1.4rem}
+.desc{color:#999;font-size:.85rem;margin-bottom:12px;max-width:700px;text-align:center}
+canvas{background:#111;border:1px solid #333;border-radius:6px}
+.controls{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.controls label{font-size:.8rem;color:#aaa}
+.controls input[type=range]{width:90px;accent-color:#10b981}
+.controls button{background:#10b981;color:#000;border:none;padding:5px 12px;border-radius:4px;font-size:.8rem;cursor:pointer;font-weight:600}
+.eq{font-family:monospace;font-size:.85rem;color:#10b981;margin:6px}
+footer{margin-top:auto;padding:12px;font-size:.7rem;color:#555}
+footer a{color:#10b981;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>Hardy-Weinberg Equilibrium</h1>
+<p class="desc">Adjust allele frequencies and evolutionary forces. Check if population is in equilibrium.</p>
+<canvas id="c" width="740" height="380"></canvas>
+<div class="controls">
+<label>p (A freq) <input type="range" id="p" min="0.01" max="0.99" step="0.01" value="0.6"><span id="pV">0.60</span></label>
+<label>Selection (s) <input type="range" id="sel" min="0" max="0.5" step="0.01" value="0"><span id="selV">0</span></label>
+<label>Migration (m) <input type="range" id="mig" min="0" max="0.2" step="0.01" value="0"><span id="migV">0</span></label>
+<label>Pop size (drift) <input type="range" id="pop" min="10" max="10000" step="10" value="10000"><span id="popV">10000</span></label>
+<button id="gen">Next Generation</button>
+<button id="run">Run 50 Gen</button>
+<button id="reset">Reset</button>
+</div>
+<div class="eq" id="eq">p^2 + 2pq + q^2 = 1</div>
+<footer><a href="/items/">FreeBioStore</a></footer>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+const W=740,H=380;
+let p=0.6,s=0,mig=0,N=10000,migP=0.5;
+let pHistory=[0.6],generation=0,running=false;
+
+function bind(id,sp,cb){document.getElementById(id).addEventListener('input',e=>{cb(+e.value);document.getElementById(sp).textContent=(+e.value).toFixed(id==='p'?2:id==='pop'?0:2);draw()});}
+bind('p','pV',v=>{p=v;pHistory=[p];generation=0;});
+bind('sel','selV',v=>s=v);
+bind('mig','migV',v=>mig=v);
+bind('pop','popV',v=>N=v);
+
+function nextGen(){
+  const q=1-p;
+  // selection: AA fitness=1, Aa=1, aa=1-s
+  const wAA=1,wAa=1,waa=1-s;
+  const wBar=p*p*wAA+2*p*q*wAa+q*q*waa;
+  let pNew=(p*p*wAA+p*q*wAa)/wBar;
+  // migration
+  pNew=pNew*(1-mig)+migP*mig;
+  // drift (binomial sampling)
+  if(N<10000){
+    let count=0;
+    for(let i=0;i<2*N;i++) if(Math.random()<pNew) count++;
+    pNew=count/(2*N);
+  }
+  pNew=Math.max(0.001,Math.min(0.999,pNew));
+  p=pNew;generation++;
+  pHistory.push(p);
+  if(pHistory.length>300) pHistory.shift();
+  document.getElementById('p').value=p;
+  document.getElementById('pV').textContent=p.toFixed(2);
+}
+
+document.getElementById('gen').addEventListener('click',()=>{nextGen();draw();});
+document.getElementById('run').addEventListener('click',()=>{for(let i=0;i<50;i++)nextGen();draw();});
+document.getElementById('reset').addEventListener('click',()=>{p=0.6;pHistory=[0.6];generation=0;document.getElementById('p').value=0.6;document.getElementById('pV').textContent='0.60';draw();});
+
+function draw(){
+  ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+  const q=1-p;
+  const AA=p*p,Aa=2*p*q,aa=q*q;
+  // genotype bars
+  const bx=30,by=40,bw=200,bh=180;
+  ctx.fillStyle='#10b981';ctx.font='bold 12px system-ui';ctx.fillText('Genotype Frequencies',bx,by-10);
+  const bars=[{label:'AA',val:AA,color:'#10b981'},{label:'Aa',val:Aa,color:'#34d399'},{label:'aa',val:aa,color:'#6ee7b7'}];
+  for(let i=0;i<3;i++){
+    const x=bx+i*65+5,h=bars[i].val*bh;
+    ctx.fillStyle=bars[i].color;
+    ctx.fillRect(x,by+bh-h,50,h);
+    ctx.fillStyle='#ccc';ctx.font='bold 11px system-ui';
+    ctx.fillText(bars[i].label,x+14,by+bh+16);
+    ctx.fillStyle='#aaa';ctx.font='10px system-ui';
+    ctx.fillText((bars[i].val*100).toFixed(1)+'%',x+8,by+bh-h-6);
+  }
+  // allele freq pie
+  const cx=130,cy=by+bh+60;
+  ctx.fillStyle='#888';ctx.font='10px system-ui';ctx.fillText('Allele Frequencies',bx,cy-20);
+  ctx.fillStyle='#10b981';ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,30,0,p*Math.PI*2);ctx.fill();
+  ctx.fillStyle='#6ee7b7';ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,30,p*Math.PI*2,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#ccc';ctx.font='10px system-ui';
+  ctx.fillText(`p(A)=${p.toFixed(3)}`,cx+40,cy-5);
+  ctx.fillText(`q(a)=${q.toFixed(3)}`,cx+40,cy+12);
+  // history plot
+  const px2=280,py2=30,pw=430,ph=200;
+  ctx.strokeStyle='#333';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(px2,py2);ctx.lineTo(px2,py2+ph);ctx.lineTo(px2+pw,py2+ph);ctx.stroke();
+  ctx.fillStyle='#10b981';ctx.font='bold 12px system-ui';ctx.fillText('Allele Frequency Over Time',px2,py2-10);
+  ctx.fillStyle='#666';ctx.font='9px system-ui';
+  ctx.fillText('1.0',px2-25,py2+8);ctx.fillText('0.5',px2-25,py2+ph/2+3);ctx.fillText('0.0',px2-25,py2+ph+3);
+  ctx.fillText(`Gen ${generation}`,px2+pw-50,py2+ph+16);
+  // HW equilibrium line at 0.5
+  ctx.strokeStyle='#222';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(px2,py2+ph/2);ctx.lineTo(px2+pw,py2+ph/2);ctx.stroke();ctx.setLineDash([]);
+  // p history line
+  if(pHistory.length>1){
+    ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.beginPath();
+    for(let i=0;i<pHistory.length;i++){
+      const x=px2+i/(pHistory.length-1)*pw;
+      const y=py2+ph-(pHistory[i])*ph;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  // equilibrium check
+  const isEq=s===0&&mig===0&&N>=5000;
+  ctx.fillStyle=isEq?'#10b981':'#ef4444';ctx.font='bold 12px system-ui';
+  ctx.fillText(isEq?'IN EQUILIBRIUM':'NOT IN EQUILIBRIUM',px2,py2+ph+40);
+  ctx.fillStyle='#888';ctx.font='10px system-ui';
+  const violations=[];
+  if(s>0) violations.push('selection');
+  if(mig>0) violations.push('migration');
+  if(N<5000) violations.push('genetic drift');
+  if(violations.length) ctx.fillText('Violating: '+violations.join(', '),px2+200,py2+ph+40);
+  // population visualization
+  const popX=280,popY=260,popW=430,popH=100;
+  ctx.fillStyle='#888';ctx.font='10px system-ui';ctx.fillText('Population Sample (100 individuals)',popX,popY-5);
+  for(let i=0;i<100;i++){
+    const row=Math.floor(i/20),col=i%20;
+    const x=popX+col*21,y=popY+row*18;
+    const r=Math.random();
+    let geno;
+    if(r<AA) geno='AA';else if(r<AA+Aa) geno='Aa';else geno='aa';
+    ctx.fillStyle=geno==='AA'?'#10b981':geno==='Aa'?'#34d399':'#6ee7b7';
+    ctx.fillRect(x,y,16,14);
+  }
+  // equation
+  document.getElementById('eq').textContent=`p=${p.toFixed(3)}, q=${q.toFixed(3)} | p^2=${AA.toFixed(3)} + 2pq=${Aa.toFixed(3)} + q^2=${aa.toFixed(3)} = ${(AA+Aa+aa).toFixed(3)}`;
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>

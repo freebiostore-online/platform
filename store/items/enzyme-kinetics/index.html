@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Enzyme Kinetics - FreeBioStore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e0e0e0;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{color:#10b981;margin:18px 0 6px;font-size:1.4rem}
+.desc{color:#999;font-size:.85rem;margin-bottom:12px}
+.layout{display:flex;gap:12px;margin:8px;flex-wrap:wrap;justify-content:center}
+canvas{background:#111;border:1px solid #333;border-radius:6px}
+.controls{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;justify-content:center}
+.controls label{font-size:.8rem;color:#aaa}
+.controls input[type=range]{width:80px;accent-color:#10b981}
+.controls select{background:#222;color:#e0e0e0;border:1px solid #444;padding:3px 8px;border-radius:4px;font-size:.8rem}
+footer{margin-top:auto;padding:12px;font-size:.7rem;color:#555}
+footer a{color:#10b981;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>Enzyme Kinetics</h1>
+<p class="desc">Michaelis-Menten model with Lineweaver-Burk plot and inhibitor modes</p>
+<div class="layout">
+<canvas id="mm" width="360" height="300"></canvas>
+<canvas id="lb" width="360" height="300"></canvas>
+</div>
+<div class="controls">
+<label>Vmax <input type="range" id="vmax" min="5" max="100" value="50"><span id="vmaxV">50</span></label>
+<label>Km <input type="range" id="km" min="1" max="50" value="10"><span id="kmV">10</span></label>
+<label>[S] <input type="range" id="sub" min="0.5" max="100" step="0.5" value="20"><span id="subV">20</span></label>
+<label>Inhibitor: <select id="inhib"><option value="none">None</option><option value="comp">Competitive</option><option value="uncomp">Uncompetitive</option><option value="noncomp">Non-competitive</option></select></label>
+<label>[I] <input type="range" id="inh" min="0" max="30" value="0"><span id="inhV">0</span></label>
+<label>Ki <input type="range" id="ki" min="1" max="20" value="5"><span id="kiV">5</span></label>
+</div>
+<footer><a href="/items/">FreeBioStore</a></footer>
+<script>
+const mc=document.getElementById('mm'),mctx=mc.getContext('2d');
+const lc=document.getElementById('lb'),lctx=lc.getContext('2d');
+let Vmax=50,Km=10,S=20,inhibType='none',I=0,Ki=5;
+
+function bind(id,sp,cb){document.getElementById(id).addEventListener('input',e=>{cb(+e.value);document.getElementById(sp).textContent=e.value;draw()});}
+bind('vmax','vmaxV',v=>Vmax=v);bind('km','kmV',v=>Km=v);bind('sub','subV',v=>S=v);
+bind('inh','inhV',v=>I=v);bind('ki','kiV',v=>Ki=v);
+document.getElementById('inhib').addEventListener('change',e=>{inhibType=e.value;draw();});
+
+function rate(s,vmax,km,iType,iConc,ki){
+  if(iType==='comp') return vmax*s/(km*(1+iConc/ki)+s);
+  if(iType==='uncomp') return vmax*s/((km+s)*(1+iConc/ki));
+  if(iType==='noncomp') return vmax*s/((km*(1+iConc/ki)+s)*(1+iConc/ki));
+  return vmax*s/(km+s);
+}
+
+function apparentParams(vmax,km,iType,iConc,ki){
+  if(iType==='comp') return{Vmax:vmax,Km:km*(1+iConc/ki)};
+  if(iType==='uncomp') return{Vmax:vmax/(1+iConc/ki),Km:km/(1+iConc/ki)};
+  if(iType==='noncomp') return{Vmax:vmax/(1+iConc/ki),Km:km};
+  return{Vmax:vmax,Km:km};
+}
+
+function drawMM(){
+  mctx.fillStyle='#111';mctx.fillRect(0,0,360,300);
+  const px=50,py=20,pw=290,ph=240;
+  // axes
+  mctx.strokeStyle='#444';mctx.lineWidth=1;
+  mctx.beginPath();mctx.moveTo(px,py);mctx.lineTo(px,py+ph);mctx.lineTo(px+pw,py+ph);mctx.stroke();
+  mctx.fillStyle='#888';mctx.font='10px system-ui';
+  mctx.fillText('[S]',px+pw/2,py+ph+16);
+  mctx.save();mctx.translate(12,py+ph/2);mctx.rotate(-Math.PI/2);mctx.fillText('v (rate)',0,0);mctx.restore();
+  mctx.fillStyle='#10b981';mctx.font='bold 11px system-ui';mctx.fillText('Michaelis-Menten',px,py-4);
+  // uninhibited curve
+  const maxS=100;
+  mctx.strokeStyle='#555';mctx.lineWidth=1.5;mctx.setLineDash([4,4]);mctx.beginPath();
+  for(let s=0;s<=maxS;s+=0.5){
+    const v=rate(s,Vmax,Km,'none',0,Ki);
+    const x=px+s/maxS*pw,y=py+ph-v/Vmax*ph*0.9;
+    s===0?mctx.moveTo(x,y):mctx.lineTo(x,y);
+  }
+  mctx.stroke();mctx.setLineDash([]);
+  // inhibited curve
+  mctx.strokeStyle='#10b981';mctx.lineWidth=2.5;mctx.beginPath();
+  for(let s=0;s<=maxS;s+=0.5){
+    const v=rate(s,Vmax,Km,inhibType,I,Ki);
+    const x=px+s/maxS*pw,y=py+ph-v/Vmax*ph*0.9;
+    s===0?mctx.moveTo(x,y):mctx.lineTo(x,y);
+  }
+  mctx.stroke();
+  // current point
+  const cv=rate(S,Vmax,Km,inhibType,I,Ki);
+  const cx=px+S/maxS*pw,cy=py+ph-cv/Vmax*ph*0.9;
+  mctx.fillStyle='#fff';mctx.beginPath();mctx.arc(cx,cy,5,0,Math.PI*2);mctx.fill();
+  mctx.fillStyle='#ccc';mctx.font='10px system-ui';
+  mctx.fillText(`v=${cv.toFixed(1)}`,cx+8,cy-4);
+  // Vmax line
+  const ap=apparentParams(Vmax,Km,inhibType,I,Ki);
+  const vmaxY=py+ph-ap.Vmax/Vmax*ph*0.9;
+  mctx.strokeStyle='#10b98144';mctx.setLineDash([3,3]);mctx.beginPath();mctx.moveTo(px,vmaxY);mctx.lineTo(px+pw,vmaxY);mctx.stroke();mctx.setLineDash([]);
+  mctx.fillStyle='#10b981';mctx.font='9px system-ui';mctx.fillText(`Vmax'=${ap.Vmax.toFixed(1)}`,px+pw-70,vmaxY-4);
+  // Km marker
+  const kmX=px+ap.Km/maxS*pw;
+  mctx.strokeStyle='#f59e0b44';mctx.setLineDash([3,3]);mctx.beginPath();mctx.moveTo(kmX,py);mctx.lineTo(kmX,py+ph);mctx.stroke();mctx.setLineDash([]);
+  mctx.fillStyle='#f59e0b';mctx.fillText(`Km'=${ap.Km.toFixed(1)}`,kmX+4,py+ph-10);
+}
+
+function drawLB(){
+  lctx.fillStyle='#111';lctx.fillRect(0,0,360,300);
+  const px=60,py=20,pw=280,ph=240;
+  lctx.strokeStyle='#444';lctx.lineWidth=1;
+  lctx.beginPath();lctx.moveTo(px,py);lctx.lineTo(px,py+ph);lctx.lineTo(px+pw,py+ph);lctx.stroke();
+  lctx.fillStyle='#888';lctx.font='10px system-ui';
+  lctx.fillText('1/[S]',px+pw/2,py+ph+16);
+  lctx.save();lctx.translate(12,py+ph/2);lctx.rotate(-Math.PI/2);lctx.fillText('1/v',0,0);lctx.restore();
+  lctx.fillStyle='#10b981';lctx.font='bold 11px system-ui';lctx.fillText('Lineweaver-Burk',px,py-4);
+  // both lines
+  const maxInvS=0.5,minInvS=-0.15;
+  const range=maxInvS-minInvS;
+  function plotLB(vmax,km,color,dash){
+    const slope=km/vmax,yint=1/vmax;
+    lctx.strokeStyle=color;lctx.lineWidth=2;if(dash)lctx.setLineDash(dash);
+    lctx.beginPath();
+    const maxInvV=slope*maxInvS+yint;
+    const scale=ph*0.8/Math.max(maxInvV,0.1);
+    for(let invS=minInvS;invS<=maxInvS;invS+=0.005){
+      const invV=slope*invS+yint;
+      const x=px+(invS-minInvS)/range*pw;
+      const y=py+ph-invV*scale;
+      if(y<py-20||y>py+ph+20) continue;
+      invS===minInvS?lctx.moveTo(x,y):lctx.lineTo(x,y);
+    }
+    lctx.stroke();lctx.setLineDash([]);
+  }
+  // uninhibited
+  plotLB(Vmax,Km,'#555',[4,4]);
+  // inhibited
+  const ap=apparentParams(Vmax,Km,inhibType,I,Ki);
+  plotLB(ap.Vmax,ap.Km,'#10b981',null);
+  // origin marker
+  const ox=px+(0-minInvS)/range*pw;
+  lctx.strokeStyle='#333';lctx.beginPath();lctx.moveTo(ox,py);lctx.lineTo(ox,py+ph);lctx.stroke();
+  lctx.fillStyle='#666';lctx.font='9px system-ui';lctx.fillText('0',ox-3,py+ph+12);
+  // inhibitor label
+  if(inhibType!=='none'){
+    lctx.fillStyle='#f59e0b';lctx.font='10px system-ui';
+    const labels={comp:'Competitive: Km increases, Vmax same',uncomp:'Uncompetitive: both decrease',noncomp:'Non-competitive: Vmax decreases, Km same'};
+    lctx.fillText(labels[inhibType],px-40,py+ph+30);
+  }
+}
+
+function draw(){drawMM();drawLB();}
+draw();
+</script>
+</body>
+</html>

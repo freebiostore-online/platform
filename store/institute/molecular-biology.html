@@ -93,6 +93,22 @@
         <li><strong>B-form DNA</strong> — the standard right-handed helix. 10 base pairs per turn, 3.4 nm pitch, 2 nm diameter. Other forms: A-DNA (dehydrated, wider), Z-DNA (left-handed, zigzag backbone, found in GC-rich regions).</li>
       </ul>
 
+      <!-- Diagram: DNA structure -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:1.5rem 0;text-align:center">
+        <div style="background:#141414;border:1px solid #262626;border-radius:8px;padding:.75rem">
+          <div style="font-size:1.1rem;margin-bottom:.2rem">&#x1F9EC;</div>
+          <div style="font-size:.78rem;font-weight:700;color:#fafafa">Double Helix</div>
+          <div style="font-size:.68rem;color:#737373">Antiparallel strands</div>
+          <div style="font-size:.68rem;color:#737373">A-T (2 H-bonds), G-C (3 H-bonds)</div>
+        </div>
+        <div style="background:#141414;border:1px solid #262626;border-radius:8px;padding:.75rem">
+          <div style="font-size:1.1rem;margin-bottom:.2rem">&#x1F4DC;</div>
+          <div style="font-size:.78rem;font-weight:700;color:#fafafa">Base Pairing</div>
+          <div style="font-size:.68rem;color:#737373">5' &rarr; 3' coding strand</div>
+          <div style="font-size:.68rem;color:#737373">3' &rarr; 5' template strand</div>
+        </div>
+      </div>
+
       <h3>Genome Organization</h3>
       <ul>
         <li><strong>Prokaryotes</strong> — single circular chromosome (E. coli: 4.6 million bp, ~4,300 genes). Often have small circular plasmids carrying antibiotic resistance or other accessory genes. DNA in the nucleoid, not membrane-bound.</li>
@@ -120,6 +136,31 @@
     <section class="section" id="central-dogma">
       <h2>The Central Dogma</h2>
       <p>Proposed by Francis Crick in 1958 and published in 1970. The central dogma describes the flow of genetic information: DNA is replicated, DNA is transcribed into RNA, and RNA is translated into protein. Information flows from nucleic acid to protein, but not from protein back to nucleic acid.</p>
+
+      <!-- Diagram: Central dogma flow -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;margin:1.5rem 0;flex-wrap:wrap">
+        <div style="background:#022c22;border:2px solid #10b981;border-radius:50%;width:70px;height:70px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+          <div style="font-size:.85rem;font-weight:700;color:#34d399">DNA</div>
+          <div style="font-size:.55rem;color:#737373">Storage</div>
+        </div>
+        <div style="text-align:center">
+          <span style="color:#10b981;font-size:1rem">&rarr;</span>
+          <div style="font-size:.6rem;color:#525252">Transcription</div>
+        </div>
+        <div style="background:#022c22;border:2px solid #10b981;border-radius:50%;width:70px;height:70px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+          <div style="font-size:.85rem;font-weight:700;color:#34d399">RNA</div>
+          <div style="font-size:.55rem;color:#737373">Messenger</div>
+        </div>
+        <div style="text-align:center">
+          <span style="color:#10b981;font-size:1rem">&rarr;</span>
+          <div style="font-size:.6rem;color:#525252">Translation</div>
+        </div>
+        <div style="background:#022c22;border:2px solid #10b981;border-radius:50%;width:70px;height:70px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+          <div style="font-size:.85rem;font-weight:700;color:#34d399">Protein</div>
+          <div style="font-size:.55rem;color:#737373">Function</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:.68rem;color:#525252">Replication &larr; DNA &rarr; Reverse transcription (retroviruses)</div>
 
       <h3>The Flow</h3>
       <ul>

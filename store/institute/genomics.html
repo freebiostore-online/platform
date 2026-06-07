@@ -92,6 +92,30 @@
       <h3>Next-Generation Sequencing Revolution (2005-present)</h3>
       <p>Massively parallel sequencing technologies dropped the cost of a human genome from $2.7 billion to under $200 (2024). Key platforms: 454 (pyrosequencing, 2005, discontinued), Illumina (sequencing by synthesis, 2006, dominant), Ion Torrent (semiconductor, 2010), PacBio (single-molecule, 2011), Oxford Nanopore (nanopore, 2014).</p>
 
+      <!-- Diagram: Sequencing technology timeline -->
+      <div style="border-left:2px solid #262626;margin:1rem 0 1rem 1rem;padding-left:1.5rem">
+        <div style="margin-bottom:1rem;position:relative">
+          <div style="position:absolute;left:-2rem;top:.3rem;width:10px;height:10px;border-radius:50%;background:#10b981"></div>
+          <div style="font-size:.82rem;font-weight:700;color:#fafafa">1977 &mdash; Sanger Sequencing</div>
+          <div style="font-size:.75rem;color:#737373">Chain termination. First genomes. ~800 bp reads.</div>
+        </div>
+        <div style="margin-bottom:1rem;position:relative">
+          <div style="position:absolute;left:-2rem;top:.3rem;width:10px;height:10px;border-radius:50%;background:#10b981"></div>
+          <div style="font-size:.82rem;font-weight:700;color:#fafafa">2005 &mdash; Next-Gen (Illumina)</div>
+          <div style="font-size:.75rem;color:#737373">Sequencing by synthesis. Short reads, massive throughput.</div>
+        </div>
+        <div style="margin-bottom:1rem;position:relative">
+          <div style="position:absolute;left:-2rem;top:.3rem;width:10px;height:10px;border-radius:50%;background:#10b981"></div>
+          <div style="font-size:.82rem;font-weight:700;color:#fafafa">2014 &mdash; Long-Read (Nanopore + PacBio)</div>
+          <div style="font-size:.75rem;color:#737373">Single-molecule. 10-100 kb reads. Resolves repeats.</div>
+        </div>
+        <div style="position:relative">
+          <div style="position:absolute;left:-2rem;top:.3rem;width:10px;height:10px;border-radius:50%;background:#10b981"></div>
+          <div style="font-size:.82rem;font-weight:700;color:#fafafa">2022 &mdash; T2T Complete Genome</div>
+          <div style="font-size:.75rem;color:#737373">First truly complete human genome. +200 Mbp resolved.</div>
+        </div>
+      </div>
+
       <h3>T2T Consortium (2022)</h3>
       <p>The Telomere-to-Telomere (T2T) Consortium completed the first truly complete human genome sequence — including centromeres, telomeres, and ribosomal DNA arrays that were missing from the original Human Genome Project assembly. Added ~200 million base pairs (8% of the genome) previously unresolved. Used a combination of PacBio HiFi and Oxford Nanopore ultra-long reads.</p>
     </section>
@@ -107,6 +131,19 @@
         <li><strong>Sequencing by synthesis</strong> — fluorescently labeled, reversibly terminated nucleotides are added one at a time. After each incorporation, the flow cell is imaged (all clusters simultaneously). The terminator and fluorophore are cleaved, and the next cycle begins. Typically 150-300 cycles per read.</li>
         <li><strong>Data output</strong> — FASTQ files containing reads + base quality scores (Phred scale: Q30 = 99.9% accuracy, Q40 = 99.99%). Paired-end sequencing: both ends of each fragment are read, providing pairs of reads ~300-600 bp apart.</li>
       </ul>
+
+      <!-- Diagram: Illumina SBS workflow -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:.4rem;margin:1.5rem 0;flex-wrap:wrap">
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">Fragment DNA</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">Ligate adapters</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">Cluster on flow cell</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">SBS + image</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#0f3d0f;border:1px solid #4ade80;border-radius:8px;padding:.4rem .6rem;color:#4ade80;font-size:.72rem;font-weight:600">FASTQ output</div>
+      </div>
 
       <h3>Platforms</h3>
       <ul>

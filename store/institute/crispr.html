@@ -99,6 +99,22 @@
       <h2>Cas9 Mechanism</h2>
       <p>Cas9 (CRISPR-associated protein 9) from Streptococcus pyogenes (SpCas9) is the most widely used CRISPR effector. It is an RNA-guided DNA endonuclease — a molecular scissors that can be directed to cut any DNA sequence complementary to a ~20-nucleotide guide RNA.</p>
 
+      <!-- Diagram: CRISPR-Cas9 mechanism flow -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:.4rem;margin:1.5rem 0;flex-wrap:wrap">
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .7rem;color:#34d399;font-size:.72rem;font-weight:600">sgRNA binds Cas9</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .7rem;color:#34d399;font-size:.72rem;font-weight:600">PAM scanned</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .7rem;color:#34d399;font-size:.72rem;font-weight:600">R-loop forms</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#251616;border:1px solid #f87171;border-radius:8px;padding:.4rem .7rem;color:#f87171;font-size:.72rem;font-weight:600">DSB cut</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="display:flex;flex-direction:column;gap:.2rem">
+          <div style="background:#022c22;border:1px solid #10b981;border-radius:6px;padding:.2rem .5rem;color:#34d399;font-size:.65rem;font-weight:600">NHEJ (indels)</div>
+          <div style="background:#022c22;border:1px solid #10b981;border-radius:6px;padding:.2rem .5rem;color:#34d399;font-size:.65rem;font-weight:600">HDR (precise)</div>
+        </div>
+      </div>
+
       <h3>How Cas9 Cuts DNA</h3>
       <ul>
         <li><strong>Guide RNA loading</strong> — Cas9 binds the single guide RNA (sgRNA), which is a fusion of the CRISPR RNA (crRNA, ~20 nt target-specific) and the trans-activating crRNA (tracrRNA, scaffold). The sgRNA causes a conformational change that activates Cas9 for DNA searching.</li>
@@ -107,6 +123,30 @@
         <li><strong>Cleavage</strong> — if there is sufficient complementarity (~20 nt), two nuclease domains cut the DNA: HNH cuts the target strand (complementary to guide), RuvC cuts the non-target strand. Both cuts occur 3 bp upstream of the PAM, creating a blunt-ended double-strand break (DSB).</li>
         <li><strong>DNA repair</strong> — the cell repairs the DSB by one of two pathways: (1) NHEJ (Non-Homologous End Joining): error-prone, introduces insertions/deletions (indels) that disrupt the gene (knockout). (2) HDR (Homology-Directed Repair): precise editing using a donor template — can insert, correct, or replace sequences (knock-in). HDR is less efficient and only active in S/G2 cell cycle phases.</li>
       </ul>
+
+      <!-- Diagram: CRISPR variant comparison -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin:1.5rem 0;text-align:center">
+        <div style="background:#141414;border:1px solid #262626;border-radius:8px;padding:.6rem .3rem">
+          <div style="font-size:.78rem;font-weight:700;color:#fafafa">Cas9</div>
+          <div style="font-size:.62rem;color:#f87171;margin-top:.2rem">DSB (blunt)</div>
+          <div style="font-size:.62rem;color:#737373">Knockout</div>
+        </div>
+        <div style="background:#141414;border:1px solid #262626;border-radius:8px;padding:.6rem .3rem">
+          <div style="font-size:.78rem;font-weight:700;color:#fafafa">dCas9</div>
+          <div style="font-size:.62rem;color:#10b981;margin-top:.2rem">No cut</div>
+          <div style="font-size:.62rem;color:#737373">CRISPRi/a</div>
+        </div>
+        <div style="background:#141414;border:1px solid #262626;border-radius:8px;padding:.6rem .3rem">
+          <div style="font-size:.78rem;font-weight:700;color:#fafafa">Base Editor</div>
+          <div style="font-size:.62rem;color:#fbbf24;margin-top:.2rem">Single nick</div>
+          <div style="font-size:.62rem;color:#737373">C&rarr;T or A&rarr;G</div>
+        </div>
+        <div style="background:#141414;border:1px solid #262626;border-radius:8px;padding:.6rem .3rem">
+          <div style="font-size:.78rem;font-weight:700;color:#fafafa">Prime Editor</div>
+          <div style="font-size:.62rem;color:#a78bfa;margin-top:.2rem">Nick + RT</div>
+          <div style="font-size:.62rem;color:#737373">Any edit</div>
+        </div>
+      </div>
 
       <h3>Engineered Variants</h3>
       <ul>

@@ -83,6 +83,78 @@
       "creator": "serge-ivo",
       "creatorName": "Serge",
       "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "dna-replication",
+      "name": "DNA Replication",
+      "description": "Animated replication fork. Helicase, primase, polymerase, Okazaki fragments.",
+      "storeType": "behavior",
+      "category": "genetics",
+      "icon": "\ud83e\uddec",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "neuron-sim",
+      "name": "Neuron Simulator",
+      "description": "Hodgkin-Huxley model. Inject current, see action potentials. Na+/K+ gating.",
+      "storeType": "behavior",
+      "category": "neuroscience",
+      "icon": "\ud83e\udde0",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "pedigree",
+      "name": "Genetic Pedigree",
+      "description": "Draw family trees, assign genotypes. Punnett squares. Dominant/recessive/X-linked.",
+      "storeType": "behavior",
+      "category": "genetics",
+      "icon": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "pcr-sim",
+      "name": "PCR Simulator",
+      "description": "Denature/anneal/extend thermal cycling. Watch DNA double each cycle. Exponential chart.",
+      "storeType": "behavior",
+      "category": "techniques",
+      "icon": "\ud83d\udd2c",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "enzyme-kinetics",
+      "name": "Enzyme Kinetics",
+      "description": "Michaelis-Menten + Lineweaver-Burk. Three inhibitor modes. Vmax/Km sliders.",
+      "storeType": "behavior",
+      "category": "biochemistry",
+      "icon": "\u2697\ufe0f",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "population-genetics",
+      "name": "Hardy-Weinberg",
+      "description": "Allele frequencies, selection, drift, migration. Check equilibrium conditions.",
+      "storeType": "behavior",
+      "category": "evolution",
+      "icon": "\ud83d\udcc8",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
     }
   ]
 }

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PCR Simulator - FreeBioStore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e0e0e0;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{color:#10b981;margin:18px 0 6px;font-size:1.4rem}
+.desc{color:#999;font-size:.85rem;margin-bottom:12px}
+.layout{display:flex;gap:12px;margin:8px;flex-wrap:wrap;justify-content:center}
+canvas{background:#111;border:1px solid #333;border-radius:6px}
+.controls{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;justify-content:center}
+.controls button{background:#10b981;color:#000;border:none;padding:5px 14px;border-radius:4px;font-size:.8rem;cursor:pointer;font-weight:600}
+.controls label{font-size:.8rem;color:#aaa}
+.controls input[type=range]{width:80px;accent-color:#10b981}
+.status{font-size:.85rem;margin:6px;color:#ccc;font-weight:600}
+footer{margin-top:auto;padding:12px;font-size:.7rem;color:#555}
+footer a{color:#10b981;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>PCR Simulator</h1>
+<p class="desc">Polymerase Chain Reaction: Denature, Anneal, Extend. Watch DNA double each cycle.</p>
+<div class="layout">
+<canvas id="tube" width="260" height="340"></canvas>
+<canvas id="chart" width="460" height="340"></canvas>
+</div>
+<div class="controls">
+<button id="run">Run PCR</button>
+<button id="step">1 Cycle</button>
+<button id="reset">Reset</button>
+<label>Speed <input type="range" id="speed" min="1" max="10" value="4"><span id="speedV">4</span></label>
+</div>
+<div class="status" id="status">Ready - 1 copy of template DNA</div>
+<footer><a href="/items/">FreeBioStore</a></footer>
+<script>
+const tc=document.getElementById('tube'),tctx=tc.getContext('2d');
+const cc=document.getElementById('chart'),cctx=cc.getContext('2d');
+let cycle=0,phase=0,phaseT=0,copies=1,running=false,speed=4;
+let history=[{cycle:0,copies:1}];
+const phases=['Denature (95C)','Anneal (55C)','Extend (72C)'];
+const phaseColors=['#ef4444','#3b82f6','#10b981'];
+const phaseDur=[60,60,80];
+let dnaStrands=[];
+
+document.getElementById('speed').addEventListener('input',e=>{speed=+e.value;document.getElementById('speedV').textContent=speed;});
+document.getElementById('run').addEventListener('click',()=>{running=!running;document.getElementById('run').textContent=running?'Pause':'Run PCR';});
+document.getElementById('step').addEventListener('click',()=>{if(cycle<35) doCycle();});
+document.getElementById('reset').addEventListener('click',()=>{cycle=0;phase=0;phaseT=0;copies=1;running=false;history=[{cycle:0,copies:1}];dnaStrands=[];document.getElementById('run').textContent='Run PCR';});
+
+function doCycle(){
+  cycle++;copies*=2;
+  history.push({cycle,copies});
+  updateStrands();
+}
+
+function updateStrands(){
+  dnaStrands=[];
+  const maxShow=Math.min(copies,32);
+  for(let i=0;i<maxShow;i++){
+    dnaStrands.push({y:20+i*(280/maxShow),sep:phase===0?10:0,extended:phase===2?1:0});
+  }
+}
+
+function drawTube(){
+  tctx.fillStyle='#111';tctx.fillRect(0,0,260,340);
+  // tube shape
+  tctx.fillStyle='#181818';
+  tctx.beginPath();
+  tctx.moveTo(80,30);tctx.lineTo(180,30);tctx.lineTo(170,300);
+  tctx.quadraticCurveTo(130,330,90,300);tctx.lineTo(80,30);
+  tctx.fill();
+  tctx.strokeStyle='#444';tctx.lineWidth=2;tctx.stroke();
+  // liquid color based on phase
+  const liqColor=phase===0?'#ef444433':phase===1?'#3b82f633':'#10b98133';
+  tctx.fillStyle=liqColor;
+  tctx.beginPath();
+  tctx.moveTo(85,60);tctx.lineTo(175,60);tctx.lineTo(168,295);
+  tctx.quadraticCurveTo(130,320,92,295);tctx.lineTo(85,60);
+  tctx.fill();
+  // DNA strands inside
+  const maxShow=Math.min(copies,24);
+  const spacing=Math.max(4,220/maxShow);
+  for(let i=0;i<maxShow;i++){
+    const y=70+i*spacing;
+    const x=100+Math.sin(y*0.05+phaseT*0.02)*15;
+    const sep=phase===0?4+Math.sin(phaseT*0.1)*2:1;
+    // strand 1
+    tctx.strokeStyle='#10b981';tctx.lineWidth=1.5;
+    tctx.beginPath();
+    for(let j=0;j<40;j++){
+      const sx=x+j*1.2,sy=y-sep+Math.sin(j*0.5)*2;
+      j===0?tctx.moveTo(sx,sy):tctx.lineTo(sx,sy);
+    }
+    tctx.stroke();
+    // strand 2
+    tctx.strokeStyle='#34d399';
+    tctx.beginPath();
+    for(let j=0;j<40;j++){
+      const sx=x+j*1.2,sy=y+sep+Math.sin(j*0.5+Math.PI)*2;
+      j===0?tctx.moveTo(sx,sy):tctx.lineTo(sx,sy);
+    }
+    tctx.stroke();
+    // base pairs (when not denatured)
+    if(phase!==0&&spacing>6){
+      tctx.strokeStyle='#10b98144';tctx.lineWidth=0.5;
+      for(let j=0;j<40;j+=4){
+        const sx=x+j*1.2;
+        tctx.beginPath();tctx.moveTo(sx,y-sep+Math.sin(j*0.5)*2);
+        tctx.lineTo(sx,y+sep+Math.sin(j*0.5+Math.PI)*2);tctx.stroke();
+      }
+    }
+  }
+  // temp indicator
+  const temps=[95,55,72];
+  tctx.fillStyle=phaseColors[phase];tctx.font='bold 16px system-ui';
+  tctx.fillText(temps[phase]+'C',105,25);
+  // primers (during anneal)
+  if(phase===1){
+    tctx.fillStyle='#ef4444';tctx.font='8px system-ui';
+    for(let i=0;i<Math.min(copies,8);i++){
+      tctx.fillText('>>>',90,78+i*spacing);
+      tctx.fillText('<<<',140,78+i*spacing);
+    }
+  }
+  // polymerase (during extend)
+  if(phase===2){
+    tctx.fillStyle='#f59e0b';
+    for(let i=0;i<Math.min(3,copies);i++){
+      const py=75+i*spacing;
+      tctx.beginPath();tctx.arc(120+Math.sin(phaseT*0.05)*20,py,3,0,Math.PI*2);tctx.fill();
+    }
+  }
+}
+
+function drawChart(){
+  cctx.fillStyle='#111';cctx.fillRect(0,0,460,340);
+  cctx.fillStyle='#10b981';cctx.font='bold 12px system-ui';
+  cctx.fillText('Amplification Curve',10,20);
+  if(history.length<2){
+    cctx.fillStyle='#444';cctx.font='12px system-ui';cctx.fillText('Run PCR to see amplification',120,170);
+    return;
+  }
+  const maxC=Math.max(...history.map(h=>h.copies));
+  const logMax=Math.log2(maxC);
+  const px=50,py=40,pw=390,ph=240;
+  // axes
+  cctx.strokeStyle='#333';cctx.lineWidth=1;
+  cctx.beginPath();cctx.moveTo(px,py);cctx.lineTo(px,py+ph);cctx.lineTo(px+pw,py+ph);cctx.stroke();
+  // log scale
+  cctx.fillStyle='#666';cctx.font='9px system-ui';
+  for(let i=0;i<=logMax;i+=5){
+    const y=py+ph-i/logMax*ph;
+    cctx.fillText('2^'+i,5,y+3);
+    cctx.strokeStyle='#1a1a1a';cctx.beginPath();cctx.moveTo(px,y);cctx.lineTo(px+pw,y);cctx.stroke();
+  }
+  // curve
+  cctx.strokeStyle='#10b981';cctx.lineWidth=2.5;cctx.beginPath();
+  for(let i=0;i<history.length;i++){
+    const x=px+i/(Math.max(history.length-1,1))*pw;
+    const lv=Math.log2(history[i].copies);
+    const y=py+ph-lv/logMax*ph;
+    i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);
+  }
+  cctx.stroke();
+  // dots
+  for(let i=0;i<history.length;i++){
+    const x=px+i/(Math.max(history.length-1,1))*pw;
+    const lv=Math.log2(history[i].copies);
+    const y=py+ph-lv/logMax*ph;
+    cctx.fillStyle='#10b981';cctx.beginPath();cctx.arc(x,y,3,0,Math.PI*2);cctx.fill();
+  }
+  // linear inset
+  cctx.fillStyle='#888';cctx.font='10px system-ui';
+  cctx.fillText(`Cycle ${cycle} | ${copies.toLocaleString()} copies | 2^${cycle}`,px,py+ph+20);
+  // phase indicator bar
+  const bx=px,by=py+ph+30,bw=pw,bh=16;
+  for(let i=0;i<3;i++){
+    cctx.fillStyle=phase===i?phaseColors[i]:phaseColors[i]+'44';
+    cctx.fillRect(bx+i*(bw/3),by,bw/3-2,bh);
+    cctx.fillStyle='#fff';cctx.font='9px system-ui';
+    cctx.fillText(phases[i],bx+i*(bw/3)+4,by+12);
+  }
+}
+
+function update(){
+  if(running&&cycle<35){
+    phaseT+=speed;
+    if(phaseT>=phaseDur[phase]){
+      phaseT=0;phase++;
+      if(phase>2){phase=0;doCycle();}
+      updateStrands();
+    }
+  }
+  document.getElementById('status').textContent=`${phases[phase]} | Cycle ${cycle} | ${copies.toLocaleString()} copies`;
+  document.getElementById('status').style.color=phaseColors[phase];
+}
+
+function loop(){
+  update();drawTube();drawChart();requestAnimationFrame(loop);
+}
+updateStrands();loop();
+</script>
+</body>
+</html>

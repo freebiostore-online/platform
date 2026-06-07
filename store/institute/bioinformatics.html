@@ -99,6 +99,19 @@
         <li><strong>PSI-BLAST</strong> — Position-Specific Iterated BLAST. Builds a position-specific scoring matrix (PSSM) from initial hits, then searches again with the PSSM. Each iteration finds more distant homologs. Excellent for detecting remote homology. Risk: profile corruption from inclusion of false positives.</li>
       </ul>
 
+      <!-- Diagram: BLAST search flow -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:.4rem;margin:1.5rem 0;flex-wrap:wrap">
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .7rem;color:#34d399;font-size:.72rem;font-weight:600">Query sequence</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .7rem;color:#34d399;font-size:.72rem;font-weight:600">Seed words (k-mers)</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .7rem;color:#34d399;font-size:.72rem;font-weight:600">Extend hits</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .7rem;color:#34d399;font-size:.72rem;font-weight:600">Score + E-value</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#0f3d0f;border:1px solid #4ade80;border-radius:8px;padding:.4rem .7rem;color:#4ade80;font-size:.72rem;font-weight:600">Alignments</div>
+      </div>
+
       <h3>Running BLAST</h3>
       <ul>
         <li><strong>NCBI web BLAST</strong> — <a href="https://blast.ncbi.nlm.nih.gov">blast.ncbi.nlm.nih.gov</a>. Free, searches all GenBank sequences. Results in minutes. Best for individual queries.</li>
@@ -139,6 +152,21 @@
     <section class="section" id="phylogenetics">
       <h2>Phylogenetics</h2>
       <p>Phylogenetics reconstructs evolutionary relationships between sequences (or organisms) in the form of a tree. The tree topology shows which sequences share common ancestors, and branch lengths represent evolutionary distance (usually measured in substitutions per site).</p>
+
+      <!-- Diagram: Phylogenetics pipeline -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:.4rem;margin:1.5rem 0;flex-wrap:wrap">
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">Sequences</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">MSA</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">Trim</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">Model selection</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#022c22;border:1px solid #10b981;border-radius:8px;padding:.4rem .6rem;color:#34d399;font-size:.72rem;font-weight:600">Build tree</div>
+        <span style="color:#404040;font-size:1rem">&rarr;</span>
+        <div style="background:#0f3d0f;border:1px solid #4ade80;border-radius:8px;padding:.4rem .6rem;color:#4ade80;font-size:.72rem;font-weight:600">Phylogeny</div>
+      </div>
 
       <h3>Tree-Building Methods</h3>
       <ul>

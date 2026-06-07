@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DNA Replication - FreeBioStore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e0e0e0;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{color:#10b981;margin:18px 0 6px;font-size:1.4rem}
+.desc{color:#999;font-size:.85rem;margin-bottom:12px}
+canvas{background:#111;border:1px solid #333;border-radius:6px}
+.controls{display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.controls button{background:#10b981;color:#000;border:none;padding:5px 14px;border-radius:4px;font-size:.8rem;cursor:pointer;font-weight:600}
+.controls button:hover{background:#34d399}
+.controls label{font-size:.8rem;color:#aaa}
+.controls input[type=range]{width:80px;accent-color:#10b981}
+.info{font-size:.75rem;color:#888;max-width:700px;text-align:center;margin:4px}
+footer{margin-top:auto;padding:12px;font-size:.7rem;color:#555}
+footer a{color:#10b981;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>DNA Replication Fork</h1>
+<p class="desc">Watch helicase, primase, and DNA polymerase replicate DNA</p>
+<canvas id="c" width="740" height="380"></canvas>
+<div class="controls">
+<button id="play">Play</button>
+<button id="step">Step</button>
+<button id="reset">Reset</button>
+<label>Speed <input type="range" id="speed" min="1" max="10" value="3"><span id="speedV">3</span></label>
+</div>
+<p class="info">Helicase (yellow) unwinds | Primase (red) adds primers | DNA Pol III (green) extends | Lagging strand has Okazaki fragments</p>
+<footer><a href="/items/">FreeBioStore</a></footer>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+const W=740,H=380;
+let playing=false,speed=3,forkX=150,t=0;
+const bases='ATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCG';
+const comp={A:'T',T:'A',C:'G',G:'C'};
+const baseColors={A:'#ef4444',T:'#3b82f6',C:'#22c55e',G:'#f59e0b'};
+let okazaki=[],leadingLen=0,primerPositions=[];
+
+document.getElementById('play').addEventListener('click',()=>{playing=!playing;document.getElementById('play').textContent=playing?'Pause':'Play';});
+document.getElementById('step').addEventListener('click',()=>{advance(1);});
+document.getElementById('reset').addEventListener('click',()=>{forkX=150;t=0;leadingLen=0;okazaki=[];primerPositions=[];playing=false;document.getElementById('play').textContent='Play';});
+document.getElementById('speed').addEventListener('input',e=>{speed=+e.value;document.getElementById('speedV').textContent=speed;});
+
+function advance(dt){
+  forkX=Math.min(W-80,forkX+dt*speed*0.5);
+  t+=dt;
+  leadingLen=Math.max(0,forkX-150);
+  // add okazaki fragments periodically
+  if(t%40<dt&&forkX>200){
+    const fragStart=forkX-50-Math.random()*30;
+    if(fragStart>140){
+      primerPositions.push(fragStart);
+      okazaki.push({start:fragStart,len:0,maxLen:30+Math.random()*20,growing:true});
+    }
+  }
+  // grow okazaki
+  for(const o of okazaki){
+    if(o.growing){o.len=Math.min(o.maxLen,o.len+dt*speed*0.3);
+      if(o.len>=o.maxLen) o.growing=false;}
+  }
+}
+
+function drawBase(x,y,base,size){
+  ctx.fillStyle=baseColors[base]||'#888';
+  ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#000';ctx.font=`bold ${size}px system-ui`;
+  ctx.fillText(base,x-size*0.35,y+size*0.35);
+}
+
+function draw(){
+  ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+  const midY=H/2;
+  // template strands (unwound part before fork)
+  const bpSpacing=14;
+  // leading template (top)
+  ctx.strokeStyle='#555';ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let x=40;x<forkX;x+=2){
+    const spread=Math.max(0,(forkX-x)/80)*30;
+    ctx.lineTo(x,midY-20-spread);
+  }
+  ctx.stroke();
+  // lagging template (bottom)
+  ctx.beginPath();
+  for(let x=40;x<forkX;x+=2){
+    const spread=Math.max(0,(forkX-x)/80)*30;
+    ctx.lineTo(x,midY+20+spread);
+  }
+  ctx.stroke();
+  // unreplicated DNA (right of fork)
+  for(let x=forkX+10;x<W-20;x+=bpSpacing){
+    const i=Math.floor((x-40)/bpSpacing)%bases.length;
+    const b=bases[i];
+    drawBase(x,midY-8,b,5);
+    drawBase(x,midY+8,comp[b],5);
+    // backbone
+    ctx.strokeStyle='#44444488';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x,midY-3);ctx.lineTo(x,midY+3);ctx.stroke();
+  }
+  // helicase at fork
+  ctx.fillStyle='#eab308';ctx.beginPath();
+  ctx.arc(forkX,midY,14,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#000';ctx.font='bold 8px system-ui';ctx.fillText('HEL',forkX-10,midY+3);
+  // leading strand synthesis (top, continuous)
+  if(leadingLen>0){
+    const topY=midY-50;
+    ctx.strokeStyle='#10b981';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(forkX-leadingLen,topY+20);
+    for(let x=forkX-leadingLen;x<forkX-5;x+=2){
+      const spread=Math.max(0,(forkX-x)/80)*30;
+      ctx.lineTo(x,midY-20-spread+8);
+    }
+    ctx.stroke();
+    // polymerase on leading
+    ctx.fillStyle='#10b981';ctx.beginPath();ctx.arc(forkX-8,midY-35,10,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#000';ctx.font='bold 7px system-ui';ctx.fillText('POL',forkX-18,midY-33);
+  }
+  // lagging strand (bottom, okazaki fragments)
+  for(const o of okazaki){
+    // primer
+    ctx.strokeStyle='#ef4444';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(o.start,midY+45);ctx.lineTo(o.start+8,midY+45);ctx.stroke();
+    // fragment
+    if(o.len>0){
+      ctx.strokeStyle='#10b981';ctx.lineWidth=3;
+      ctx.beginPath();
+      for(let x=o.start+8;x<o.start+8+o.len;x+=2){
+        const spread=Math.max(0,(forkX-x)/80)*30;
+        ctx.lineTo(x,midY+20+spread-8);
+      }
+      ctx.stroke();
+    }
+  }
+  // primase (near fork, bottom)
+  if(forkX>180){
+    ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(forkX-20,midY+40,8,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='bold 6px system-ui';ctx.fillText('PRI',forkX-28,midY+42);
+  }
+  // labels
+  ctx.fillStyle='#10b981';ctx.font='bold 11px system-ui';
+  ctx.fillText('5\'',30,midY-60);ctx.fillText('3\'',W-30,midY-12);
+  ctx.fillText('3\'',30,midY+65);ctx.fillText('5\'',W-30,midY+12);
+  ctx.fillStyle='#888';ctx.font='10px system-ui';
+  ctx.fillText('Leading strand (continuous)',100,midY-70);
+  ctx.fillText('Lagging strand (Okazaki fragments)',100,midY+80);
+  ctx.fillText(`Fork position: ${Math.floor(forkX)}`,W-160,20);
+  // direction arrow
+  ctx.fillStyle='#10b981';
+  ctx.beginPath();ctx.moveTo(forkX+30,midY);ctx.lineTo(forkX+20,midY-6);ctx.lineTo(forkX+20,midY+6);ctx.fill();
+  requestAnimationFrame(draw);
+}
+
+function loop(){
+  if(playing) advance(1);
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>

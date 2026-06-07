@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Genetic Pedigree - FreeBioStore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e0e0e0;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{color:#10b981;margin:18px 0 6px;font-size:1.4rem}
+.desc{color:#999;font-size:.85rem;margin-bottom:12px}
+canvas{background:#111;border:1px solid #333;border-radius:6px;cursor:pointer}
+.controls{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.controls select,.controls button{background:#222;color:#e0e0e0;border:1px solid #444;padding:4px 10px;border-radius:4px;font-size:.8rem;cursor:pointer}
+.controls button{background:#10b981;color:#000;border:none;font-weight:600}
+.info{font-size:.8rem;color:#aaa;margin:4px;max-width:700px;text-align:center}
+.punnett{background:#181818;border:1px solid #333;border-radius:6px;padding:10px;margin:8px;font-family:monospace;font-size:.85rem;min-height:60px}
+footer{margin-top:auto;padding:12px;font-size:.7rem;color:#555}
+footer a{color:#10b981;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>Genetic Pedigree Builder</h1>
+<p class="desc">Click to add family members. Assign genotypes, see offspring probabilities.</p>
+<canvas id="c" width="700" height="300"></canvas>
+<div class="controls">
+<label style="font-size:.8rem;color:#aaa">Mode: <select id="mode"><option value="ad">Autosomal Dominant</option><option value="ar">Autosomal Recessive</option><option value="xl">X-linked Recessive</option></select></label>
+<button id="addM">Add Male</button>
+<button id="addF">Add Female</button>
+<button id="mate">Mate Selected</button>
+<button id="child">Add Child</button>
+<button id="toggle">Toggle Affected</button>
+<button id="clear">Clear</button>
+</div>
+<p class="info">Click a person to select. "Mate" links two selected. "Add Child" adds offspring to mated pair.</p>
+<div class="punnett" id="punnett">Select a mated pair to see Punnett square</div>
+<footer><a href="/items/">FreeBioStore</a></footer>
+<script>
+const C=document.getElementById('c'),ctx=C.getContext('2d');
+const W=700,H=300;
+let mode='ad';
+let people=[],matings=[],selected=[];
+let nextId=0;
+
+function Person(x,y,sex,gen){return{id:nextId++,x,y,sex,gen,affected:false,genotype:sex==='M'?'Aa':'Aa',mateId:null};}
+
+document.getElementById('mode').addEventListener('change',e=>{mode=e.value;updateGenotypes();});
+document.getElementById('addM').addEventListener('click',()=>{people.push(Person(60+people.length*70,60,'M',0));});
+document.getElementById('addF').addEventListener('click',()=>{people.push(Person(60+people.length*70,60,'F',0));});
+document.getElementById('toggle').addEventListener('click',()=>{
+  if(selected.length){const p=people.find(p=>p.id===selected[0]);if(p){p.affected=!p.affected;updateGenotypes();}}
+});
+document.getElementById('mate').addEventListener('click',()=>{
+  if(selected.length===2){
+    const a=people.find(p=>p.id===selected[0]),b=people.find(p=>p.id===selected[1]);
+    if(a&&b&&a.sex!==b.sex){
+      a.mateId=b.id;b.mateId=a.id;
+      matings.push({p1:a.id,p2:b.id,children:[]});
+    }
+  }
+});
+document.getElementById('child').addEventListener('click',()=>{
+  const m=matings.find(m=>selected.includes(m.p1)||selected.includes(m.p2));
+  if(m){
+    const p1=people.find(p=>p.id===m.p1),p2=people.find(p=>p.id===m.p2);
+    const cx=(p1.x+p2.x)/2+m.children.length*50-25;
+    const cy=Math.max(p1.y,p2.y)+80;
+    const sex=Math.random()>.5?'M':'F';
+    const child=Person(cx,cy,sex,Math.max(p1.gen||0,p2.gen||0)+1);
+    people.push(child);
+    m.children.push(child.id);
+  }
+});
+document.getElementById('clear').addEventListener('click',()=>{people=[];matings=[];selected=[];nextId=0;});
+
+function updateGenotypes(){
+  for(const p of people){
+    if(mode==='ad'){
+      p.genotype=p.affected?'Aa':'aa';
+    } else if(mode==='ar'){
+      p.genotype=p.affected?'aa':'A_';
+    } else {
+      if(p.sex==='M') p.genotype=p.affected?'XaY':'XAY';
+      else p.genotype=p.affected?'XaXa':'XA_';
+    }
+  }
+  updatePunnett();
+}
+
+function updatePunnett(){
+  const m=matings.find(m=>selected.includes(m.p1)||selected.includes(m.p2));
+  const el=document.getElementById('punnett');
+  if(!m){el.textContent='Select a mated pair to see Punnett square';return;}
+  const p1=people.find(p=>p.id===m.p1),p2=people.find(p=>p.id===m.p2);
+  const mom=p1.sex==='F'?p1:p2,dad=p1.sex==='M'?p1:p2;
+  let html=`<b>${mode.toUpperCase()}</b> | ${dad.genotype} x ${mom.genotype}<br>`;
+  if(mode==='ad'||mode==='ar'){
+    const dA=dad.genotype.split(''),mA=mom.genotype.split('');
+    const d0=dA[0]==='_'?['A','a']:[dA[0]],d1=dA[1]==='_'?['A','a']:[dA[1]];
+    const m0=mA[0]==='_'?['A','a']:[mA[0]],m1=mA[1]==='_'?['A','a']:[mA[1]];
+    html+=`Offspring: `;
+    const combos={};
+    for(const da of[...d0,...d1]) for(const ma of[...m0,...m1]){
+      const g=[da,ma].sort().join('');combos[g]=(combos[g]||0)+1;
+    }
+    const total=Object.values(combos).reduce((a,b)=>a+b,0);
+    for(const[g,c] of Object.entries(combos)){
+      const affected=mode==='ad'?g.includes('A'):g==='aa';
+      html+=`<span style="color:${affected?'#ef4444':'#10b981'}">${g}(${(c/total*100).toFixed(0)}%)</span> `;
+    }
+  } else {
+    html+=`X-linked recessive cross`;
+  }
+  el.innerHTML=html;
+}
+
+C.addEventListener('click',e=>{
+  const r=C.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  let clicked=null;
+  for(const p of people){
+    const d=Math.sqrt((p.x-mx)**2+(p.y-my)**2);
+    if(d<18) clicked=p.id;
+  }
+  if(clicked!==null){
+    if(selected.includes(clicked)) selected=selected.filter(s=>s!==clicked);
+    else{selected.push(clicked);if(selected.length>2) selected.shift();}
+    updatePunnett();
+  }
+});
+
+function drawPerson(p){
+  const sel=selected.includes(p.id);
+  ctx.strokeStyle=sel?'#fff':'#666';ctx.lineWidth=sel?3:2;
+  ctx.fillStyle=p.affected?'#10b981':'#111';
+  if(p.sex==='M'){
+    ctx.fillRect(p.x-14,p.y-14,28,28);ctx.strokeRect(p.x-14,p.y-14,28,28);
+  } else {
+    ctx.beginPath();ctx.arc(p.x,p.y,16,0,Math.PI*2);ctx.fill();ctx.stroke();
+  }
+  ctx.fillStyle='#aaa';ctx.font='9px monospace';ctx.fillText(p.genotype,p.x-12,p.y+30);
+}
+
+function draw(){
+  ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+  // mating lines
+  for(const m of matings){
+    const p1=people.find(p=>p.id===m.p1),p2=people.find(p=>p.id===m.p2);
+    if(p1&&p2){
+      ctx.strokeStyle='#444';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke();
+      // line to children
+      const midX=(p1.x+p2.x)/2,midY=(p1.y+p2.y)/2;
+      for(const cid of m.children){
+        const ch=people.find(p=>p.id===cid);
+        if(ch){
+          ctx.beginPath();ctx.moveTo(midX,midY);ctx.lineTo(midX,midY+30);ctx.lineTo(ch.x,midY+30);ctx.lineTo(ch.x,ch.y-18);ctx.stroke();
+        }
+      }
+    }
+  }
+  // people
+  for(const p of people) drawPerson(p);
+  // legend
+  ctx.fillStyle='#666';ctx.font='10px system-ui';
+  ctx.fillText('Square=Male, Circle=Female, Filled=Affected',10,H-10);
+  requestAnimationFrame(draw);
+}
+// seed initial family
+people.push(Person(200,50,'M',0));people.push(Person(320,50,'F',0));
+people[0].affected=true;
+matings.push({p1:0,p2:1,children:[]});
+people[0].mateId=1;people[1].mateId=0;
+const c1=Person(220,160,'M',1);people.push(c1);matings[0].children.push(c1.id);
+const c2=Person(300,160,'F',1);c2.affected=true;people.push(c2);matings[0].children.push(c2.id);
+updateGenotypes();
+draw();
+</script>
+</body>
+</html>
