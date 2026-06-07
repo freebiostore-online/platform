@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Molecular Dynamics — FreeBioStore</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;color:#fafafa;font-family:'Manrope',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+    h1{font-size:1.3rem;font-weight:700;margin:1.25rem 0 .25rem} h1 span{color:#10b981}
+    .sub{color:#737373;font-size:.85rem;margin-bottom:.5rem;text-align:center;max-width:540px}
+    canvas{border:1px solid #262626;border-radius:12px}
+    .controls{display:flex;gap:.5rem;margin:.75rem 0;flex-wrap:wrap;justify-content:center;align-items:center}
+    label{font-size:.78rem;color:#a3a3a3;display:flex;align-items:center;gap:.3rem}
+    input[type=range]{width:80px;accent-color:#10b981}
+    .val{color:#10b981;font-weight:600;min-width:2.5rem;font-size:.75rem}
+    button{padding:.4rem .9rem;border-radius:8px;border:1px solid #333;background:#171717;color:#fafafa;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit}
+    button:hover{border-color:#10b981;color:#10b981}
+    button.active{background:#10b981;border-color:#10b981;color:#fff}
+    .stats{font-size:.75rem;color:#525252;margin:.35rem;display:flex;gap:1.25rem;flex-wrap:wrap;justify-content:center}
+    .stats span{color:#a3a3a3}
+    a{color:#525252;text-decoration:none}
+  </style>
+</head>
+<body>
+  <h1>Molecular <span>Dynamics</span></h1>
+  <p class="sub">Atoms interacting via Lennard-Jones potential. Adjust temperature to see phase transitions: solid (crystal lattice) → liquid (flowing) → gas (bouncing). Click to add energy.</p>
+
+  <canvas id="sim" width="700" height="500"></canvas>
+
+  <div class="controls">
+    <label>Temperature <input type="range" id="temp" min="1" max="500" value="100"><span class="val" id="temp-v">100</span>K</label>
+    <label>Atoms <input type="range" id="count" min="20" max="300" value="100"><span class="val" id="count-v">100</span></label>
+    <button id="btn-solid">Solid (10K)</button>
+    <button id="btn-liquid" class="active">Liquid (100K)</button>
+    <button id="btn-gas">Gas (400K)</button>
+    <button id="btn-reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div>Phase: <span id="phase">Liquid</span></div>
+    <div>KE: <span id="ke">0</span></div>
+    <div>PE: <span id="pe">0</span></div>
+    <div>Pressure: <span id="pressure">0</span></div>
+    <div><a href="https://freebiostore.pages.dev">FreeBioStore</a></div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('sim');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    let atoms = [];
+    const sigma = 12, epsilon = 1.5; // LJ parameters
+    const cutoff = sigma * 2.5;
+    const dt = 0.01;
+
+    const sl = id => document.getElementById(id);
+    sl('temp').addEventListener('input', () => {
+      sl('temp-v').textContent = sl('temp').value;
+      setTemperature(+sl('temp').value);
+    });
+    sl('count').addEventListener('input', () => { sl('count-v').textContent = sl('count').value; initAtoms(+sl('count').value); });
+    sl('btn-solid').addEventListener('click', () => { sl('temp').value=10; sl('temp-v').textContent='10'; setTemperature(10); setActive('btn-solid'); });
+    sl('btn-liquid').addEventListener('click', () => { sl('temp').value=100; sl('temp-v').textContent='100'; setTemperature(100); setActive('btn-liquid'); });
+    sl('btn-gas').addEventListener('click', () => { sl('temp').value=400; sl('temp-v').textContent='400'; setTemperature(400); setActive('btn-gas'); });
+    sl('btn-reset').addEventListener('click', () => initAtoms(+sl('count').value));
+
+    function setActive(id) {
+      ['btn-solid','btn-liquid','btn-gas'].forEach(b => sl(b).classList.remove('active'));
+      sl(id).classList.add('active');
+    }
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      for (const a of atoms) {
+        const d = Math.hypot(a.x - mx, a.y - my);
+        if (d < 50) {
+          a.vx += (Math.random() - 0.5) * 15;
+          a.vy += (Math.random() - 0.5) * 15;
+        }
+      }
+    });
+
+    function initAtoms(n) {
+      atoms = [];
+      const cols = Math.ceil(Math.sqrt(n));
+      const spacing = Math.min((W - 40) / cols, (H - 40) / cols, sigma * 1.1);
+      const ox = (W - cols * spacing) / 2 + spacing / 2;
+      const oy = (H - Math.ceil(n / cols) * spacing) / 2 + spacing / 2;
+
+      for (let i = 0; i < n; i++) {
+        const col = i % cols, row = Math.floor(i / cols);
+        atoms.push({
+          x: ox + col * spacing + (Math.random() - 0.5) * 2,
+          y: oy + row * spacing + (Math.random() - 0.5) * 2,
+          vx: 0, vy: 0, fx: 0, fy: 0,
+          element: Math.random() < 0.7 ? 'O' : Math.random() < 0.5 ? 'N' : 'C',
+        });
+      }
+      setTemperature(+sl('temp').value);
+    }
+
+    function setTemperature(T) {
+      const targetKE = T * 0.01;
+      for (const a of atoms) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.sqrt(targetKE * 2) * (0.5 + Math.random());
+        a.vx = Math.cos(angle) * speed;
+        a.vy = Math.sin(angle) * speed;
+      }
+    }
+
+    const colors = { O: '#ef4444', N: '#3b82f6', C: '#737373' };
+    const radii = { O: 5, N: 4.5, C: 4 };
+
+    function simulate() {
+      const n = atoms.length;
+
+      // Reset forces
+      for (const a of atoms) { a.fx = 0; a.fy = 0; }
+
+      // Lennard-Jones forces
+      let totalPE = 0;
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          let dx = atoms[j].x - atoms[i].x;
+          let dy = atoms[j].y - atoms[i].y;
+          const r2 = dx * dx + dy * dy;
+          if (r2 > cutoff * cutoff || r2 < 1) continue;
+
+          const r = Math.sqrt(r2);
+          const sr6 = Math.pow(sigma / r, 6);
+          const sr12 = sr6 * sr6;
+
+          // Force magnitude: 24 * eps * (2*sr12 - sr6) / r
+          const fMag = 24 * epsilon * (2 * sr12 - sr6) / r;
+          const fx = fMag * dx / r;
+          const fy = fMag * dy / r;
+
+          atoms[i].fx -= fx; atoms[i].fy -= fy;
+          atoms[j].fx += fx; atoms[j].fy += fy;
+
+          totalPE += 4 * epsilon * (sr12 - sr6);
+        }
+      }
+
+      // Integration (Velocity Verlet)
+      let totalKE = 0, wallForce = 0;
+      for (const a of atoms) {
+        a.vx += a.fx * dt;
+        a.vy += a.fy * dt;
+        a.x += a.vx * dt * 10;
+        a.y += a.vy * dt * 10;
+
+        // Boundary (elastic walls)
+        const margin = 10;
+        if (a.x < margin) { a.x = margin; a.vx = Math.abs(a.vx); wallForce += Math.abs(a.vx); }
+        if (a.x > W - margin) { a.x = W - margin; a.vx = -Math.abs(a.vx); wallForce += Math.abs(a.vx); }
+        if (a.y < margin) { a.y = margin; a.vy = Math.abs(a.vy); wallForce += Math.abs(a.vy); }
+        if (a.y > H - margin) { a.y = H - margin; a.vy = -Math.abs(a.vy); wallForce += Math.abs(a.vy); }
+
+        // Thermostat (gentle velocity rescaling)
+        const targetKE = +sl('temp').value * 0.01;
+        const currentKE = 0.5 * (a.vx * a.vx + a.vy * a.vy);
+        if (currentKE > 0.001) {
+          const scale = Math.sqrt(targetKE / currentKE);
+          const blend = 0.01;
+          a.vx *= 1 + (scale - 1) * blend;
+          a.vy *= 1 + (scale - 1) * blend;
+        }
+
+        totalKE += 0.5 * (a.vx * a.vx + a.vy * a.vy);
+      }
+
+      // Phase detection
+      const avgKE = totalKE / n;
+      const phase = avgKE < 0.3 ? 'Solid' : avgKE < 2 ? 'Liquid' : 'Gas';
+
+      sl('phase').textContent = phase;
+      sl('ke').textContent = totalKE.toFixed(1);
+      sl('pe').textContent = totalPE.toFixed(1);
+      sl('pressure').textContent = (wallForce / (2 * (W + H))).toFixed(2);
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, W, H);
+
+      // Container
+      ctx.strokeStyle = '#1f1f1f'; ctx.lineWidth = 2;
+      ctx.strokeRect(8, 8, W - 16, H - 16);
+
+      // Bonds (draw lines between close atoms)
+      for (let i = 0; i < atoms.length; i++) {
+        for (let j = i + 1; j < atoms.length; j++) {
+          const d = Math.hypot(atoms[j].x - atoms[i].x, atoms[j].y - atoms[i].y);
+          if (d < sigma * 1.3) {
+            const alpha = Math.max(0, 1 - d / (sigma * 1.3));
+            ctx.strokeStyle = `rgba(100, 100, 100, ${alpha * 0.3})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(atoms[i].x, atoms[i].y);
+            ctx.lineTo(atoms[j].x, atoms[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Atoms
+      for (const a of atoms) {
+        const speed = Math.sqrt(a.vx * a.vx + a.vy * a.vy);
+        const r = radii[a.element];
+        const baseColor = colors[a.element];
+
+        // Glow based on speed
+        if (speed > 2) {
+          ctx.fillStyle = `${baseColor}20`;
+          ctx.beginPath(); ctx.arc(a.x, a.y, r + speed, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // Atom body
+        ctx.fillStyle = baseColor;
+        ctx.beginPath(); ctx.arc(a.x, a.y, r, 0, Math.PI * 2); ctx.fill();
+
+        // Highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.beginPath(); ctx.arc(a.x - r * 0.3, a.y - r * 0.3, r * 0.4, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Legend
+      ctx.fillStyle = '#525252'; ctx.font = '10px Manrope';
+      let ly = 25;
+      for (const [elem, color] of [['Oxygen','#ef4444'],['Nitrogen','#3b82f6'],['Carbon','#737373']]) {
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(25, ly, 4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#525252'; ctx.fillText(elem, 35, ly + 4);
+        ly += 16;
+      }
+    }
+
+    function loop() {
+      requestAnimationFrame(loop);
+      for (let i = 0; i < 3; i++) simulate(); // 3 substeps
+      draw();
+    }
+
+    initAtoms(100);
+    loop();
+  </script>
+</body>
+</html>
