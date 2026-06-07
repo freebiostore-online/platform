@@ -1,6 +1,18 @@
 {
   "robots": [
     {
+      "id": "gene-expression",
+      "name": "Gene Expression",
+      "description": "Animate DNA\u2192mRNA\u2192Protein. Click bases to mutate \u2014 see silent, missense, and nonsense mutations. Codon table included.",
+      "storeType": "behavior",
+      "category": "genetics",
+      "icon": "\ud83d\udd2c",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
       "id": "molecular-dynamics",
       "name": "Molecular Dynamics",
       "description": "Atoms interacting via Lennard-Jones potential. Adjust temperature for phase transitions: solid \u2192 liquid \u2192 gas. Click to add energy.",

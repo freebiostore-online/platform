@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gene Expression Simulator | FreeBioStore</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0a0a0f;color:#e2e2e8;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+  header{padding:18px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1e1e2e}
+  header .logo{font-size:24px}
+  header h1{font-size:18px;font-weight:600;color:#6ee7b7}
+  header span{font-size:13px;color:#10b981;margin-left:auto;font-weight:500}
+  .container{max-width:1300px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr 380px;gap:20px}
+  .panel{background:#12121c;border:1px solid #1e1e2e;border-radius:12px;padding:20px}
+  h2{font-size:14px;font-weight:600;color:#6ee7b7;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+  h3{font-size:13px;font-weight:600;color:#aaa;margin:12px 0 6px}
+  button{background:#10b981;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+  button:hover{background:#059669}
+  button.secondary{background:#1e1e2e;color:#6ee7b7;border:1px solid #2e2e3e}
+  button.secondary:hover{background:#2e2e3e}
+  button:disabled{opacity:0.4;cursor:not-allowed}
+  select{background:#1e1e2e;color:#e2e2e8;border:1px solid #2e2e3e;padding:8px 12px;border-radius:6px;font-size:13px;cursor:pointer}
+  .seq-display{font-family:'Courier New',monospace;font-size:15px;line-height:1.8;word-break:break-all;padding:16px;background:#0d0d14;border-radius:8px;border:1px solid #1e1e2e;position:relative;min-height:60px;margin-bottom:12px}
+  .base{cursor:pointer;padding:1px 2px;border-radius:2px;transition:background 0.15s}
+  .base:hover{background:#2e2e3e}
+  .base-a{color:#f472b6}
+  .base-t,.base-u{color:#60a5fa}
+  .base-g{color:#34d399}
+  .base-c{color:#fbbf24}
+  .promoter{background:#10b98122;border-bottom:2px solid #10b981}
+  .start-codon{background:#7c3aed33;border-bottom:2px solid #7c3aed}
+  .stop-codon{background:#ef444433;border-bottom:2px solid #ef4444}
+  .current-codon{background:#10b98133;outline:2px solid #10b981}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .protein-chain{display:flex;flex-wrap:wrap;gap:3px;min-height:40px;padding:12px;background:#0d0d14;border-radius:8px;border:1px solid #1e1e2e}
+  .amino-acid{background:#10b98122;border:1px solid #10b981;border-radius:4px;padding:4px 8px;font-size:11px;font-weight:600;color:#6ee7b7;font-family:'Courier New',monospace}
+  .amino-acid.new{animation:popIn 0.3s ease}
+  @keyframes popIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .codon-table{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;font-size:10px}
+  .codon-entry{background:#0d0d14;border:1px solid #1e1e2e;border-radius:4px;padding:4px;text-align:center;cursor:pointer;transition:background 0.15s}
+  .codon-entry:hover{background:#1e1e2e}
+  .codon-entry .codon{font-family:'Courier New',monospace;color:#6ee7b7;font-weight:600;font-size:11px}
+  .codon-entry .aa{color:#888;font-size:9px;margin-top:1px}
+  .mutation-info{margin-top:8px;padding:10px;background:#0d0d14;border-radius:6px;font-size:12px;border:1px solid #1e1e2e;min-height:40px}
+  .mutation-silent{color:#60a5fa}
+  .mutation-missense{color:#fbbf24}
+  .mutation-nonsense{color:#ef4444}
+  .step-indicator{display:flex;gap:0;margin-bottom:16px}
+  .step{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:600;background:#0d0d14;border:1px solid #1e1e2e;color:#555}
+  .step:first-child{border-radius:8px 0 0 8px}
+  .step:last-child{border-radius:0 8px 8px 0}
+  .step.active{background:#10b98122;color:#6ee7b7;border-color:#10b981}
+  .step.done{background:#10b98111;color:#10b981;border-color:#10b98155}
+  .full-width{grid-column:1/-1}
+  .anim-bar{height:4px;background:#1e1e2e;border-radius:2px;margin:8px 0;overflow:hidden}
+  .anim-bar-fill{height:100%;background:#10b981;width:0%;transition:width 0.1s linear;border-radius:2px}
+  .label-row{display:flex;gap:16px;font-size:12px;color:#888;margin-bottom:6px}
+  .label-row span{display:flex;align-items:center;gap:4px}
+  .label-row .dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+  @media(max-width:900px){.container{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">&#129516;</div>
+  <h1>Gene Expression Simulator</h1>
+  <span>FreeBioStore</span>
+</header>
+
+<div class="container">
+  <div class="panel">
+    <h2>DNA Sequence</h2>
+    <div class="btn-row">
+      <select id="presetSelect" onchange="loadPreset(this.value)">
+        <option value="lac">Lac Operon (lacZ fragment)</option>
+        <option value="insulin">Insulin Gene (fragment)</option>
+        <option value="gfp">GFP (Green Fluorescent Protein)</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+    <div class="label-row">
+      <span><span class="dot" style="background:#10b981"></span> Promoter</span>
+      <span><span class="dot" style="background:#7c3aed"></span> Start (AUG)</span>
+      <span><span class="dot" style="background:#ef4444"></span> Stop codon</span>
+      <span style="color:#6ee7b7">Click any base to mutate</span>
+    </div>
+    <div class="seq-display" id="dnaDisplay"></div>
+
+    <div class="step-indicator">
+      <div class="step" id="step1">1. DNA</div>
+      <div class="step" id="step2">2. Transcription</div>
+      <div class="step" id="step3">3. mRNA</div>
+      <div class="step" id="step4">4. Translation</div>
+      <div class="step" id="step5">5. Protein</div>
+    </div>
+
+    <h2>mRNA Transcript</h2>
+    <div class="seq-display" id="mrnaDisplay" style="color:#60a5fa">-</div>
+    <div class="anim-bar"><div class="anim-bar-fill" id="transcribeBar"></div></div>
+
+    <div class="btn-row">
+      <button onclick="transcribe()" id="btnTranscribe">Transcribe (DNA &rarr; mRNA)</button>
+      <button onclick="translate()" id="btnTranslate" disabled>Translate (mRNA &rarr; Protein)</button>
+      <button class="secondary" onclick="resetSim()">Reset</button>
+    </div>
+
+    <h2>Protein Chain</h2>
+    <div class="protein-chain" id="proteinChain">-</div>
+    <div class="anim-bar"><div class="anim-bar-fill" id="translateBar"></div></div>
+
+    <div class="mutation-info" id="mutationInfo">Click any DNA base to introduce a mutation and see how it affects the protein.</div>
+  </div>
+
+  <div class="panel" style="overflow-y:auto;max-height:calc(100vh - 100px)">
+    <h2>Codon Table</h2>
+    <p style="font-size:11px;color:#666;margin-bottom:10px">Click a codon to highlight it in the mRNA</p>
+    <div class="codon-table" id="codonTable"></div>
+  </div>
+</div>
+
+<script>
+// Codon table
+const CODON_MAP = {
+  'UUU':'Phe','UUC':'Phe','UUA':'Leu','UUG':'Leu',
+  'CUU':'Leu','CUC':'Leu','CUA':'Leu','CUG':'Leu',
+  'AUU':'Ile','AUC':'Ile','AUA':'Ile','AUG':'Met',
+  'GUU':'Val','GUC':'Val','GUA':'Val','GUG':'Val',
+  'UCU':'Ser','UCC':'Ser','UCA':'Ser','UCG':'Ser',
+  'CCU':'Pro','CCC':'Pro','CCA':'Pro','CCG':'Pro',
+  'ACU':'Thr','ACC':'Thr','ACA':'Thr','ACG':'Thr',
+  'GCU':'Ala','GCC':'Ala','GCA':'Ala','GCG':'Ala',
+  'UAU':'Tyr','UAC':'Tyr','UAA':'STOP','UAG':'STOP',
+  'UGU':'Cys','UGC':'Cys','UGA':'STOP','UGG':'Trp',
+  'CGU':'Arg','CGC':'Arg','CGA':'Arg','CGG':'Arg',
+  'AGU':'Ser','AGC':'Ser','AGA':'Arg','AGG':'Arg',
+  'GGU':'Gly','GGC':'Gly','GGA':'Gly','GGG':'Gly',
+  'CAU':'His','CAC':'His','CAA':'Gln','CAG':'Gln',
+  'AAU':'Asn','AAC':'Asn','AAA':'Lys','AAG':'Lys',
+  'GAU':'Asp','GAC':'Asp','GAA':'Glu','GAG':'Glu'
+};
+
+const PRESETS = {
+  lac: {
+    promoter: 'TTTACA',  // -35 region (simplified)
+    seq: 'ATGACCATGATTACGGATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAA'
+  },
+  insulin: {
+    promoter: 'TATAAT',
+    seq: 'ATGGCCCTGTGGATGCGCCTCCTGCCCCTGCTGGCGCTGCTGGCCCTCTGGGGACCTGACCCAGCCGCAGCCTTTGTGAACCAACACCTGTGCGGCTCACACCTGGTGGAAGCTCTCTACCTAGTGTGCGGGGAACGAGGCTTCTTCTACACACCCAAGACCCGCCGGGAGGCAGAGGACCTGCAGGGTGAGCCAACTGCCCATTGCTGCCCCTGGCCGCCCCCAGCCACCCCCTGCTCCTGGCGCTCCCACCCAGCATGGGCAGAAGGG'
+  },
+  gfp: {
+    promoter: 'TATAAA',
+    seq: 'ATGAGTAAAGGAGAAGAACTTTTCACTGGAGTTGTCCCAATTCTTGTTGAATTAGATGGTGATGTTAATGGGCACAAATTTTCTGTCAGTGGAGAGGGTGAAGGTGATGCAACATACGGAAAACTTACCCTTAAATTTATTTGCACTACTGGAAAACTACCTGTTCCATGGCCAACACTTGTCACTACTTTCGGTTATGGTGTTCAATGCTTTGCGAGATACCCAGATCATATGAAACAGCATGACTTTTTCAAGAGTGCCATGCCCGAA'
+  }
+};
+
+let dnaSequence = '';
+let mrnaSequence = '';
+let protein = [];
+let originalProtein = [];
+let currentStep = 1;
+let animTimer = null;
+
+function dnaToRNA(base) {
+  return { A: 'U', T: 'A', G: 'C', C: 'G' }[base] || base;
+}
+
+function loadPreset(key) {
+  if (key === 'custom') return;
+  resetSim();
+  const p = PRESETS[key];
+  dnaSequence = p.promoter + p.seq;
+  renderDNA();
+}
+
+function renderDNA() {
+  const display = document.getElementById('dnaDisplay');
+  const preset = document.getElementById('presetSelect').value;
+  const p = PRESETS[preset] || PRESETS.lac;
+  const promoterLen = p ? p.promoter.length : 0;
+
+  // Find start codon (ATG) position in coding region
+  const codingStart = dnaSequence.indexOf('ATG', promoterLen);
+
+  let html = '<span style="color:#666;font-size:11px">5\' &mdash; </span>';
+  for (let i = 0; i < dnaSequence.length; i++) {
+    const base = dnaSequence[i];
+    let cls = 'base base-' + base.toLowerCase();
+
+    if (i < promoterLen) cls += ' promoter';
+    if (codingStart >= 0 && i >= codingStart && i < codingStart + 3) cls += ' start-codon';
+
+    // Find stop codons
+    if (codingStart >= 0) {
+      const posInCoding = i - codingStart;
+      if (posInCoding >= 0 && posInCoding % 3 === 0) {
+        const codon = dnaSequence.substr(i, 3);
+        const rnaCodon = codon.split('').map(dnaToRNA).join('');
+        if (CODON_MAP[rnaCodon] === 'STOP') cls += ' stop-codon';
+      }
+    }
+
+    html += `<span class="${cls}" data-idx="${i}" onclick="mutateBase(${i})">${base}</span>`;
+    if ((i + 1) % 3 === 0 && i >= codingStart && codingStart >= 0) html += ' ';
+  }
+  html += '<span style="color:#666;font-size:11px"> &mdash; 3\'</span>';
+  display.innerHTML = html;
+}
+
+function renderMRNA(upTo) {
+  const display = document.getElementById('mrnaDisplay');
+  if (!mrnaSequence) { display.innerHTML = '-'; return; }
+  const len = upTo !== undefined ? upTo : mrnaSequence.length;
+
+  let html = '<span style="color:#666;font-size:11px">5\' &mdash; </span>';
+  const startIdx = mrnaSequence.indexOf('AUG');
+
+  for (let i = 0; i < len; i++) {
+    const base = mrnaSequence[i];
+    let cls = 'base base-' + base.toLowerCase();
+
+    if (startIdx >= 0 && i >= startIdx && i < startIdx + 3) cls += ' start-codon';
+
+    // Highlight current translation codon
+    if (currentStep >= 4 && startIdx >= 0) {
+      const posInCoding = i - startIdx;
+      if (posInCoding >= 0 && posInCoding % 3 === 0) {
+        const codon = mrnaSequence.substr(i, 3);
+        if (CODON_MAP[codon] === 'STOP') cls += ' stop-codon';
+      }
+    }
+
+    html += `<span class="${cls}">${base}</span>`;
+    if (startIdx >= 0 && i >= startIdx && (i - startIdx + 1) % 3 === 0) html += ' ';
+  }
+  html += '<span style="color:#666;font-size:11px"> &mdash; 3\'</span>';
+  display.innerHTML = html;
+}
+
+function transcribe() {
+  if (animTimer) clearInterval(animTimer);
+  currentStep = 2;
+  updateSteps();
+
+  // Template strand is complement; mRNA has same sequence as coding strand but with U instead of T
+  const preset = document.getElementById('presetSelect').value;
+  const p = PRESETS[preset] || PRESETS.lac;
+  const promoterLen = p ? p.promoter.length : 0;
+  const coding = dnaSequence.substring(promoterLen);
+
+  // mRNA is transcribed from template strand (3'->5'), result is same as coding strand with T->U
+  mrnaSequence = coding.split('').map(b => b === 'T' ? 'U' : b).join('');
+
+  // Animate transcription
+  let pos = 0;
+  const bar = document.getElementById('transcribeBar');
+  document.getElementById('btnTranscribe').disabled = true;
+
+  animTimer = setInterval(() => {
+    pos += 3;
+    if (pos >= mrnaSequence.length) {
+      pos = mrnaSequence.length;
+      clearInterval(animTimer);
+      animTimer = null;
+      currentStep = 3;
+      updateSteps();
+      document.getElementById('btnTranslate').disabled = false;
+      document.getElementById('btnTranscribe').disabled = false;
+    }
+    bar.style.width = (pos / mrnaSequence.length * 100) + '%';
+    renderMRNA(pos);
+  }, 30);
+}
+
+function translate() {
+  if (animTimer) clearInterval(animTimer);
+  currentStep = 4;
+  updateSteps();
+  protein = [];
+
+  const startIdx = mrnaSequence.indexOf('AUG');
+  if (startIdx < 0) {
+    document.getElementById('proteinChain').innerHTML = '<span style="color:#ef4444">No start codon (AUG) found!</span>';
+    return;
+  }
+
+  const codons = [];
+  for (let i = startIdx; i + 2 < mrnaSequence.length; i += 3) {
+    codons.push({ codon: mrnaSequence.substr(i, 3), pos: i });
+  }
+
+  let ci = 0;
+  const bar = document.getElementById('translateBar');
+  document.getElementById('btnTranslate').disabled = true;
+
+  animTimer = setInterval(() => {
+    if (ci >= codons.length) {
+      clearInterval(animTimer);
+      animTimer = null;
+      currentStep = 5;
+      updateSteps();
+      document.getElementById('btnTranslate').disabled = false;
+      originalProtein = [...protein];
+      return;
+    }
+
+    const { codon } = codons[ci];
+    const aa = CODON_MAP[codon];
+
+    if (aa === 'STOP') {
+      clearInterval(animTimer);
+      animTimer = null;
+      currentStep = 5;
+      updateSteps();
+      document.getElementById('btnTranslate').disabled = false;
+      originalProtein = [...protein];
+      bar.style.width = '100%';
+      return;
+    }
+
+    if (aa) protein.push(aa);
+    ci++;
+
+    bar.style.width = (ci / codons.length * 100) + '%';
+    renderProtein();
+  }, 80);
+}
+
+function renderProtein() {
+  const container = document.getElementById('proteinChain');
+  if (protein.length === 0) { container.innerHTML = '-'; return; }
+  container.innerHTML = protein.map((aa, i) =>
+    `<div class="amino-acid${i === protein.length - 1 ? ' new' : ''}" title="Position ${i + 1}">${aa}</div>`
+  ).join('');
+}
+
+function mutateBase(idx) {
+  const bases = ['A', 'T', 'G', 'C'];
+  const current = dnaSequence[idx];
+  const others = bases.filter(b => b !== current);
+  const newBase = others[Math.floor(Math.random() * others.length)];
+
+  const oldSeq = dnaSequence;
+  dnaSequence = dnaSequence.substring(0, idx) + newBase + dnaSequence.substring(idx + 1);
+
+  renderDNA();
+
+  // If we already have mRNA and protein, show mutation effect
+  if (originalProtein.length > 0) {
+    // Re-transcribe and re-translate silently
+    const preset = document.getElementById('presetSelect').value;
+    const p = PRESETS[preset] || PRESETS.lac;
+    const promoterLen = p ? p.promoter.length : 0;
+    const coding = dnaSequence.substring(promoterLen);
+    mrnaSequence = coding.split('').map(b => b === 'T' ? 'U' : b).join('');
+    renderMRNA();
+
+    // Translate
+    const startIdx = mrnaSequence.indexOf('AUG');
+    const newProtein = [];
+    if (startIdx >= 0) {
+      for (let i = startIdx; i + 2 < mrnaSequence.length; i += 3) {
+        const codon = mrnaSequence.substr(i, 3);
+        const aa = CODON_MAP[codon];
+        if (aa === 'STOP' || !aa) break;
+        newProtein.push(aa);
+      }
+    }
+
+    protein = newProtein;
+    renderProtein();
+
+    // Determine mutation type
+    const info = document.getElementById('mutationInfo');
+    const posInCoding = idx - promoterLen;
+
+    if (posInCoding < 0) {
+      info.innerHTML = `<span style="color:#fbbf24">Promoter mutation:</span> Base ${idx + 1}: ${current} &rarr; ${newBase}. This could affect gene expression levels but not protein sequence.`;
+    } else if (newProtein.length === 0 && originalProtein.length > 0) {
+      info.innerHTML = `<span class="mutation-nonsense">Nonsense mutation (or start codon destroyed):</span> Base ${idx + 1}: ${current} &rarr; ${newBase}. No functional protein produced!`;
+    } else if (newProtein.length < originalProtein.length) {
+      info.innerHTML = `<span class="mutation-nonsense">Nonsense mutation:</span> Base ${idx + 1}: ${current} &rarr; ${newBase}. Premature stop codon! Protein truncated from ${originalProtein.length} to ${newProtein.length} amino acids.`;
+    } else {
+      // Compare sequences
+      let diffs = [];
+      const maxLen = Math.max(newProtein.length, originalProtein.length);
+      for (let i = 0; i < maxLen; i++) {
+        if (newProtein[i] !== originalProtein[i]) diffs.push(i);
+      }
+      if (diffs.length === 0) {
+        info.innerHTML = `<span class="mutation-silent">Silent (synonymous) mutation:</span> Base ${idx + 1}: ${current} &rarr; ${newBase}. The codon changed but codes for the same amino acid. The protein is identical.`;
+      } else {
+        const diffStr = diffs.map(d => `pos ${d + 1}: ${originalProtein[d] || '?'} &rarr; ${newProtein[d] || '?'}`).join(', ');
+        info.innerHTML = `<span class="mutation-missense">Missense mutation:</span> Base ${idx + 1}: ${current} &rarr; ${newBase}. Amino acid change: ${diffStr}. This could alter protein function.`;
+      }
+    }
+  } else {
+    document.getElementById('mutationInfo').innerHTML = `Mutation: Base ${idx + 1}: ${current} &rarr; ${newBase}. Transcribe and translate to see the effect.`;
+  }
+}
+
+function updateSteps() {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step' + i);
+    el.className = 'step';
+    if (i < currentStep) el.classList.add('done');
+    if (i === currentStep) el.classList.add('active');
+  }
+}
+
+function resetSim() {
+  if (animTimer) clearInterval(animTimer);
+  animTimer = null;
+  mrnaSequence = '';
+  protein = [];
+  originalProtein = [];
+  currentStep = 1;
+  updateSteps();
+  document.getElementById('mrnaDisplay').innerHTML = '-';
+  document.getElementById('proteinChain').innerHTML = '-';
+  document.getElementById('transcribeBar').style.width = '0%';
+  document.getElementById('translateBar').style.width = '0%';
+  document.getElementById('btnTranscribe').disabled = false;
+  document.getElementById('btnTranslate').disabled = true;
+  document.getElementById('mutationInfo').innerHTML = 'Click any DNA base to introduce a mutation and see how it affects the protein.';
+  renderDNA();
+}
+
+// Build codon table
+function buildCodonTable() {
+  const table = document.getElementById('codonTable');
+  const bases = ['U', 'C', 'A', 'G'];
+  // Standard order
+  bases.forEach(b1 => {
+    bases.forEach(b3 => {
+      bases.forEach(b2 => {
+        const codon = b1 + b2 + b3;
+        const aa = CODON_MAP[codon] || '?';
+        const div = document.createElement('div');
+        div.className = 'codon-entry';
+        div.innerHTML = `<div class="codon">${codon}</div><div class="aa">${aa}</div>`;
+        div.title = `${codon} = ${aa}`;
+        table.appendChild(div);
+      });
+    });
+  });
+}
+
+// Init
+buildCodonTable();
+loadPreset('lac');
+updateSteps();
+</script>
+</body>
+</html>
