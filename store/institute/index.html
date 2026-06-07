@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biotech Institute — Powered by Zensical</title>
+  <meta name="description" content="Free educational resources for biotechnology. Tutorials, research papers, courses, tools, and community.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#262626}
+    body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--line);padding:.75rem 0}
+    header .container{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+    .brand-emoji{font-size:1.5rem}
+    .brand-text{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+    .brand-tag{font-size:.68rem;color:var(--muted)}
+    nav{display:flex;gap:1rem;font-size:.82rem;font-weight:600;margin-left:auto}
+    nav a{color:var(--muted)}nav a:hover{color:var(--ink)}
+    .hero{text-align:center;padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--line)}
+    .hero h1{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem}
+    .hero h1 em{color:var(--accent);font-style:normal}
+    .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:.95rem}
+    .powered{font-size:.72rem;color:#525252;margin-top:.75rem}
+    .powered a{color:#525252}
+    .toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1.5rem 0}
+    .toc h3{font-size:.85rem;font-weight:700;margin-bottom:.5rem;color:var(--accent)}
+    .toc ul{list-style:none;padding:0;columns:2}
+    .toc li{margin:.2rem 0}.toc a{color:#a3a3a3;font-size:.82rem}.toc a:hover{color:var(--ink)}
+    .section{margin-bottom:2rem;padding-top:1rem}
+    .section h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid var(--line)}
+    .section h3{font-size:.95rem;font-weight:700;margin:1rem 0 .35rem;color:#e5e5e5}
+    .section p,.section li{color:#a3a3a3;font-size:.88rem}
+    ul{padding-left:1.25rem;margin:.35rem 0}
+    li{margin-bottom:.3rem}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem;margin:.5rem 0}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.85rem;transition:border-color .15s}
+    .card:hover{border-color:var(--accent)}
+    .card h4{font-size:.85rem;font-weight:700;margin-bottom:.2rem}
+    .card h4 a{color:var(--ink)}.card p{font-size:.75rem;color:var(--muted);margin:0;line-height:1.5}
+    .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
+    footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/institute/" class="brand">
+        <span class="brand-emoji">🧬</span>
+        <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Powered by <a href="https://zensical.org" style="color:#525252">Zensical</a></span></span>
+      </a>
+      <nav><a href="/">Simulations</a><a href="#fundamentals">Learn</a><a href="#courses">Courses</a><a href="#research">Research</a><a href="#tools">Tools</a><a href="#community">Community</a></nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h1>Biotech <em>Institute</em></h1>
+      <p>Everything you need to learn biotechnology. Free courses, research papers, open-source tools, and community resources — curated for practitioners.</p>
+      
+    </section>
+
+    <nav class="toc">
+      <h3>Contents</h3>
+      <ul>
+        <li><a href="#fundamentals">Fundamentals</a></li>
+        <li><a href="#courses">Free Courses</a></li>
+        <li><a href="#textbooks">Textbooks</a></li>
+        <li><a href="#research">Key Research Papers</a></li>
+        <li><a href="#tools">Open-Source Tools</a></li>
+        <li><a href="#hardware">Hardware & Providers</a></li>
+        <li><a href="#reference">Reference</a></li>
+        <li><a href="#community">Community</a></li>
+      </ul>
+    </nav>
+
+    <section class="section" id="fundamentals">
+      <h2>Fundamentals</h2>
+      <h3>What is Biotechnology?</h3>
+      <p>Biotechnology applies biological systems and living organisms to develop technologies and products. Modern biotech spans genomics, protein engineering, gene editing, synthetic biology, and bioinformatics — using computational tools to understand and manipulate the molecular machinery of life.</p>
+
+      <h3>Key Concepts</h3>
+      <ul>
+        <li><strong>DNA & RNA</strong> — DNA stores genetic information as a double helix of nucleotide bases (A, T, G, C). RNA (using U instead of T) transcribes and translates that code into proteins.</li>
+        <li><strong>Protein Structure</strong> — primary (sequence), secondary (alpha helices, beta sheets), tertiary (3D fold), quaternary (multi-subunit complexes). Structure determines function.</li>
+        <li><strong>CRISPR-Cas9</strong> — programmable gene editing. A guide RNA directs the Cas9 nuclease to a specific DNA sequence, where it cuts. The cell's repair machinery introduces changes.</li>
+        <li><strong>PCR</strong> — Polymerase Chain Reaction amplifies specific DNA segments exponentially. Denature, anneal primers, extend with polymerase. Foundation of molecular biology.</li>
+        <li><strong>Sequencing</strong> — reading the order of nucleotides in DNA/RNA. Sanger (first-gen), Illumina (short-read NGS), Nanopore/PacBio (long-read).</li>
+        <li><strong>Phylogenetics</strong> — reconstructing evolutionary relationships from sequence data. Multiple sequence alignment, tree building (ML, Bayesian), molecular clocks.</li>
+      </ul>
+
+      <h3>Central Dogma</h3>
+      <ul>
+        <li>DNA is transcribed into mRNA by RNA polymerase.</li>
+        <li>mRNA is translated into protein by ribosomes, reading codons (3-nucleotide sequences) and assembling amino acids.</li>
+        <li>Proteins fold into 3D structures that carry out virtually all cellular functions — enzymes, receptors, structural components.</li>
+        <li>Epigenetics, RNA interference, and post-translational modifications add layers of regulation beyond the simple DNA-to-protein flow.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="courses">
+      <h2>Free Courses</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://ocw.mit.edu/courses/7-012-introduction-to-biology-fall-2004/">MIT OCW: Introduction to Biology</a></h4>
+          <p>Foundational biology course. Biochemistry, genetics, molecular biology, recombinant DNA, genomics. Lecture videos and notes.</p>
+          <div class="meta">MIT OpenCourseWare | Free | Beginner</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.khanacademy.org/science/biology">Khan Academy: Biology</a></h4>
+          <p>Comprehensive biology curriculum. Cell biology, genetics, molecular biology, evolution. Interactive exercises and videos.</p>
+          <div class="meta">Khan Academy | Free | Beginner</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.coursera.org/learn/genomics-research">Coursera: Genomic Data Science (Johns Hopkins)</a></h4>
+          <p>Genomics specialization covering sequencing, alignment, variant calling, and statistical genomics. Free to audit.</p>
+          <div class="meta">Johns Hopkins University | Free audit | Intermediate</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.edx.org/learn/bioinformatics/university-of-california-san-diego-bioinformatics">edX: Bioinformatics (UCSD)</a></h4>
+          <p>Algorithms for DNA sequencing, genome assembly, sequence comparison, and phylogenetics. Free to audit.</p>
+          <div class="meta">UC San Diego | Free audit | Intermediate</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.coursera.org/learn/dna-analysis">Coursera: Biology Meets Programming (UCSD)</a></h4>
+          <p>Computational approaches to molecular biology. Pattern finding in DNA, genome assembly, comparing sequences.</p>
+          <div class="meta">UC San Diego | Free audit | Beginner</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://rosalind.info">Rosalind</a></h4>
+          <p>Learn bioinformatics through problem solving. Hundreds of coding challenges from string algorithms to population genetics.</p>
+          <div class="meta">Free | Interactive | Beginner to Advanced</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="textbooks">
+      <h2>Textbooks</h2>
+      <ul>
+        <li><strong><a href="https://www.ncbi.nlm.nih.gov/books/NBK21054/">Alberts et al: Molecular Biology of the Cell</a></strong> — THE cell biology textbook. Free online via NCBI Bookshelf. Covers everything from DNA replication to cell signaling.</li>
+        <li><strong><a href="https://www.ncbi.nlm.nih.gov/books/NBK26818/">Lodish et al: Molecular Cell Biology</a></strong> — Comprehensive and accessible. Strong on gene expression, protein targeting, and signaling pathways.</li>
+        <li><strong><a href="https://www.bioinformaticsonline.org/">Lesk: Introduction to Bioinformatics</a></strong> — Covers databases, sequence alignment, phylogenetics, protein structure prediction, and genomics.</li>
+        <li><strong><a href="https://bio.libretexts.org/Bookshelves/Genetics">LibreTexts: Genetics</a></strong> — Free, open-access genetics textbooks. Mendelian genetics, molecular genetics, population genetics.</li>
+        <li><strong><a href="https://www.nature.com/scitable/">Nature Scitable</a></strong> — Free peer-reviewed science library. Topic pages on genetics, gene expression, cell biology, and evolution.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="research">
+      <h2>Key Research Papers</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://www.nature.com/articles/171737a0">Watson & Crick (1953): Structure of DNA</a></h4>
+          <p>The one-page paper that changed everything. Proposed the double helix structure of DNA, explaining base pairing and replication.</p>
+          <div class="meta">Watson & Crick | Nature | Most cited biology paper</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.science.org/doi/10.1126/science.1225829">Jinek et al (2012): CRISPR-Cas9</a></h4>
+          <p>Doudna & Charpentier demonstrated programmable DNA cleavage with CRISPR-Cas9. Launched the gene editing revolution. Nobel Prize 2020.</p>
+          <div class="meta">Doudna & Charpentier | Science</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.nature.com/articles/s41586-021-03819-2">Jumper et al (2021): AlphaFold</a></h4>
+          <p>Solved the 50-year protein folding problem. AlphaFold2 predicts 3D protein structure from sequence with near-experimental accuracy.</p>
+          <div class="meta">DeepMind | Nature | Breakthrough of the Year 2021</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.nature.com/articles/nature01262">International Human Genome Sequencing Consortium (2001)</a></h4>
+          <p>Initial sequencing and analysis of the human genome. 3.2 billion base pairs, ~20,000 genes. Launched the genomics era.</p>
+          <div class="meta">Human Genome Project | Nature</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.nature.com/articles/nbt.4091">Cao et al (2017): Single-Cell RNA-seq</a></h4>
+          <p>sci-RNA-seq method for profiling gene expression in individual cells at scale. Foundation for the Human Cell Atlas.</p>
+          <div class="meta">Nature Biotechnology</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.science.org/doi/10.1126/science.aaf5573">Abudayyeh et al (2016): RNA-targeting CRISPR (Cas13)</a></h4>
+          <p>Extended CRISPR beyond DNA editing to RNA knockdown and diagnostics. Basis for SHERLOCK diagnostic platform.</p>
+          <div class="meta">Zhang Lab | Science</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tools">
+      <h2>Open-Source Tools</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://pymol.org">PyMOL</a></h4>
+          <p>Molecular visualization system. Render publication-quality 3D protein structures. Open-source version available.</p>
+          <div class="meta">Python | Schrodinger | Open-source build available</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi">NCBI BLAST</a></h4>
+          <p>Basic Local Alignment Search Tool. Find similar sequences in databases. The most-used bioinformatics tool in the world.</p>
+          <div class="meta">NCBI | Free | Web + standalone</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://github.com/google-deepmind/alphafold">AlphaFold</a></h4>
+          <p>AI-powered protein structure prediction. Predicts 3D structure from amino acid sequence. 200M+ structures in the AlphaFold DB.</p>
+          <div class="meta">Python | Google DeepMind | Apache 2.0</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.gromacs.org">GROMACS</a></h4>
+          <p>Molecular dynamics simulation. Simulate protein folding, membrane interactions, drug binding. Highly optimized for HPC.</p>
+          <div class="meta">C / C++ | Free | LGPL</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://github.com/biopython/biopython">Biopython</a></h4>
+          <p>Python library for biological computation. Sequence analysis, PDB parsing, BLAST, phylogenetics, population genetics.</p>
+          <div class="meta">Python | 4K+ stars | BSD</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.ncbi.nlm.nih.gov/guide/all/">NCBI Tools</a></h4>
+          <p>National Center for Biotechnology Information. GenBank, PubMed, Gene, Protein, SRA — the world's largest biomedical databases.</p>
+          <div class="meta">NCBI | Free | Public domain</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hardware">
+      <h2>Hardware & Providers</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://www.illumina.com">Illumina</a></h4>
+          <p>Dominant DNA sequencing platform. Short-read NGS. NovaSeq, NextSeq, MiSeq. Powers ~80% of the world's sequencing data.</p>
+          <div class="meta">DNA Sequencing | Market leader</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.10xgenomics.com">10x Genomics</a></h4>
+          <p>Single-cell and spatial genomics. Chromium (single-cell RNA-seq), Visium (spatial transcriptomics), Xenium (in situ).</p>
+          <div class="meta">Single-cell | Spatial biology</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://nanoporetech.com">Oxford Nanopore Technologies</a></h4>
+          <p>Long-read sequencing. MinION (portable USB sequencer), PromethION (high-throughput). Real-time, direct DNA/RNA sequencing.</p>
+          <div class="meta">Long-read sequencing | Portable</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.ncbi.nlm.nih.gov">NCBI</a></h4>
+          <p>National Center for Biotechnology Information. GenBank, PubMed, dbSNP, ClinVar, GEO — central hub for biomedical data.</p>
+          <div class="meta">Databases | NIH | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.uniprot.org">UniProt</a></h4>
+          <p>Universal Protein Resource. Curated protein sequence and function database. 250M+ entries. Swiss-Prot (reviewed) + TrEMBL (auto).</p>
+          <div class="meta">Protein database | Free | CC BY 4.0</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.rcsb.org">Protein Data Bank (PDB)</a></h4>
+          <p>Repository of 3D structures of proteins, nucleic acids, and complex assemblies. 210K+ experimentally determined structures.</p>
+          <div class="meta">Structural biology | Free | CC0</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="reference">
+      <h2>Reference</h2>
+      <h3>Molecular Biology</h3>
+      <ul>
+        <li><strong>DNA Replication</strong> — semiconservative; helicase unwinds, primase lays RNA primers, DNA polymerase III synthesizes, ligase seals Okazaki fragments</li>
+        <li><strong>Transcription</strong> — RNA polymerase reads DNA template 3'→5', synthesizes mRNA 5'→3'. Promoter recognition, elongation, termination.</li>
+        <li><strong>Translation</strong> — ribosome reads mRNA codons, tRNA delivers amino acids. Initiation (AUG), elongation, termination (UAA/UAG/UGA).</li>
+        <li><strong>Gene Regulation</strong> — operons (prokaryotes), transcription factors, enhancers, epigenetics (methylation, histone modification), miRNA.</li>
+      </ul>
+
+      <h3>Techniques</h3>
+      <ul>
+        <li><strong>PCR</strong> — 3-step thermal cycling: denature (95C), anneal primers (55-65C), extend (72C). Exponential amplification: 2^n copies after n cycles.</li>
+        <li><strong>CRISPR</strong> — design sgRNA complementary to target, Cas9 makes double-strand break, NHEJ (knockout) or HDR (knock-in) repairs the cut.</li>
+        <li><strong>NGS</strong> — library prep (fragment + ligate adapters), cluster generation, sequencing by synthesis, base calling, alignment, variant calling.</li>
+        <li><strong>Gel Electrophoresis</strong> — separate DNA/RNA/protein by size in an electric field. Agarose (DNA) or polyacrylamide (protein/SDS-PAGE).</li>
+      </ul>
+
+      <h3>Bioinformatics</h3>
+      <ul>
+        <li><strong>Sequence Alignment</strong> — Needleman-Wunsch (global), Smith-Waterman (local), BLAST (heuristic). Substitution matrices (BLOSUM, PAM).</li>
+        <li><strong>Phylogenetics</strong> — distance (neighbor-joining), parsimony, maximum likelihood (RAxML), Bayesian (MrBayes, BEAST).</li>
+        <li><strong>Genome Assembly</strong> — de Bruijn graphs (short reads), overlap-layout-consensus (long reads). SPAdes, Hifiasm, Flye.</li>
+        <li><strong>Structure Prediction</strong> — homology modeling, ab initio (Rosetta), deep learning (AlphaFold2, ESMFold). CASP competition benchmark.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="community">
+      <h2>Community & News</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://www.reddit.com/r/bioinformatics/">r/bioinformatics</a></h4>
+          <p>Active Reddit community for bioinformatics. Tools, pipelines, career advice, paper discussions. 100K+ members.</p>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.biostars.org">BioStars</a></h4>
+          <p>Q&A forum for bioinformatics, computational genomics, and biological data analysis. 150K+ questions answered.</p>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.iscb.org">ISCB</a></h4>
+          <p>International Society for Computational Biology. Publishes Bioinformatics journal, runs ISMB/ECCB conferences.</p>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.rcsb.org">Protein Data Bank</a></h4>
+          <p>The global archive of 3D macromolecular structure data. Browse, search, and download experimentally determined structures.</p>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.ncbi.nlm.nih.gov/genbank/">GenBank</a></h4>
+          <p>NIH genetic sequence database. Annotated collection of all publicly available DNA sequences. 250B+ base pairs.</p>
+        </div>
+        <div class="card">
+          <h4><a href="https://arxiv.org/list/q-bio/new">arXiv q-bio</a></h4>
+          <p>Preprints in quantitative biology. Genomics, biophysics, molecular networks, populations — cutting-edge research.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="container">
+      <a href="/">FreeBioStore</a> · <a href="/institute/">Institute</a> · Built with <a href="https://zensical.org">Zensical</a>
+    </div>
+  </footer>
+</body>
+</html>
