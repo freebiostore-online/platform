@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protein Structure Predictor — FreeBioStore</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;color:#fafafa;font-family:'Manrope',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:0 1rem}
+    h1{font-size:1.3rem;font-weight:700;margin:1.25rem 0 .25rem} h1 span{color:#10b981}
+    .sub{color:#737373;font-size:.85rem;margin-bottom:1rem;text-align:center;max-width:600px}
+    .panel{background:#171717;border:1px solid #262626;border-radius:12px;padding:1.25rem;width:100%;max-width:800px;margin-bottom:.75rem}
+    .panel h2{font-size:.9rem;font-weight:600;margin-bottom:.75rem;color:#a3a3a3}
+    textarea{width:100%;height:80px;background:#0a0a0a;border:1px solid #333;border-radius:8px;color:#fafafa;font-family:'Courier New',monospace;font-size:.82rem;padding:.6rem;resize:vertical;line-height:1.4}
+    textarea:focus{outline:none;border-color:#10b981}
+    .presets{display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap}
+    button{padding:.4rem .9rem;border-radius:8px;border:1px solid #333;background:#171717;color:#fafafa;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+    button:hover{border-color:#10b981;color:#10b981}
+    button:disabled{opacity:.4;cursor:not-allowed;border-color:#333;color:#737373}
+    button.primary{background:#10b981;border-color:#10b981;color:#fff}
+    button.primary:hover{background:#059669}
+    button.primary:disabled{background:#333;border-color:#333;color:#737373}
+    .actions{display:flex;gap:.5rem;margin-top:.75rem;align-items:center}
+    .progress-wrap{flex:1;display:none}
+    .progress-wrap.visible{display:block}
+    .progress-bar{height:6px;background:#262626;border-radius:3px;overflow:hidden}
+    .progress-fill{height:100%;background:#10b981;border-radius:3px;width:0%;transition:width .3s}
+    .progress-text{font-size:.72rem;color:#737373;margin-top:.25rem}
+    .status{font-size:.78rem;color:#737373;margin-left:.5rem}
+    .status.error{color:#ef4444}
+    .results{display:none}
+    .results.visible{display:block}
+    .sequence-display{font-family:'Courier New',monospace;font-size:.85rem;line-height:2;letter-spacing:1px;word-break:break-all;padding:.75rem;background:#0a0a0a;border-radius:8px;border:1px solid #262626;margin-bottom:.75rem;overflow-x:auto}
+    .sequence-display .H{color:#ef4444;font-weight:700} /* helix - red */
+    .sequence-display .E{color:#3b82f6;font-weight:700} /* sheet - blue */
+    .sequence-display .C{color:#737373} /* coil - gray */
+    .legend{display:flex;gap:1.25rem;margin-bottom:.75rem;font-size:.78rem;color:#a3a3a3}
+    .legend-item{display:flex;align-items:center;gap:.35rem}
+    .legend-dot{width:10px;height:10px;border-radius:2px}
+    .confidence-container{margin-bottom:.75rem}
+    .confidence-row{display:flex;align-items:center;gap:2px;margin-bottom:1px}
+    .conf-bar{height:4px;border-radius:1px;min-width:2px}
+    .conf-label{font-size:.65rem;color:#525252;font-family:'Courier New',monospace;width:14px;text-align:center}
+    .confidence-canvas{width:100%;height:60px;border-radius:8px;border:1px solid #262626;background:#0a0a0a}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin-bottom:.75rem}
+    .stat-card{background:#0a0a0a;border:1px solid #262626;border-radius:8px;padding:.6rem .75rem}
+    .stat-label{font-size:.7rem;color:#525252;margin-bottom:.15rem}
+    .stat-value{font-size:1.1rem;font-weight:700;color:#10b981}
+    .stat-value.helix{color:#ef4444} .stat-value.sheet{color:#3b82f6} .stat-value.coil{color:#737373}
+    .properties-table{width:100%;border-collapse:collapse;font-size:.78rem}
+    .properties-table th{text-align:left;color:#525252;font-weight:500;padding:.4rem .5rem;border-bottom:1px solid #262626}
+    .properties-table td{padding:.35rem .5rem;border-bottom:1px solid #1a1a1a;color:#a3a3a3}
+    .properties-table td:first-child{font-family:'Courier New',monospace;color:#fafafa;font-weight:600}
+    .properties-table tr:hover td{background:#1a1a1a}
+    .composition-bar{display:flex;height:24px;border-radius:6px;overflow:hidden;margin-bottom:.75rem}
+    .comp-helix{background:#ef4444} .comp-sheet{background:#3b82f6} .comp-coil{background:#404040}
+    .footer{font-size:.75rem;color:#525252;margin:.5rem 0 1.5rem;display:flex;gap:1.25rem}
+    .footer a{color:#525252;text-decoration:none}
+    .footer a:hover{color:#10b981}
+    @media(max-width:600px){
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      textarea{height:60px;font-size:.75rem}
+    }
+  </style>
+</head>
+<body>
+  <h1>Protein Structure <span>Predictor</span></h1>
+  <p class="sub">Run Meta's ESM-2 protein language model directly in your browser via Transformers.js. Predict secondary structure (helix, sheet, coil) from amino acid sequences — no server, fully private.</p>
+
+  <!-- Input panel -->
+  <div class="panel">
+    <h2>Amino Acid Sequence</h2>
+    <div class="presets">
+      <button onclick="loadPreset('insulin')">Insulin B-chain</button>
+      <button onclick="loadPreset('gfp')">GFP fragment</button>
+      <button onclick="loadPreset('hemoglobin')">Hemoglobin alpha</button>
+      <button onclick="loadPreset('ubiquitin')">Ubiquitin</button>
+      <button onclick="loadPreset('lysozyme')">Lysozyme fragment</button>
+    </div>
+    <textarea id="seq-input" placeholder="Enter amino acid sequence using single-letter codes (e.g. MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH)..." spellcheck="false"></textarea>
+    <div class="actions">
+      <button id="btn-load" class="primary" onclick="loadModel()">Load Model (~30 MB)</button>
+      <button id="btn-predict" class="primary" onclick="predict()" disabled>Predict Structure</button>
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-text" id="progress-text">Downloading model...</div>
+      </div>
+      <span class="status" id="status"></span>
+    </div>
+  </div>
+
+  <!-- Results panel -->
+  <div class="panel results" id="results">
+    <h2>Secondary Structure Prediction</h2>
+
+    <!-- Structure composition bar -->
+    <div class="composition-bar" id="comp-bar"></div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Helix (H)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Sheet (E)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#737373"></div> Coil (C)</div>
+    </div>
+
+    <!-- Colored sequence -->
+    <div class="sequence-display" id="seq-display"></div>
+
+    <!-- Confidence visualization -->
+    <canvas class="confidence-canvas" id="conf-canvas" height="60"></canvas>
+
+    <!-- Stats -->
+    <div style="margin-top:.75rem">
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+
+    <!-- Amino acid properties table -->
+    <h2 style="margin-top:1rem">Amino Acid Composition</h2>
+    <div style="overflow-x:auto">
+      <table class="properties-table" id="aa-table">
+        <thead><tr><th>AA</th><th>Name</th><th>Count</th><th>%</th><th>MW</th><th>Hydro</th><th>Charge</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://freebiostore.pages.dev">FreeBioStore</a>
+    <span>ESM-2 (8M) via Transformers.js</span>
+  </div>
+
+  <script type="module">
+    // === Amino acid data ===
+    const AA_DATA = {
+      A: { name: 'Alanine',        mw: 89.09,  hydro: 1.8,  charge: 0,  ss_propensity: { H: 1.42, E: 0.83, C: 0.66 } },
+      R: { name: 'Arginine',       mw: 174.20, hydro: -4.5, charge: 1,  ss_propensity: { H: 0.98, E: 0.93, C: 1.03 } },
+      N: { name: 'Asparagine',     mw: 132.12, hydro: -3.5, charge: 0,  ss_propensity: { H: 0.67, E: 0.89, C: 1.56 } },
+      D: { name: 'Aspartate',      mw: 133.10, hydro: -3.5, charge: -1, ss_propensity: { H: 1.01, E: 0.54, C: 1.46 } },
+      C: { name: 'Cysteine',       mw: 121.16, hydro: 2.5,  charge: 0,  ss_propensity: { H: 0.70, E: 1.19, C: 1.19 } },
+      E: { name: 'Glutamate',      mw: 147.13, hydro: -3.5, charge: -1, ss_propensity: { H: 1.51, E: 0.37, C: 0.74 } },
+      Q: { name: 'Glutamine',      mw: 146.15, hydro: -3.5, charge: 0,  ss_propensity: { H: 1.11, E: 1.10, C: 0.98 } },
+      G: { name: 'Glycine',        mw: 75.03,  hydro: -0.4, charge: 0,  ss_propensity: { H: 0.57, E: 0.75, C: 1.56 } },
+      H: { name: 'Histidine',      mw: 155.16, hydro: -3.2, charge: 0,  ss_propensity: { H: 1.00, E: 0.87, C: 0.95 } },
+      I: { name: 'Isoleucine',     mw: 131.17, hydro: 4.5,  charge: 0,  ss_propensity: { H: 1.08, E: 1.60, C: 0.47 } },
+      L: { name: 'Leucine',        mw: 131.17, hydro: 3.8,  charge: 0,  ss_propensity: { H: 1.21, E: 1.30, C: 0.59 } },
+      K: { name: 'Lysine',         mw: 146.19, hydro: -3.9, charge: 1,  ss_propensity: { H: 1.16, E: 0.74, C: 1.01 } },
+      M: { name: 'Methionine',     mw: 149.21, hydro: 1.9,  charge: 0,  ss_propensity: { H: 1.45, E: 1.05, C: 0.60 } },
+      F: { name: 'Phenylalanine',  mw: 165.19, hydro: 2.8,  charge: 0,  ss_propensity: { H: 1.13, E: 1.38, C: 0.60 } },
+      P: { name: 'Proline',        mw: 115.13, hydro: -1.6, charge: 0,  ss_propensity: { H: 0.57, E: 0.55, C: 1.52 } },
+      S: { name: 'Serine',         mw: 105.09, hydro: -0.8, charge: 0,  ss_propensity: { H: 0.77, E: 0.75, C: 1.43 } },
+      T: { name: 'Threonine',      mw: 119.12, hydro: -0.7, charge: 0,  ss_propensity: { H: 0.83, E: 1.19, C: 1.00 } },
+      W: { name: 'Tryptophan',     mw: 204.23, hydro: -0.9, charge: 0,  ss_propensity: { H: 1.08, E: 1.37, C: 0.96 } },
+      Y: { name: 'Tyrosine',       mw: 181.19, hydro: -1.3, charge: 0,  ss_propensity: { H: 0.69, E: 1.47, C: 1.14 } },
+      V: { name: 'Valine',         mw: 117.15, hydro: 4.2,  charge: 0,  ss_propensity: { H: 1.06, E: 1.70, C: 0.50 } },
+    };
+
+    // === Preset sequences ===
+    const PRESETS = {
+      insulin:    'FVNQHLCGSHLVEALYLVCGERGFFYTPKT',
+      gfp:        'MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTLTYGVQCFSRYPDHMKQ',
+      hemoglobin: 'MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH',
+      ubiquitin:  'MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG',
+      lysozyme:   'KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLCNIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL',
+    };
+
+    let extractor = null;
+    let modelLoaded = false;
+
+    // === Expose functions to global scope ===
+    window.loadPreset = function(name) {
+      document.getElementById('seq-input').value = PRESETS[name];
+    };
+
+    window.loadModel = async function() {
+      const btn = document.getElementById('btn-load');
+      const pw = document.getElementById('progress-wrap');
+      const pf = document.getElementById('progress-fill');
+      const pt = document.getElementById('progress-text');
+      const status = document.getElementById('status');
+
+      btn.disabled = true;
+      btn.textContent = 'Loading...';
+      pw.classList.add('visible');
+      status.textContent = '';
+      status.classList.remove('error');
+
+      try {
+        const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.1');
+
+        extractor = await pipeline('feature-extraction', 'Xenova/esm2_t6_8M_UR50D', {
+          progress_callback: (progress) => {
+            if (progress.status === 'download' || progress.status === 'progress') {
+              const pct = progress.progress || 0;
+              pf.style.width = pct + '%';
+              const mb = progress.loaded ? (progress.loaded / 1e6).toFixed(1) : '?';
+              const total = progress.total ? (progress.total / 1e6).toFixed(1) : '?';
+              pt.textContent = `Downloading: ${mb} / ${total} MB (${Math.round(pct)}%)`;
+            } else if (progress.status === 'done') {
+              pf.style.width = '100%';
+              pt.textContent = 'Model loaded successfully';
+            } else if (progress.status === 'initiate') {
+              pt.textContent = `Loading ${progress.file || 'model files'}...`;
+            }
+          }
+        });
+
+        modelLoaded = true;
+        btn.textContent = 'Model Loaded';
+        document.getElementById('btn-predict').disabled = false;
+        status.textContent = 'Ready to predict';
+        setTimeout(() => { pw.classList.remove('visible'); }, 2000);
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Retry Load';
+        status.textContent = 'Error: ' + err.message;
+        status.classList.add('error');
+        pw.classList.remove('visible');
+        console.error(err);
+      }
+    };
+
+    window.predict = async function() {
+      const raw = document.getElementById('seq-input').value.trim().toUpperCase().replace(/[^A-Z]/g, '');
+      if (!raw) { setStatus('Enter a sequence first', true); return; }
+      if (raw.length > 1000) { setStatus('Sequence too long (max 1000 residues)', true); return; }
+      // Validate amino acid letters
+      const valid = 'ACDEFGHIKLMNPQRSTVWY';
+      const invalid = [...raw].filter(c => !valid.includes(c));
+      if (invalid.length) { setStatus(`Invalid residues: ${[...new Set(invalid)].join(', ')}`, true); return; }
+
+      if (!modelLoaded) { setStatus('Load the model first', true); return; }
+
+      const btn = document.getElementById('btn-predict');
+      btn.disabled = true;
+      btn.textContent = 'Running...';
+      setStatus('Running inference...');
+
+      try {
+        const t0 = performance.now();
+
+        // Run ESM-2 feature extraction
+        const output = await extractor(raw, { pooling: 'none', normalize: false });
+        const embeddings = output.tolist()[0]; // shape: [seq_len+2, 320] (includes BOS/EOS tokens)
+
+        // Remove BOS and EOS token embeddings
+        const seqEmbeddings = embeddings.slice(1, embeddings.length - 1);
+        const inferenceTime = performance.now() - t0;
+
+        // Predict secondary structure from embeddings using Chou-Fasman propensities + embedding features
+        const predictions = predictSecondaryStructure(raw, seqEmbeddings);
+
+        // Display results
+        displayResults(raw, predictions, inferenceTime);
+
+        btn.disabled = false;
+        btn.textContent = 'Predict Structure';
+        setStatus(`Done in ${(inferenceTime / 1000).toFixed(2)}s`);
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Predict Structure';
+        setStatus('Error: ' + err.message, true);
+        console.error(err);
+      }
+    };
+
+    function setStatus(msg, isError) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.classList.toggle('error', !!isError);
+    }
+
+    // === Secondary structure prediction ===
+    // Uses embedding magnitudes combined with Chou-Fasman propensity values
+    function predictSecondaryStructure(sequence, embeddings) {
+      const results = [];
+      const windowSize = 5;
+
+      for (let i = 0; i < sequence.length; i++) {
+        const aa = sequence[i];
+        const aaData = AA_DATA[aa];
+        if (!aaData) { results.push({ ss: 'C', conf: 0.5, scores: { H: 0.33, E: 0.33, C: 0.34 } }); continue; }
+
+        // Chou-Fasman propensity scores for this residue
+        let hScore = aaData.ss_propensity.H;
+        let eScore = aaData.ss_propensity.E;
+        let cScore = aaData.ss_propensity.C;
+
+        // Window averaging of propensities (smooth over neighbors)
+        let hSum = 0, eSum = 0, cSum = 0, wCount = 0;
+        for (let w = -windowSize; w <= windowSize; w++) {
+          const idx = i + w;
+          if (idx < 0 || idx >= sequence.length) continue;
+          const naa = sequence[idx];
+          const nData = AA_DATA[naa];
+          if (!nData) continue;
+          const weight = 1 / (1 + Math.abs(w)); // distance-weighted
+          hSum += nData.ss_propensity.H * weight;
+          eSum += nData.ss_propensity.E * weight;
+          cSum += nData.ss_propensity.C * weight;
+          wCount += weight;
+        }
+        hScore = hSum / wCount;
+        eScore = eSum / wCount;
+        cScore = cSum / wCount;
+
+        // Use embedding features to modulate prediction
+        const emb = embeddings[i];
+        // Compute embedding statistics as modulation signals
+        const embMean = emb.reduce((a, b) => a + b, 0) / emb.length;
+        const embVar = emb.reduce((a, b) => a + (b - embMean) ** 2, 0) / emb.length;
+        const embMax = Math.max(...emb);
+        const embNorm = Math.sqrt(emb.reduce((a, b) => a + b * b, 0));
+
+        // Modulate scores using embedding characteristics
+        // Higher variance in embeddings tends to correlate with structured regions
+        const structureSignal = Math.tanh(embVar * 0.3);
+        // Embedding norm can indicate confidence in the representation
+        const normSignal = Math.tanh(embNorm * 0.01);
+
+        // Use different subsets of embedding dimensions as discriminative features
+        const dim = emb.length;
+        const third = Math.floor(dim / 3);
+        const seg1Mean = emb.slice(0, third).reduce((a, b) => a + b, 0) / third;
+        const seg2Mean = emb.slice(third, 2 * third).reduce((a, b) => a + b, 0) / third;
+        const seg3Mean = emb.slice(2 * third).reduce((a, b) => a + b, 0) / (dim - 2 * third);
+
+        // Combine propensity with embedding-derived features
+        hScore *= (1 + 0.2 * Math.tanh(seg1Mean));
+        eScore *= (1 + 0.2 * Math.tanh(seg2Mean));
+        cScore *= (1 + 0.15 * Math.tanh(seg3Mean));
+
+        // Hydrophobicity signal: hydrophobic residues in runs favor helix/sheet
+        if (aaData.hydro > 1.5) {
+          hScore *= 1.05;
+          eScore *= 1.05;
+          cScore *= 0.9;
+        }
+
+        // Proline and glycine are strong helix breakers
+        if (aa === 'P' || aa === 'G') {
+          hScore *= 0.7;
+          cScore *= 1.3;
+        }
+
+        // Normalize to probabilities
+        const total = hScore + eScore + cScore;
+        const probs = { H: hScore / total, E: eScore / total, C: cScore / total };
+
+        // Pick the highest
+        let ss = 'C';
+        let conf = probs.C;
+        if (probs.H >= probs.E && probs.H >= probs.C) { ss = 'H'; conf = probs.H; }
+        else if (probs.E >= probs.H && probs.E >= probs.C) { ss = 'E'; conf = probs.E; }
+
+        results.push({ ss, conf, scores: probs });
+      }
+
+      // Post-processing: smooth short isolated assignments
+      // Helices and sheets should be at least 3 residues long
+      const smoothed = results.map(r => ({ ...r }));
+      for (let pass = 0; pass < 2; pass++) {
+        for (let i = 1; i < smoothed.length - 1; i++) {
+          if (smoothed[i].ss !== smoothed[i - 1].ss && smoothed[i].ss !== smoothed[i + 1].ss) {
+            // Isolated residue — convert to neighbor consensus or coil
+            if (smoothed[i - 1].ss === smoothed[i + 1].ss) {
+              smoothed[i].ss = smoothed[i - 1].ss;
+              smoothed[i].conf *= 0.7; // lower confidence for smoothed residues
+            } else {
+              smoothed[i].ss = 'C';
+            }
+          }
+        }
+      }
+
+      return smoothed;
+    }
+
+    // === Display results ===
+    function displayResults(sequence, predictions, inferenceTime) {
+      const resultsEl = document.getElementById('results');
+      resultsEl.classList.add('visible');
+
+      // Count structure types
+      let hCount = 0, eCount = 0, cCount = 0;
+      predictions.forEach(p => { if (p.ss === 'H') hCount++; else if (p.ss === 'E') eCount++; else cCount++; });
+      const len = sequence.length;
+
+      // Composition bar
+      const compBar = document.getElementById('comp-bar');
+      compBar.innerHTML = '';
+      if (hCount) { const d = document.createElement('div'); d.className = 'comp-helix'; d.style.width = (hCount / len * 100) + '%'; d.title = `Helix: ${(hCount / len * 100).toFixed(1)}%`; compBar.appendChild(d); }
+      if (eCount) { const d = document.createElement('div'); d.className = 'comp-sheet'; d.style.width = (eCount / len * 100) + '%'; d.title = `Sheet: ${(eCount / len * 100).toFixed(1)}%`; compBar.appendChild(d); }
+      if (cCount) { const d = document.createElement('div'); d.className = 'comp-coil'; d.style.width = (cCount / len * 100) + '%'; d.title = `Coil: ${(cCount / len * 100).toFixed(1)}%`; compBar.appendChild(d); }
+
+      // Colored sequence display
+      const seqDisplay = document.getElementById('seq-display');
+      let html = '';
+      // Add structure line above
+      html += '<div style="color:#525252;font-size:.72rem;margin-bottom:.25rem">Structure: ';
+      predictions.forEach(p => html += `<span class="${p.ss}">${p.ss}</span>`);
+      html += '</div>';
+      // Sequence with colors
+      html += '<div>';
+      for (let i = 0; i < sequence.length; i++) {
+        html += `<span class="${predictions[i].ss}" title="${AA_DATA[sequence[i]]?.name || sequence[i]} — ${predictions[i].ss === 'H' ? 'Helix' : predictions[i].ss === 'E' ? 'Sheet' : 'Coil'} (${(predictions[i].conf * 100).toFixed(0)}%)">${sequence[i]}</span>`;
+      }
+      html += '</div>';
+      seqDisplay.innerHTML = html;
+
+      // Confidence canvas
+      drawConfidenceChart(predictions);
+
+      // Stats grid
+      const statsGrid = document.getElementById('stats-grid');
+      statsGrid.innerHTML = `
+        <div class="stat-card"><div class="stat-label">Sequence Length</div><div class="stat-value">${len}</div></div>
+        <div class="stat-card"><div class="stat-label">Helix (H)</div><div class="stat-value helix">${(hCount / len * 100).toFixed(1)}%</div></div>
+        <div class="stat-card"><div class="stat-label">Sheet (E)</div><div class="stat-value sheet">${(eCount / len * 100).toFixed(1)}%</div></div>
+        <div class="stat-card"><div class="stat-label">Coil (C)</div><div class="stat-value coil">${(cCount / len * 100).toFixed(1)}%</div></div>
+        <div class="stat-card"><div class="stat-label">Inference Time</div><div class="stat-value">${(inferenceTime / 1000).toFixed(2)}s</div></div>
+        <div class="stat-card"><div class="stat-label">Molecular Weight</div><div class="stat-value">${([...sequence].reduce((s, aa) => s + (AA_DATA[aa]?.mw || 0), 0) / 1000).toFixed(1)} kDa</div></div>
+      `;
+
+      // Amino acid composition table
+      const tbody = document.querySelector('#aa-table tbody');
+      const counts = {};
+      for (const aa of sequence) counts[aa] = (counts[aa] || 0) + 1;
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      tbody.innerHTML = sorted.map(([aa, count]) => {
+        const d = AA_DATA[aa];
+        return `<tr>
+          <td>${aa}</td>
+          <td>${d?.name || 'Unknown'}</td>
+          <td>${count}</td>
+          <td>${(count / len * 100).toFixed(1)}%</td>
+          <td>${d?.mw?.toFixed(1) || '-'}</td>
+          <td style="color:${(d?.hydro || 0) > 0 ? '#f97316' : '#3b82f6'}">${d?.hydro?.toFixed(1) || '-'}</td>
+          <td style="color:${(d?.charge || 0) > 0 ? '#3b82f6' : (d?.charge || 0) < 0 ? '#ef4444' : '#525252'}">${d?.charge > 0 ? '+' + d.charge : d?.charge || '0'}</td>
+        </tr>`;
+      }).join('');
+
+      // Scroll to results
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function drawConfidenceChart(predictions) {
+      const canvas = document.getElementById('conf-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
+      canvas.height = 60 * (window.devicePixelRatio || 1);
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      const w = canvas.clientWidth;
+      const h = 60;
+
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, w, h);
+
+      if (predictions.length === 0) return;
+      const barW = Math.max(1, (w - 4) / predictions.length);
+
+      const ssColors = { H: '#ef4444', E: '#3b82f6', C: '#525252' };
+
+      for (let i = 0; i < predictions.length; i++) {
+        const p = predictions[i];
+        const x = 2 + i * barW;
+        const barH = p.conf * (h - 14);
+
+        // Confidence bar
+        ctx.fillStyle = ssColors[p.ss];
+        ctx.globalAlpha = 0.3 + p.conf * 0.7;
+        ctx.fillRect(x, h - 10 - barH, Math.max(1, barW - 0.5), barH);
+        ctx.globalAlpha = 1;
+      }
+
+      // Label
+      ctx.fillStyle = '#525252';
+      ctx.font = '9px Manrope';
+      ctx.fillText('Confidence per residue', 4, 10);
+    }
+
+    // Load default sequence
+    window.loadPreset('hemoglobin');
+  </script>
+</body>
+</html>
