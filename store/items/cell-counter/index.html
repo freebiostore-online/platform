@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Cell Counter - FreeBioStore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e5e5e5;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+header{width:100%;padding:16px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #222}
+header span.logo{font-size:20px}
+header h1{font-size:18px;font-weight:600;color:#10b981}
+header small{color:#777;margin-left:auto;font-size:13px}
+.container{max-width:1000px;width:100%;padding:24px;display:flex;flex-direction:column;gap:20px}
+.row{display:flex;gap:20px;flex-wrap:wrap}
+.panel{background:#141414;border:1px solid #262626;border-radius:10px;padding:20px;flex:1;min-width:280px}
+h2{font-size:15px;color:#aaa;font-weight:500;margin-bottom:10px}
+canvas{border:1px solid #333;border-radius:6px;display:block;background:#000;cursor:crosshair}
+label{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;color:#ccc}
+label span{width:100px;text-align:right}
+label input[type=range]{flex:1}
+label .val{width:40px;font-size:12px;color:#10b981}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{background:#262626;color:#e5e5e5;border:1px solid #333;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;transition:background .15s}
+button:hover{background:#333}
+button.primary{background:#10b981;border-color:#10b981;color:#fff}
+button.primary:hover{background:#059669}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:#0a1e14;border:1px solid #1a3d2a;border-radius:8px;padding:10px;text-align:center}
+.stat .num{font-size:22px;font-weight:700;color:#10b981}
+.stat .lbl{font-size:11px;color:#888;margin-top:2px}
+.stat.rbc .num{color:#ef4444}
+.stat.wbc .num{color:#a855f6}
+.stat.plt .num{color:#3b82f6}
+.pie-container{display:flex;justify-content:center;margin-top:12px}
+.legend-items{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#ccc}
+.legend-dot{width:12px;height:12px;border-radius:50%}
+.compare{margin-top:12px;padding:12px;background:#0a1e14;border:1px solid #1a3d2a;border-radius:8px}
+.compare h3{font-size:13px;color:#10b981;margin-bottom:6px}
+.compare p{font-size:12px;color:#888;margin:2px 0}
+</style>
+</head>
+<body>
+<header>
+<span class="logo">&#x1f9ec;</span>
+<h1>FreeBioStore</h1>
+<small>AI Cell Counter</small>
+</header>
+<div class="container">
+<div class="row">
+<div class="panel" style="flex:2;min-width:420px">
+<h2>Microscope View</h2>
+<canvas id="scope" width="512" height="400"></canvas>
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+<label><span>Cell Density</span><input type="range" id="density" min="20" max="200" value="80"><span class="val" id="densityV">80</span></label>
+<label><span>Noise</span><input type="range" id="noise" min="0" max="50" value="15"><span class="val" id="noiseV">15</span></label>
+</div>
+<div class="btn-row">
+<button class="primary" id="countBtn">Count Cells</button>
+<button id="genBtn">Generate Sample</button>
+<button id="clearMarks">Clear Marks</button>
+<button id="manualMode" style="margin-left:auto">Manual Count Mode</button>
+</div>
+</div>
+<div class="panel">
+<h2>Cell Counts</h2>
+<div class="stats" id="stats">
+<div class="stat rbc"><div class="num" id="rbcCount">-</div><div class="lbl">Red Blood Cells</div></div>
+<div class="stat wbc"><div class="num" id="wbcCount">-</div><div class="lbl">White Blood Cells</div></div>
+<div class="stat plt"><div class="num" id="pltCount">-</div><div class="lbl">Platelets</div></div>
+</div>
+<h2 style="margin-top:16px">Distribution</h2>
+<div class="pie-container"><canvas id="pie" width="160" height="160"></canvas></div>
+<div class="legend-items">
+<div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>Red Blood Cells (6-8um)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#a855f6"></div>White Blood Cells (10-15um)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Platelets (2-4um)</div>
+</div>
+<div class="compare" id="compare" style="display:none">
+<h3>AI vs Human Comparison</h3>
+<p id="cmpAI">AI: -</p>
+<p id="cmpHuman">Human: -</p>
+<p id="cmpDiff">Difference: -</p>
+</div>
+<h2 style="margin-top:16px">Density Estimate</h2>
+<div id="densityEst" style="font-size:13px;color:#666">Run detection first.</div>
+</div>
+</div>
+</div>
+<script>
+const canvas = document.getElementById('scope');
+const ctx = canvas.getContext('2d');
+const W = 512, H = 400;
+let cells = []; // ground truth
+let detected = [];
+let humanMarks = [];
+let manualOn = false;
+
+const densityS = document.getElementById('density');
+const noiseS = document.getElementById('noise');
+const densityV = document.getElementById('densityV');
+const noiseV = document.getElementById('noiseV');
+densityS.addEventListener('input', () => { densityV.textContent = densityS.value; });
+noiseS.addEventListener('input', () => { noiseV.textContent = noiseS.value; });
+
+function generateSample() {
+  cells = [];
+  detected = [];
+  humanMarks = [];
+  const numCells = +densityS.value;
+  const noiseLevel = +noiseS.value;
+
+  // Pink-ish background
+  ctx.fillStyle = '#f5e6d8';
+  ctx.fillRect(0, 0, W, H);
+
+  // Background noise
+  const imgData = ctx.getImageData(0, 0, W, H);
+  const d = imgData.data;
+  for (let i = 0; i < W * H; i++) {
+    const n = (Math.random() - 0.5) * noiseLevel;
+    d[i*4] = Math.max(0, Math.min(255, d[i*4] + n));
+    d[i*4+1] = Math.max(0, Math.min(255, d[i*4+1] + n));
+    d[i*4+2] = Math.max(0, Math.min(255, d[i*4+2] + n));
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // Generate cells
+  for (let i = 0; i < numCells; i++) {
+    const roll = Math.random();
+    let type, r, color, alpha;
+    if (roll < 0.7) {
+      // Red blood cell
+      type = 'rbc';
+      r = 5 + Math.random() * 4; // 5-9px
+      const shade = 180 + Math.random() * 60;
+      color = `rgba(${shade},${40 + Math.random()*30},${40 + Math.random()*20},`;
+      alpha = 0.5 + Math.random() * 0.3;
+    } else if (roll < 0.85) {
+      // White blood cell
+      type = 'wbc';
+      r = 10 + Math.random() * 7; // 10-17px
+      color = `rgba(${130 + Math.random()*40},${80 + Math.random()*40},${160 + Math.random()*60},`;
+      alpha = 0.55 + Math.random() * 0.3;
+    } else {
+      // Platelet
+      type = 'plt';
+      r = 2 + Math.random() * 3; // 2-5px
+      color = `rgba(${60 + Math.random()*40},${80 + Math.random()*60},${180 + Math.random()*60},`;
+      alpha = 0.4 + Math.random() * 0.3;
+    }
+
+    const x = r + Math.random() * (W - 2 * r);
+    const y = r + Math.random() * (H - 2 * r);
+    cells.push({ x, y, r, type, color, alpha });
+  }
+
+  // Draw cells
+  cells.forEach(c => drawCell(c));
+
+  resetUI();
+}
+
+function drawCell(c) {
+  ctx.save();
+  if (c.type === 'rbc') {
+    // Biconcave disc: darker ring, lighter center
+    const grd = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
+    grd.addColorStop(0, c.color + (c.alpha * 0.4) + ')');
+    grd.addColorStop(0.5, c.color + c.alpha + ')');
+    grd.addColorStop(0.8, c.color + (c.alpha * 0.9) + ')');
+    grd.addColorStop(1, c.color + '0)');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fill();
+  } else if (c.type === 'wbc') {
+    // Larger, with visible nucleus
+    const grd = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
+    grd.addColorStop(0, c.color + c.alpha + ')');
+    grd.addColorStop(0.7, c.color + (c.alpha * 0.6) + ')');
+    grd.addColorStop(1, c.color + '0)');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fill();
+    // Nucleus
+    ctx.fillStyle = `rgba(80,40,120,${c.alpha * 0.7})`;
+    ctx.beginPath(); ctx.arc(c.x - c.r * 0.15, c.y, c.r * 0.5, 0, Math.PI * 2); ctx.fill();
+  } else {
+    // Platelet: small dot
+    ctx.fillStyle = c.color + c.alpha + ')';
+    ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function resetUI() {
+  document.getElementById('rbcCount').textContent = '-';
+  document.getElementById('wbcCount').textContent = '-';
+  document.getElementById('pltCount').textContent = '-';
+  document.getElementById('compare').style.display = 'none';
+  document.getElementById('densityEst').textContent = 'Run detection first.';
+  const pc = document.getElementById('pie').getContext('2d');
+  pc.clearRect(0, 0, 160, 160);
+}
+
+function countCells() {
+  detected = [];
+  // Re-draw clean
+  generateSample();
+
+  // Get image data for detection
+  const imgData = ctx.getImageData(0, 0, W, H);
+  const d = imgData.data;
+
+  // Convert to brightness + color channels
+  const bright = new Float32Array(W * H);
+  const red = new Float32Array(W * H);
+  const blue = new Float32Array(W * H);
+  const purple = new Float32Array(W * H);
+
+  for (let i = 0; i < W * H; i++) {
+    const r = d[i*4], g = d[i*4+1], b = d[i*4+2];
+    bright[i] = (r + g + b) / (3 * 255);
+    red[i] = r / 255 - (g + b) / (2 * 255); // redness
+    blue[i] = b / 255 - (r + g) / (2 * 255); // blueness
+    purple[i] = (r + b) / (2 * 255) - g / 255; // purpleness
+  }
+
+  // Find dark blobs (cells are darker than background)
+  const bgBright = 0.85; // approximate background brightness
+  const visited = new Uint8Array(W * H);
+
+  for (let y = 2; y < H - 2; y++) {
+    for (let x = 2; x < W - 2; x++) {
+      const idx = y * W + x;
+      if (visited[idx] || bright[idx] > bgBright - 0.08) continue;
+
+      // Flood fill to find blob
+      const queue = [idx];
+      visited[idx] = 1;
+      const pixels = [];
+      let sumX = 0, sumY = 0, sumR = 0, sumB = 0, sumP = 0;
+
+      while (queue.length > 0) {
+        const p = queue.pop();
+        const px = p % W, py = Math.floor(p / W);
+        pixels.push(p);
+        sumX += px; sumY += py;
+        sumR += red[p]; sumB += blue[p]; sumP += purple[p];
+
+        for (const [dx, dy] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+          const nx = px + dx, ny = py + dy;
+          if (nx < 0 || nx >= W || ny < 0 || ny >= H) continue;
+          const ni = ny * W + nx;
+          if (!visited[ni] && bright[ni] < bgBright - 0.05) {
+            visited[ni] = 1;
+            queue.push(ni);
+          }
+        }
+        if (pixels.length > 2000) break; // safety
+      }
+
+      if (pixels.length < 4) continue; // too small, noise
+
+      const cx = sumX / pixels.length;
+      const cy = sumY / pixels.length;
+      const area = pixels.length;
+      const radius = Math.sqrt(area / Math.PI);
+      const avgR = sumR / pixels.length;
+      const avgB = sumB / pixels.length;
+      const avgP = sumP / pixels.length;
+
+      // Classify by size and color
+      let type;
+      if (radius < 4) type = 'plt';
+      else if (radius > 8 && avgP > avgR * 0.5) type = 'wbc';
+      else type = 'rbc';
+
+      // Check no duplicate in vicinity
+      let dup = false;
+      for (const d of detected) {
+        if (Math.sqrt((d.x - cx) ** 2 + (d.y - cy) ** 2) < Math.max(d.r, radius) * 0.7) { dup = true; break; }
+      }
+      if (!dup) detected.push({ x: cx, y: cy, r: radius, type });
+    }
+  }
+
+  // Draw detection circles
+  const colors = { rbc: '#ef4444', wbc: '#a855f6', plt: '#3b82f6' };
+  detected.forEach(c => {
+    ctx.strokeStyle = colors[c.type];
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 2]);
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r + 2, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // Redraw human marks
+  humanMarks.forEach(m => {
+    ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(m.x, m.y, 6, 0, Math.PI * 2); ctx.stroke();
+  });
+
+  // Update counts
+  const counts = { rbc: 0, wbc: 0, plt: 0 };
+  detected.forEach(c => counts[c.type]++);
+  document.getElementById('rbcCount').textContent = counts.rbc;
+  document.getElementById('wbcCount').textContent = counts.wbc;
+  document.getElementById('pltCount').textContent = counts.plt;
+
+  // Pie chart
+  drawPie(counts);
+
+  // Density estimate
+  const total = detected.length;
+  const areaMMsq = (W * H) / (100 * 100); // assume 100px = 1mm
+  document.getElementById('densityEst').innerHTML =
+    `Total cells: <b style="color:#10b981">${total}</b><br>` +
+    `Estimated density: <b style="color:#10b981">${(total / areaMMsq).toFixed(0)}</b> cells/mm<sup>2</sup><br>` +
+    `RBC:WBC ratio: <b style="color:#10b981">${counts.wbc > 0 ? (counts.rbc / counts.wbc).toFixed(1) : 'N/A'}:1</b>`;
+
+  // Comparison
+  if (humanMarks.length > 0) showComparison(total);
+}
+
+function drawPie(counts) {
+  const pc = document.getElementById('pie').getContext('2d');
+  pc.clearRect(0, 0, 160, 160);
+  const total = counts.rbc + counts.wbc + counts.plt;
+  if (total === 0) return;
+  const slices = [
+    { val: counts.rbc, col: '#ef4444' },
+    { val: counts.wbc, col: '#a855f6' },
+    { val: counts.plt, col: '#3b82f6' }
+  ];
+  let angle = -Math.PI / 2;
+  slices.forEach(s => {
+    const sweep = (s.val / total) * Math.PI * 2;
+    pc.fillStyle = s.col;
+    pc.beginPath();
+    pc.moveTo(80, 80);
+    pc.arc(80, 80, 70, angle, angle + sweep);
+    pc.closePath();
+    pc.fill();
+    // Percentage label
+    if (s.val > 0) {
+      const mid = angle + sweep / 2;
+      const lx = 80 + Math.cos(mid) * 45;
+      const ly = 80 + Math.sin(mid) * 45;
+      pc.fillStyle = '#fff';
+      pc.font = '11px system-ui';
+      pc.textAlign = 'center';
+      pc.fillText(Math.round(s.val / total * 100) + '%', lx, ly + 4);
+    }
+    angle += sweep;
+  });
+}
+
+function showComparison(aiTotal) {
+  const cmp = document.getElementById('compare');
+  cmp.style.display = 'block';
+  document.getElementById('cmpAI').textContent = `AI count: ${aiTotal}`;
+  document.getElementById('cmpHuman').textContent = `Human count: ${humanMarks.length}`;
+  const diff = aiTotal - humanMarks.length;
+  document.getElementById('cmpDiff').textContent = `Difference: ${diff > 0 ? '+' : ''}${diff} (${diff === 0 ? 'exact match' : Math.abs(diff) <= 3 ? 'close' : 'significant gap'})`;
+}
+
+// Manual counting
+document.getElementById('manualMode').addEventListener('click', function () {
+  manualOn = !manualOn;
+  this.style.background = manualOn ? '#10b981' : '';
+  this.style.color = manualOn ? '#fff' : '';
+  this.textContent = manualOn ? 'Manual ON' : 'Manual Count Mode';
+});
+
+canvas.addEventListener('click', e => {
+  if (!manualOn) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (W / rect.width);
+  const y = (e.clientY - rect.top) * (H / rect.height);
+  humanMarks.push({ x, y });
+  ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.stroke();
+  if (detected.length > 0) showComparison(detected.length);
+});
+
+document.getElementById('genBtn').addEventListener('click', generateSample);
+document.getElementById('countBtn').addEventListener('click', countCells);
+document.getElementById('clearMarks').addEventListener('click', () => {
+  humanMarks = [];
+  document.getElementById('compare').style.display = 'none';
+  generateSample();
+});
+
+generateSample();
+</script>
+</body>
+</html>

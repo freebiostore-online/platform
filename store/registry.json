@@ -1,6 +1,18 @@
 {
   "robots": [
     {
+      "id": "cell-counter",
+      "name": "Cell Counter",
+      "description": "Detect and classify blood cells in microscope view. RBC, WBC, platelets. Pie chart distribution. Manual vs AI count.",
+      "storeType": "behavior",
+      "category": "analysis",
+      "icon": "\ud83e\udd16",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
       "id": "gene-expression",
       "name": "Gene Expression",
       "description": "Animate DNA\u2192mRNA\u2192Protein. Click bases to mutate \u2014 see silent, missense, and nonsense mutations. Codon table included.",
