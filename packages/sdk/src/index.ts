@@ -65,3 +65,5 @@ export type {
   OllamaStatus,
 } from './types.js';
 export { WorkerBridge } from './worker-bridge.js';
+// Molecule analysis — SMILES parser, property calculator, drug-likeness
+export { Molecule } from './molecule.js';
