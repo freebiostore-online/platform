@@ -1,0 +1,23 @@
+{
+  "name": "AGENTNAME",
+  "description": "Convert text to natural-sounding speech using Kokoro TTS, entirely in your browser",
+  "version": "1.0.0",
+  "task": "text-to-speech",
+  "category": "audio",
+  "models": [
+    {
+      "repo": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "size": "160MB",
+      "backend": ["webgpu", "wasm"],
+      "task": "text-to-speech"
+    }
+  ],
+  "estimatedDownload": "160MB",
+  "input": ["text/plain"],
+  "output": ["audio/wav"],
+  "requiresWebGPU": false,
+  "requiresOllama": false,
+  "requiresWebContainers": false,
+  "offlineCapable": true,
+  "desktopOnly": true
+}

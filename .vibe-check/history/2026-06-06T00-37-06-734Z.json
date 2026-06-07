@@ -1,0 +1,4300 @@
+{
+  "version": "0.31.0",
+  "timestamp": "2026-06-06T00:37:06.734Z",
+  "score": 58,
+  "grade": "D",
+  "checks": [
+    {
+      "name": "structure",
+      "score": 100,
+      "grade": "A",
+      "details": {
+        "found": [
+          "package.json",
+          "tsconfig.json",
+          "LICENSE",
+          ".gitignore",
+          "README.md",
+          "lockfile"
+        ],
+        "missing": [],
+        "srcFiles": 50,
+        "testFiles": 20,
+        "testRatio": "40%",
+        "monorepo": true,
+        "workspaceTool": "pnpm",
+        "packages": 15
+      },
+      "issues": [],
+      "duration": 10
+    },
+    {
+      "name": "lint",
+      "score": 45,
+      "grade": "D",
+      "details": {
+        "errors": 33,
+        "warnings": 55,
+        "linter": "biome"
+      },
+      "issues": [
+        {
+          "severity": "info",
+          "message": "Template literals are preferred over string concatenation.",
+          "file": "packages/extension/src/background.ts",
+          "rule": "lint/style/useTemplate"
+        },
+        {
+          "severity": "info",
+          "message": "Template literals are preferred over string concatenation.",
+          "file": "packages/extension/src/content.ts",
+          "rule": "lint/style/useTemplate"
+        },
+        {
+          "severity": "info",
+          "message": "Template literals are preferred over string concatenation.",
+          "file": "packages/extension/src/player.ts",
+          "rule": "lint/style/useTemplate"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/background.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/background.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/background.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Several of these imports are unused.",
+          "file": "packages/extension/src/background.ts",
+          "rule": "lint/correctness/noUnusedImports"
+        },
+        {
+          "severity": "warning",
+          "message": "This parameter sender is unused.",
+          "file": "packages/extension/src/background.ts",
+          "rule": "lint/correctness/noUnusedFunctionParameters"
+        },
+        {
+          "severity": "warning",
+          "message": "This parameter action is unused.",
+          "file": "packages/extension/src/content.ts",
+          "rule": "lint/correctness/noUnusedFunctionParameters"
+        },
+        {
+          "severity": "warning",
+          "message": "This variable tiers is unused.",
+          "file": "packages/extension/src/recorder.test.ts",
+          "rule": "lint/correctness/noUnusedVariables"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/store.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/store.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/store.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/store.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Several of these imports are unused.",
+          "file": "packages/extension/src/trainer.ts",
+          "rule": "lint/correctness/noUnusedImports"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/extension/src/trainer.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Change to an optional chain.",
+          "file": "packages/extension/src/trainer.ts",
+          "rule": "lint/complexity/useOptionalChain"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/agent.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Several of these imports are unused.",
+          "file": "packages/sdk/src/hooks/use-built-in-ai.ts",
+          "rule": "lint/correctness/noUnusedImports"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/hooks/use-model.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/hooks/use-worker-inference.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/model.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "This variable store is unused.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/correctness/noUnusedVariables"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Several of these imports are unused.",
+          "file": "packages/sdk/src/result-store.test.ts",
+          "rule": "lint/correctness/noUnusedImports"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/result-store.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "This parameter data is unused.",
+          "file": "packages/sdk/src/rooms.test.ts",
+          "rule": "lint/correctness/noUnusedFunctionParameters"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/worker-bridge.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/worker-bridge.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/worker-bridge.test.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/worker-bridge.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/worker-bridge.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "warning",
+          "message": "Unexpected any. Specify a different type.",
+          "file": "packages/sdk/src/worker-bridge.ts",
+          "rule": "lint/suspicious/noExplicitAny"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/background.ts",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Sort these imports.",
+          "file": "packages/extension/src/background.ts",
+          "rule": "assist/source/organizeImports"
+        },
+        {
+          "severity": "error",
+          "message": "Sort these imports.",
+          "file": "packages/extension/src/content.ts",
+          "rule": "assist/source/organizeImports"
+        },
+        {
+          "severity": "error",
+          "message": "Other switch clauses can erroneously access this declaration.\nWrap the declaration in a block to restrict its access to the switch clause.",
+          "file": "packages/extension/src/content.ts",
+          "rule": "lint/correctness/noSwitchDeclarations"
+        },
+        {
+          "severity": "error",
+          "message": "Other switch clauses can erroneously access this declaration.\nWrap the declaration in a block to restrict its access to the switch clause.",
+          "file": "packages/extension/src/content.ts",
+          "rule": "lint/correctness/noSwitchDeclarations"
+        },
+        {
+          "severity": "error",
+          "message": "This callback passed to forEach() iterable method should not return a value.",
+          "file": "packages/extension/src/content.ts",
+          "rule": "lint/suspicious/useIterableCallbackReturn"
+        },
+        {
+          "severity": "error",
+          "message": "Other switch clauses can erroneously access this declaration.\nWrap the declaration in a block to restrict its access to the switch clause.",
+          "file": "packages/extension/src/content.ts",
+          "rule": "lint/correctness/noSwitchDeclarations"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/content.ts",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/player.ts",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "This callback passed to forEach() iterable method should not return a value.",
+          "file": "packages/extension/src/player.ts",
+          "rule": "lint/suspicious/useIterableCallbackReturn"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/popup/App.tsx",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/popup/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Sort the imported names.",
+          "file": "packages/extension/src/popup/App.tsx",
+          "rule": "assist/source/organizeImports"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/popup/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/popup/index.css",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Sort the imported names.",
+          "file": "packages/extension/src/recorder.test.ts",
+          "rule": "assist/source/organizeImports"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/recorder.test.ts",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "This callback passed to forEach() iterable method should not return a value.",
+          "file": "packages/extension/src/recorder.ts",
+          "rule": "lint/suspicious/useIterableCallbackReturn"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/recorder.ts",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Sort the imported names.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "assist/source/organizeImports"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Provide an explicit type prop for the button element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/a11y/useButtonType"
+        },
+        {
+          "severity": "error",
+          "message": "Avoid using the index of an array as key property in an element.",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "lint/suspicious/noArrayIndexKey"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/sidepanel/index.css",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/store.ts",
+          "rule": "format"
+        },
+        {
+          "severity": "error",
+          "message": "Sort the imported names.",
+          "file": "packages/extension/src/trainer.ts",
+          "rule": "assist/source/organizeImports"
+        },
+        {
+          "severity": "error",
+          "message": "Formatter would have printed the following content:",
+          "file": "packages/extension/src/trainer.ts",
+          "rule": "format"
+        }
+      ],
+      "duration": 661
+    },
+    {
+      "name": "types",
+      "score": 0,
+      "grade": "F",
+      "details": {
+        "errors": 161,
+        "ok": false
+      },
+      "issues": [
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 18,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 21,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 21,
+          "rule": "TS7006",
+          "message": "Parameter 'sender' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 21,
+          "rule": "TS7006",
+          "message": "Parameter 'sendResponse' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 26,
+          "rule": "TS2503",
+          "message": "Cannot find namespace 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 29,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 35,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 42,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 72,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/background.ts",
+          "line": 74,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/content.ts",
+          "line": 42,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/content.ts",
+          "line": 42,
+          "rule": "TS7006",
+          "message": "Parameter '_sender' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/content.ts",
+          "line": 42,
+          "rule": "TS7006",
+          "message": "Parameter 'sendResponse' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/content.ts",
+          "line": 47,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/content.ts",
+          "line": 70,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/content.ts",
+          "line": 75,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 1,
+          "rule": "TS2307",
+          "message": "Cannot find module 'react' or its corresponding type declarations."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 9,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 9,
+          "rule": "TS7006",
+          "message": "Parameter 'res' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 16,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 21,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 21,
+          "rule": "TS2875",
+          "message": "This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 22,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 23,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 23,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 24,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 27,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 28,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 31,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 32,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 34,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 39,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 40,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 40,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 41,
+          "rule": "TS7006",
+          "message": "Parameter 'a' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 42,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 44,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 49,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 49,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 50,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 50,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 51,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 53,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 55,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 57,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 60,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 62,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/App.tsx",
+          "line": 63,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/main.tsx",
+          "line": 1,
+          "rule": "TS2307",
+          "message": "Cannot find module 'react' or its corresponding type declarations."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/main.tsx",
+          "line": 2,
+          "rule": "TS2307",
+          "message": "Cannot find module 'react-dom/client' or its corresponding type declarations."
+        },
+        {
+          "severity": "error",
+          "file": "src/popup/main.tsx",
+          "line": 7,
+          "rule": "TS2875",
+          "message": "This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 1,
+          "rule": "TS2307",
+          "message": "Cannot find module 'react' or its corresponding type declarations."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 14,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 21,
+          "rule": "TS7006",
+          "message": "Parameter 'a' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 24,
+          "rule": "TS2875",
+          "message": "This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 28,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 30,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 31,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 31,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 32,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 32,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 33,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 36,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 39,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 41,
+          "rule": "TS7006",
+          "message": "Parameter 'e' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 45,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 47,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 53,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 56,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 58,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 70,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 72,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 75,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 77,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 78,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 78,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 79,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 79,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 80,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 82,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 83,
+          "rule": "TS7006",
+          "message": "Parameter 'a' implicitly has an 'any' type."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 84,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 89,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 90,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 90,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 92,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 96,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 98,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 99,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 99,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 100,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 102,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 104,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 105,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 119,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 127,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 140,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 145,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 147,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 148,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 148,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 149,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 149,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 151,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 151,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 153,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 156,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 157,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 160,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 161,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 164,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 165,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 168,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 169,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 172,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 172,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 176,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 177,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 177,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 178,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 178,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 179,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 179,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 180,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 180,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 181,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 181,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 182,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 185,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 186,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 186,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 188,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 189,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 189,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 190,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 191,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 191,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 192,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 194,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 194,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 195,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 196,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 197,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 201,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 202,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 204,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 208,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 209,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 209,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 210,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 212,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 220,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 221,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/App.tsx",
+          "line": 223,
+          "rule": "TS7026",
+          "message": "JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/main.tsx",
+          "line": 1,
+          "rule": "TS2307",
+          "message": "Cannot find module 'react' or its corresponding type declarations."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/main.tsx",
+          "line": 2,
+          "rule": "TS2307",
+          "message": "Cannot find module 'react-dom/client' or its corresponding type declarations."
+        },
+        {
+          "severity": "error",
+          "file": "src/sidepanel/main.tsx",
+          "line": 7,
+          "rule": "TS2875",
+          "message": "This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+        },
+        {
+          "severity": "error",
+          "file": "src/store.ts",
+          "line": 24,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/store.ts",
+          "line": 25,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/store.ts",
+          "line": 25,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        },
+        {
+          "severity": "error",
+          "file": "src/store.ts",
+          "line": 26,
+          "rule": "TS2304",
+          "message": "Cannot find name 'chrome'."
+        }
+      ],
+      "duration": 26162
+    },
+    {
+      "name": "type-safety",
+      "score": 87,
+      "grade": "B",
+      "details": {
+        ": any": 12,
+        "non-null assertion (!.)": 3,
+        "as any": 8,
+        "filesScanned": 50,
+        "totalUnsafe": 23
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/extension/src/background.ts",
+          "line": 21,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/extension/src/background.ts",
+          "line": 26,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/extension/src/background.ts",
+          "line": 26,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "info",
+          "message": "non-null assertion (!.)",
+          "file": "packages/extension/src/recorder.ts",
+          "line": 251,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/extension/src/store.ts",
+          "line": 30,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/extension/src/store.ts",
+          "line": 42,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 162,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 23,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 35,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 52,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 90,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 112,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 132,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 152,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/sdk/src/hooks/use-model.ts",
+          "line": 48,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/sdk/src/hooks/use-worker-inference.ts",
+          "line": 6,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": "as any",
+          "file": "packages/sdk/src/model.ts",
+          "line": 15,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/sdk/src/result-store.ts",
+          "line": 53,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/sdk/src/worker-bridge.ts",
+          "line": 9,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/sdk/src/worker-bridge.ts",
+          "line": 10,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "info",
+          "message": "non-null assertion (!.)",
+          "file": "packages/sdk/src/worker-bridge.ts",
+          "line": 31,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "warning",
+          "message": ": any",
+          "file": "packages/sdk/src/worker-bridge.ts",
+          "line": 41,
+          "rule": "unsafe-type"
+        },
+        {
+          "severity": "info",
+          "message": "non-null assertion (!.)",
+          "file": "packages/agents/browser-automation/src/index.ts",
+          "line": 83,
+          "rule": "unsafe-type"
+        }
+      ],
+      "duration": 22
+    },
+    {
+      "name": "standards",
+      "score": 22,
+      "grade": "F",
+      "details": {
+        "filesScanned": 50,
+        "codeSmells": 44,
+        "largeFiles": 4,
+        "namingViolations": 0
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "309 lines — consider splitting (max 300)",
+          "file": "packages/extension/src/player.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "262 lines — getting large",
+          "file": "packages/extension/src/recorder.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "226 lines — getting large",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "241 lines — getting large",
+          "file": "packages/extension/src/trainer.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "217 lines — getting large",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "229 lines — getting large",
+          "file": "packages/sdk/src/heuristic.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "215 lines — getting large",
+          "file": "packages/agents/browser-automation/src/index.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "266 lines — getting large",
+          "file": "packages/agents/resume-parser/src/index.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "225 lines — getting large",
+          "file": "packages/agents/writing-assistant/src/index.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "642 lines — consider splitting (max 300)",
+          "file": "workers/host/src/api.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "208 lines — getting large",
+          "file": "workers/host/src/index.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "525 lines — consider splitting (max 300)",
+          "file": "workers/mcp/src/index.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "313 lines — consider splitting (max 300)",
+          "file": "workers/mcp/src/oauth-provider.ts",
+          "rule": "large-file"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/check.ts",
+          "line": 5,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/check.ts",
+          "line": 6,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/check.ts",
+          "line": 16,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/check.ts",
+          "line": 19,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/check.ts",
+          "line": 22,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/check.ts",
+          "line": 26,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/check.ts",
+          "line": 27,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 39,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 47,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 48,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 49,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 50,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 51,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 52,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "packages/cli/src/commands/init.ts",
+          "line": 53,
+          "rule": "console.log"
+        },
+        {
+          "severity": "warning",
+          "message": "innerHTML is an XSS vector — use textContent or DOM APIs",
+          "file": "packages/extension/src/content.ts",
+          "line": 29,
+          "rule": "innerHTML assignment"
+        },
+        {
+          "severity": "error",
+          "message": "new Function() is equivalent to eval()",
+          "file": "packages/extension/src/player.ts",
+          "line": 122,
+          "rule": "new Function()"
+        },
+        {
+          "severity": "warning",
+          "message": "Unresolved TODO/FIXME comment",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 45,
+          "rule": "TODO/FIXME"
+        },
+        {
+          "severity": "error",
+          "message": "new Function() is equivalent to eval()",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 126,
+          "rule": "new Function()"
+        },
+        {
+          "severity": "error",
+          "message": "new Function() is equivalent to eval()",
+          "file": "packages/sdk/src/agent-config.ts",
+          "line": 85,
+          "rule": "new Function()"
+        },
+        {
+          "severity": "error",
+          "message": "new Function() is equivalent to eval()",
+          "file": "packages/sdk/src/heuristic.ts",
+          "line": 81,
+          "rule": "new Function()"
+        },
+        {
+          "severity": "error",
+          "message": "new Function() is equivalent to eval()",
+          "file": "packages/sdk/src/heuristic.ts",
+          "line": 100,
+          "rule": "new Function()"
+        },
+        {
+          "severity": "warning",
+          "message": "Non-HTTPS URL — use https://",
+          "file": "packages/sdk/src/rooms.ts",
+          "line": 12,
+          "rule": "http:// URL"
+        },
+        {
+          "severity": "error",
+          "message": "new Function() is equivalent to eval()",
+          "file": "packages/agents/browser-automation/src/index.ts",
+          "line": 189,
+          "rule": "new Function()"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 539,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 540,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 541,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 545,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 546,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 567,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 568,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 569,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 572,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 574,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 575,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "warning",
+          "message": "innerHTML is an XSS vector — use textContent or DOM APIs",
+          "file": "workers/host/src/api.ts",
+          "line": 600,
+          "rule": "innerHTML assignment"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 603,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 608,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 619,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 622,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 623,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 630,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "error",
+          "message": "Use const/let instead of var",
+          "file": "workers/host/src/api.ts",
+          "line": 631,
+          "rule": "var keyword"
+        },
+        {
+          "severity": "warning",
+          "message": "console.log in production code",
+          "file": "workers/mcp/src/index.ts",
+          "line": 399,
+          "rule": "console.log"
+        }
+      ],
+      "duration": 28
+    },
+    {
+      "name": "complexity",
+      "score": 88,
+      "grade": "B",
+      "details": {
+        "totalFiles": 50,
+        "totalLines": 6791,
+        "longFunctions": 10,
+        "complexFunctions": 5,
+        "functionCount": 228
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "publish: 67 lines (max 60)",
+          "file": "packages/cli/src/commands/publish.ts",
+          "line": 16,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "handleMessage: 124 lines (max 60)",
+          "file": "packages/extension/src/background.ts",
+          "line": 26,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "buildSelectors: 64 lines (max 60)",
+          "file": "packages/extension/src/recorder.ts",
+          "line": 22,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "buildSelectors: complexity 16 (max 15)",
+          "file": "packages/extension/src/recorder.ts",
+          "line": 22,
+          "rule": "high-complexity"
+        },
+        {
+          "severity": "warning",
+          "message": "DetailView: 115 lines (max 60)",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "line": 111,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "buildEvolvePrompt: 63 lines (max 60)",
+          "file": "packages/sdk/src/heuristic.ts",
+          "line": 154,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "buildEvolvePrompt: complexity 16 (max 15)",
+          "file": "packages/sdk/src/heuristic.ts",
+          "line": 154,
+          "rule": "high-complexity"
+        },
+        {
+          "severity": "warning",
+          "message": "handleApiRoute: 109 lines (max 60)",
+          "file": "workers/host/src/api.ts",
+          "line": 256,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "renderKeysPage: 153 lines (max 60)",
+          "file": "workers/host/src/api.ts",
+          "line": 489,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "renderKeysPage: complexity 19 (max 15)",
+          "file": "workers/host/src/api.ts",
+          "line": 489,
+          "rule": "high-complexity"
+        },
+        {
+          "severity": "warning",
+          "message": "fetch: 108 lines (max 60)",
+          "file": "workers/host/src/index.ts",
+          "line": 36,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "fetch: complexity 30 (max 15)",
+          "file": "workers/host/src/index.ts",
+          "line": 36,
+          "rule": "high-complexity"
+        },
+        {
+          "severity": "warning",
+          "message": "init: 377 lines (max 60)",
+          "file": "workers/mcp/src/index.ts",
+          "line": 72,
+          "rule": "long-function"
+        },
+        {
+          "severity": "warning",
+          "message": "init: complexity 50 (max 15)",
+          "file": "workers/mcp/src/index.ts",
+          "line": 72,
+          "rule": "high-complexity"
+        },
+        {
+          "severity": "warning",
+          "message": "tokenExchange: 65 lines (max 60)",
+          "file": "workers/mcp/src/oauth-provider.ts",
+          "line": 248,
+          "rule": "long-function"
+        }
+      ],
+      "duration": 25
+    },
+    {
+      "name": "duplication",
+      "score": 95,
+      "grade": "A",
+      "details": {
+        "filesScanned": 50,
+        "totalSourceLines": 6791,
+        "duplicateBlocks": 12,
+        "duplicationPct": "1%",
+        "tool": "built-in"
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): const issues: string[] = []; │ const walkSrc = (d: string) => { │ for (const entry of fs.readdirSync(d, { withFileTypes:...",
+          "file": "packages/compliance/src/index.ts:108 ↔ packages/compliance/src/index.ts:148",
+          "rule": "duplicate-code",
+          "snippet": "const issues: string[] = [];"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): createRoot(document.getElementById('root')!).render( │ <StrictMode> │ <App />",
+          "file": "packages/extension/src/popup/main.tsx:4 ↔ packages/extension/src/sidepanel/main.tsx:4",
+          "rule": "duplicate-code",
+          "snippet": "createRoot(document.getElementById('root')!).render("
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): createRoot(document.getElementById('root')!).render( │ <StrictMode> │ <App />",
+          "file": "packages/extension/src/popup/main.tsx:5 ↔ packages/extension/src/sidepanel/main.tsx:5",
+          "rule": "duplicate-code",
+          "snippet": "createRoot(document.getElementById('root')!).render("
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): createPromptSession, │ createRewriter, │ createSummarizer,",
+          "file": "packages/sdk/src/hooks/use-built-in-ai.ts:2 ↔ packages/sdk/src/index.ts:27",
+          "rule": "duplicate-code",
+          "snippet": "createPromptSession,"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): createPromptSession, │ createRewriter, │ createSummarizer,",
+          "file": "packages/sdk/src/hooks/use-built-in-ai.ts:3 ↔ packages/sdk/src/index.ts:28",
+          "rule": "duplicate-code",
+          "snippet": "createPromptSession,"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): createPromptSession, │ createRewriter, │ createSummarizer,",
+          "file": "packages/sdk/src/hooks/use-built-in-ai.ts:4 ↔ packages/sdk/src/index.ts:29",
+          "rule": "duplicate-code",
+          "snippet": "createPromptSession,"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): createRewriter, │ createSummarizer, │ createTranslator,",
+          "file": "packages/sdk/src/hooks/use-built-in-ai.ts:5 ↔ packages/sdk/src/index.ts:30",
+          "rule": "duplicate-code",
+          "snippet": "createRewriter,"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): }, []); │ useEffect(() => { │ refresh();",
+          "file": "packages/sdk/src/hooks/use-model-cache.ts:21 ↔ packages/sdk/src/hooks/use-result-store.ts:20",
+          "rule": "duplicate-code",
+          "snippet": "}, []);"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): private apiBase: string; │ private agentId: string; │ constructor(apiBase: string, agentId: string) {",
+          "file": "packages/sdk/src/kv.ts:3 ↔ packages/sdk/src/rooms.ts:3",
+          "rule": "duplicate-code",
+          "snippet": "private apiBase: string;"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): private agentId: string; │ constructor(apiBase: string, agentId: string) { │ this.apiBase = apiBase;",
+          "file": "packages/sdk/src/kv.ts:4 ↔ packages/sdk/src/rooms.ts:4",
+          "rule": "duplicate-code",
+          "snippet": "private agentId: string;"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): try { │ const estimate = await navigator.storage.estimate(); │ return estimate.usage ?? 0;",
+          "file": "packages/sdk/src/model-cache.ts:49 ↔ packages/sdk/src/model.ts:44",
+          "rule": "duplicate-code",
+          "snippet": "try {"
+        },
+        {
+          "severity": "warning",
+          "message": "Duplicate (6 lines): const estimate = await navigator.storage.estimate(); │ return estimate.usage ?? 0; │ } catch {",
+          "file": "packages/sdk/src/model-cache.ts:50 ↔ packages/sdk/src/model.ts:45",
+          "rule": "duplicate-code",
+          "snippet": "const estimate = await navigator.storage.estimate();"
+        }
+      ],
+      "duration": 28
+    },
+    {
+      "name": "error-handling",
+      "score": 67,
+      "grade": "C",
+      "details": {
+        "emptyCatch": 4,
+        "throwString": 0,
+        "floatingPromises": 2,
+        "jsonParseUnsafe": 3,
+        "infiniteLoops": 0,
+        "hasErrorBoundary": false,
+        "tool": "built-in"
+      },
+      "issues": [
+        {
+          "severity": "error",
+          "message": "Empty catch block",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 230,
+          "rule": "empty-catch"
+        },
+        {
+          "severity": "error",
+          "message": "Empty catch block",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 186,
+          "rule": "empty-catch"
+        },
+        {
+          "severity": "error",
+          "message": "Empty catch block",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 206,
+          "rule": "empty-catch"
+        },
+        {
+          "severity": "warning",
+          "message": ".catch(() => {}) silently swallows errors — at least log them",
+          "file": "workers/host/src/api.ts",
+          "line": 477,
+          "rule": "swallowed-promise"
+        },
+        {
+          "severity": "error",
+          "message": "Empty catch block",
+          "file": "workers/host/src/api.ts",
+          "line": 547,
+          "rule": "empty-catch"
+        },
+        {
+          "severity": "warning",
+          "message": "Floating promise — missing await, .catch(), or return",
+          "file": "workers/host/src/api.ts",
+          "line": 564,
+          "rule": "floating-promise"
+        },
+        {
+          "severity": "warning",
+          "message": "Floating promise — missing await, .catch(), or return",
+          "file": "workers/host/src/api.ts",
+          "line": 565,
+          "rule": "floating-promise"
+        },
+        {
+          "severity": "warning",
+          "message": "JSON.parse of external data without try-catch — crashes on malformed input",
+          "file": "packages/extension/src/store.ts",
+          "line": 32,
+          "rule": "unsafe-json-parse"
+        },
+        {
+          "severity": "warning",
+          "message": "JSON.parse of external data without try-catch — crashes on malformed input",
+          "file": "packages/extension/src/store.ts",
+          "line": 44,
+          "rule": "unsafe-json-parse"
+        },
+        {
+          "severity": "warning",
+          "message": "JSON.parse of external data without try-catch — crashes on malformed input",
+          "file": "packages/sdk/src/rooms.ts",
+          "line": 29,
+          "rule": "unsafe-json-parse"
+        },
+        {
+          "severity": "warning",
+          "message": "React project with no Error Boundary",
+          "rule": "no-error-boundary"
+        }
+      ],
+      "duration": 22
+    },
+    {
+      "name": "react",
+      "score": 70,
+      "grade": "C",
+      "details": {
+        "jsxFiles": 4,
+        "conditionalHooks": 0,
+        "missingKeys": 0,
+        "indexKeys": 1,
+        "propSpreading": 0,
+        "inlineHandlers": 2,
+        "effectNoDeps": 0,
+        "domManipulation": 2
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Using index as key — can cause rendering bugs with reorderable lists",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "line": 188,
+          "rule": "index-key"
+        },
+        {
+          "severity": "warning",
+          "message": "Direct DOM query in React component — use refs instead",
+          "file": "packages/extension/src/popup/main.tsx",
+          "line": 6,
+          "rule": "direct-dom"
+        },
+        {
+          "severity": "warning",
+          "message": "Direct DOM query in React component — use refs instead",
+          "file": "packages/extension/src/sidepanel/main.tsx",
+          "line": 6,
+          "rule": "direct-dom"
+        }
+      ],
+      "duration": 8
+    },
+    {
+      "name": "accessibility",
+      "score": 75,
+      "grade": "B",
+      "details": {
+        "jsxFiles": 4,
+        "missingAlt": 0,
+        "clickDiv": 0,
+        "missingLabel": 1,
+        "missingLang": 0,
+        "autofocus": 0,
+        "positiveTabindex": 0
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Form control without label, aria-label, or aria-labelledby",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "line": 39,
+          "rule": "form-label"
+        }
+      ],
+      "duration": 7
+    },
+    {
+      "name": "docs",
+      "score": 68,
+      "grade": "C",
+      "details": {
+        "readmeLines": 128,
+        "totalExports": 125,
+        "documentedExports": 69,
+        "documentedPct": "55%",
+        "hasChangelog": false
+      },
+      "issues": [
+        {
+          "severity": "info",
+          "message": "No CHANGELOG.md — version history not documented",
+          "rule": "no-changelog"
+        }
+      ],
+      "duration": 8
+    },
+    {
+      "name": "best-practices",
+      "score": 47,
+      "grade": "D",
+      "details": {
+        "practicesChecked": 34,
+        "practicesFollowed": 16,
+        "adherence": "47%"
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "ci.yml: no explicit permissions block — defaults to read-write (overly permissive)",
+          "file": ".github/workflows/ci.yml",
+          "rule": "explicit-permissions"
+        },
+        {
+          "severity": "warning",
+          "message": "deploy-agents.yml: no explicit permissions block — defaults to read-write (overly permissive)",
+          "file": ".github/workflows/deploy-agents.yml",
+          "rule": "explicit-permissions"
+        },
+        {
+          "severity": "info",
+          "message": "deploy-agents.yml: uses long-lived secret tokens — consider OIDC trusted publishing/workload identity",
+          "file": ".github/workflows/deploy-agents.yml",
+          "rule": "prefer-oidc"
+        },
+        {
+          "severity": "info",
+          "message": "deploy-agents.yml: CI install without frozen lockfile — builds may not be reproducible",
+          "file": ".github/workflows/deploy-agents.yml",
+          "rule": "frozen-lockfile-ci"
+        },
+        {
+          "severity": "info",
+          "message": "deploy-host.yml: 2 third-party actions not pinned to SHA — vulnerable to supply chain attacks",
+          "file": ".github/workflows/deploy-host.yml",
+          "rule": "pin-actions-to-sha"
+        },
+        {
+          "severity": "warning",
+          "message": "deploy-host.yml: no explicit permissions block — defaults to read-write (overly permissive)",
+          "file": ".github/workflows/deploy-host.yml",
+          "rule": "explicit-permissions"
+        },
+        {
+          "severity": "info",
+          "message": "deploy-mcp.yml: 1 third-party actions not pinned to SHA — vulnerable to supply chain attacks",
+          "file": ".github/workflows/deploy-mcp.yml",
+          "rule": "pin-actions-to-sha"
+        },
+        {
+          "severity": "warning",
+          "message": "deploy-mcp.yml: no explicit permissions block — defaults to read-write (overly permissive)",
+          "file": ".github/workflows/deploy-mcp.yml",
+          "rule": "explicit-permissions"
+        },
+        {
+          "severity": "info",
+          "message": "deploy-mcp.yml: CI install without frozen lockfile — builds may not be reproducible",
+          "file": ".github/workflows/deploy-mcp.yml",
+          "rule": "frozen-lockfile-ci"
+        },
+        {
+          "severity": "warning",
+          "message": "deploy-store.yml: no explicit permissions block — defaults to read-write (overly permissive)",
+          "file": ".github/workflows/deploy-store.yml",
+          "rule": "explicit-permissions"
+        },
+        {
+          "severity": "info",
+          "message": "deploy-store.yml: uses long-lived secret tokens — consider OIDC trusted publishing/workload identity",
+          "file": ".github/workflows/deploy-store.yml",
+          "rule": "prefer-oidc"
+        },
+        {
+          "severity": "info",
+          "message": "No SECURITY.md — users don't know how to report vulnerabilities",
+          "rule": "security-policy"
+        },
+        {
+          "severity": "info",
+          "message": "No CODEOWNERS file — no mandatory reviewers for critical paths",
+          "rule": "codeowners"
+        },
+        {
+          "severity": "info",
+          "message": "No CONTRIBUTING.md — onboarding is harder for new contributors",
+          "rule": "contributing-guide"
+        },
+        {
+          "severity": "info",
+          "message": "No pre-commit hooks (husky/lefthook) — lint/format not enforced before commit",
+          "rule": "pre-commit-hooks"
+        },
+        {
+          "severity": "info",
+          "message": "No Dependabot/Renovate — dependency updates are manual and often forgotten",
+          "rule": "automated-deps"
+        },
+        {
+          "severity": "info",
+          "message": "No commit convention enforcement (commitlint/changesets) — changelog generation is manual",
+          "rule": "conventional-commits"
+        }
+      ],
+      "duration": 2
+    },
+    {
+      "name": "testing",
+      "score": 29,
+      "grade": "F",
+      "details": {
+        "pyramid": {
+          "unit": 20,
+          "integration": 0,
+          "component": 0,
+          "e2e": 0
+        },
+        "layersPresent": "1/4",
+        "e2eTool": "none",
+        "testFiles": 20,
+        "srcFiles": 50,
+        "pairing": "40%",
+        "quality": {
+          "assertionsPerTest": 1.6,
+          "mockRatio": 0.26,
+          "snapshotRatio": 0
+        }
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "No integration tests — consider testing service boundaries",
+          "rule": "no-integration-tests"
+        },
+        {
+          "severity": "warning",
+          "message": "react project with no component tests — test your UI components",
+          "rule": "no-component-tests"
+        },
+        {
+          "severity": "warning",
+          "message": "No E2E test framework (Playwright/Cypress) — critical user flows untested",
+          "rule": "no-e2e-framework"
+        },
+        {
+          "severity": "info",
+          "message": "No test file for packages/cli/src/commands/check.ts",
+          "file": "packages/cli/src/commands/check.ts",
+          "rule": "untested-file"
+        },
+        {
+          "severity": "info",
+          "message": "No test file for packages/cli/src/commands/init.ts",
+          "file": "packages/cli/src/commands/init.ts",
+          "rule": "untested-file"
+        },
+        {
+          "severity": "info",
+          "message": "No test file for packages/cli/src/commands/publish.ts",
+          "file": "packages/cli/src/commands/publish.ts",
+          "rule": "untested-file"
+        },
+        {
+          "severity": "info",
+          "message": "No test file for packages/extension/src/background.ts",
+          "file": "packages/extension/src/background.ts",
+          "rule": "untested-file"
+        },
+        {
+          "severity": "info",
+          "message": "No test file for packages/extension/src/content.ts",
+          "file": "packages/extension/src/content.ts",
+          "rule": "untested-file"
+        },
+        {
+          "severity": "info",
+          "message": "...and 16 more untested files",
+          "rule": "untested-file"
+        }
+      ],
+      "duration": 920
+    },
+    {
+      "name": "secrets",
+      "score": 100,
+      "grade": "A",
+      "details": {
+        "secretsFound": 0,
+        "tool": "built-in"
+      },
+      "issues": [],
+      "duration": 271
+    },
+    {
+      "name": "security",
+      "score": 31,
+      "grade": "F",
+      "details": {
+        "filesScanned": 50,
+        "patterns": 9,
+        "cweCategories": 3,
+        "errors": 6,
+        "warnings": 3
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Command injection risk: prefer execFile with argument array",
+          "file": "packages/cli/src/commands/publish.ts",
+          "line": 100,
+          "rule": "CWE-78"
+        },
+        {
+          "severity": "warning",
+          "message": "XSS: innerHTML assignment — use textContent or DOM APIs",
+          "file": "packages/extension/src/content.ts",
+          "line": 29,
+          "rule": "CWE-79"
+        },
+        {
+          "severity": "error",
+          "message": "Injection: new Function() is equivalent to eval()",
+          "file": "packages/extension/src/player.ts",
+          "line": 122,
+          "rule": "CWE-94"
+        },
+        {
+          "severity": "error",
+          "message": "Injection: new Function() is equivalent to eval()",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 126,
+          "rule": "CWE-94"
+        },
+        {
+          "severity": "error",
+          "message": "Injection: new Function() is equivalent to eval()",
+          "file": "packages/sdk/src/agent-config.ts",
+          "line": 85,
+          "rule": "CWE-94"
+        },
+        {
+          "severity": "error",
+          "message": "Injection: new Function() is equivalent to eval()",
+          "file": "packages/sdk/src/heuristic.ts",
+          "line": 81,
+          "rule": "CWE-94"
+        },
+        {
+          "severity": "error",
+          "message": "Injection: new Function() is equivalent to eval()",
+          "file": "packages/sdk/src/heuristic.ts",
+          "line": 100,
+          "rule": "CWE-94"
+        },
+        {
+          "severity": "error",
+          "message": "Injection: new Function() is equivalent to eval()",
+          "file": "packages/agents/browser-automation/src/index.ts",
+          "line": 189,
+          "rule": "CWE-94"
+        },
+        {
+          "severity": "warning",
+          "message": "XSS: innerHTML assignment — use textContent or DOM APIs",
+          "file": "workers/host/src/api.ts",
+          "line": 600,
+          "rule": "CWE-79"
+        }
+      ],
+      "duration": 40
+    },
+    {
+      "name": "dependencies",
+      "score": 43,
+      "grade": "D",
+      "details": {
+        "vulnerabilities": {
+          "critical": 2,
+          "high": 0,
+          "moderate": 8,
+          "low": 4
+        },
+        "outdated": 2,
+        "majorOutdated": 2
+      },
+      "issues": [
+        {
+          "severity": "error",
+          "message": "2 critical vulnerabilities"
+        },
+        {
+          "severity": "warning",
+          "message": "8 moderate vulnerabilities"
+        },
+        {
+          "severity": "warning",
+          "message": "2 packages behind by a major version",
+          "rule": "major-outdated"
+        },
+        {
+          "severity": "info",
+          "message": "typescript 5.9.3 → 6.0.3",
+          "rule": "outdated-package"
+        },
+        {
+          "severity": "info",
+          "message": "vitest 3.2.6 → 4.1.8",
+          "rule": "outdated-package"
+        }
+      ],
+      "duration": 1590
+    },
+    {
+      "name": "architecture",
+      "score": 93,
+      "grade": "A",
+      "details": {
+        "totalModules": 50,
+        "circularDeps": 1,
+        "godModules": 0,
+        "orphans": 0,
+        "highFanOut": 1,
+        "connectors": 0,
+        "graph": {
+          "packages/cli/src/commands/check.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/cli/src/commands"
+          },
+          "packages/cli/src/commands/init.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/cli/src/commands"
+          },
+          "packages/cli/src/commands/publish.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/cli/src/commands"
+          },
+          "packages/cli/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/cli/src"
+          },
+          "packages/compliance/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/compliance/src"
+          },
+          "packages/extension/src/background.ts": {
+            "imports": [
+              "packages/extension/src/types.ts",
+              "packages/extension/src/store.ts",
+              "packages/extension/src/trainer.ts"
+            ],
+            "importedBy": [],
+            "dir": "packages/extension/src"
+          },
+          "packages/extension/src/content.ts": {
+            "imports": [
+              "packages/extension/src/recorder.ts",
+              "packages/extension/src/player.ts",
+              "packages/extension/src/types.ts"
+            ],
+            "importedBy": [],
+            "dir": "packages/extension/src"
+          },
+          "packages/extension/src/player.ts": {
+            "imports": [
+              "packages/extension/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/extension/src/content.ts"
+            ],
+            "dir": "packages/extension/src"
+          },
+          "packages/extension/src/popup/App.tsx": {
+            "imports": [
+              "packages/extension/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/extension/src/popup/main.tsx"
+            ],
+            "dir": "packages/extension/src/popup"
+          },
+          "packages/extension/src/popup/main.tsx": {
+            "imports": [
+              "packages/extension/src/popup/App.tsx"
+            ],
+            "importedBy": [],
+            "dir": "packages/extension/src/popup"
+          },
+          "packages/extension/src/recorder.ts": {
+            "imports": [
+              "packages/extension/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/extension/src/content.ts"
+            ],
+            "dir": "packages/extension/src"
+          },
+          "packages/extension/src/sidepanel/App.tsx": {
+            "imports": [
+              "packages/extension/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/extension/src/sidepanel/main.tsx"
+            ],
+            "dir": "packages/extension/src/sidepanel"
+          },
+          "packages/extension/src/sidepanel/main.tsx": {
+            "imports": [
+              "packages/extension/src/sidepanel/App.tsx"
+            ],
+            "importedBy": [],
+            "dir": "packages/extension/src/sidepanel"
+          },
+          "packages/extension/src/store.ts": {
+            "imports": [
+              "packages/extension/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/extension/src/background.ts"
+            ],
+            "dir": "packages/extension/src"
+          },
+          "packages/extension/src/trainer.ts": {
+            "imports": [
+              "packages/extension/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/extension/src/background.ts"
+            ],
+            "dir": "packages/extension/src"
+          },
+          "packages/extension/src/types.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/extension/src/background.ts",
+              "packages/extension/src/content.ts",
+              "packages/extension/src/player.ts",
+              "packages/extension/src/popup/App.tsx",
+              "packages/extension/src/recorder.ts",
+              "packages/extension/src/sidepanel/App.tsx",
+              "packages/extension/src/store.ts",
+              "packages/extension/src/trainer.ts"
+            ],
+            "dir": "packages/extension/src"
+          },
+          "packages/sdk/src/agent-config.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent-evolve.ts",
+              "packages/sdk/src/index.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/agent-evolve.ts": {
+            "imports": [
+              "packages/sdk/src/agent-config.ts",
+              "packages/sdk/src/built-in-ai.ts",
+              "packages/sdk/src/heuristic.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/index.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/agent.ts": {
+            "imports": [
+              "packages/sdk/src/auth.ts",
+              "packages/sdk/src/kv.ts",
+              "packages/sdk/src/model.ts",
+              "packages/sdk/src/model-cache.ts",
+              "packages/sdk/src/ollama.ts",
+              "packages/sdk/src/result-store.ts",
+              "packages/sdk/src/rooms.ts",
+              "packages/sdk/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/index.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/auth.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/built-in-ai.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent-evolve.ts",
+              "packages/sdk/src/hooks/use-built-in-ai.ts",
+              "packages/sdk/src/hooks/use-built-in-ai.ts",
+              "packages/sdk/src/index.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/heuristic.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent-evolve.ts",
+              "packages/sdk/src/index.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/hooks/use-built-in-ai.ts": {
+            "imports": [
+              "packages/sdk/src/built-in-ai.ts",
+              "packages/sdk/src/built-in-ai.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/hooks.ts"
+            ],
+            "dir": "packages/sdk/src/hooks"
+          },
+          "packages/sdk/src/hooks/use-model-cache.ts": {
+            "imports": [
+              "packages/sdk/src/model-cache.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/hooks.ts"
+            ],
+            "dir": "packages/sdk/src/hooks"
+          },
+          "packages/sdk/src/hooks/use-model.ts": {
+            "imports": [
+              "packages/sdk/src/model.ts",
+              "packages/sdk/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/hooks.ts"
+            ],
+            "dir": "packages/sdk/src/hooks"
+          },
+          "packages/sdk/src/hooks/use-ollama.ts": {
+            "imports": [
+              "packages/sdk/src/ollama.ts",
+              "packages/sdk/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/hooks.ts"
+            ],
+            "dir": "packages/sdk/src/hooks"
+          },
+          "packages/sdk/src/hooks/use-result-store.ts": {
+            "imports": [
+              "packages/sdk/src/result-store.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/hooks.ts"
+            ],
+            "dir": "packages/sdk/src/hooks"
+          },
+          "packages/sdk/src/hooks/use-worker-inference.ts": {
+            "imports": [
+              "packages/sdk/src/worker-bridge.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/hooks.ts"
+            ],
+            "dir": "packages/sdk/src/hooks"
+          },
+          "packages/sdk/src/hooks.ts": {
+            "imports": [
+              "packages/sdk/src/hooks/use-built-in-ai.ts",
+              "packages/sdk/src/hooks/use-model.ts",
+              "packages/sdk/src/hooks/use-model-cache.ts",
+              "packages/sdk/src/hooks/use-ollama.ts",
+              "packages/sdk/src/hooks/use-result-store.ts",
+              "packages/sdk/src/hooks/use-worker-inference.ts"
+            ],
+            "importedBy": [],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/index.ts": {
+            "imports": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/agent-config.ts",
+              "packages/sdk/src/agent-config.ts",
+              "packages/sdk/src/agent-evolve.ts",
+              "packages/sdk/src/agent-evolve.ts",
+              "packages/sdk/src/auth.ts",
+              "packages/sdk/src/built-in-ai.ts",
+              "packages/sdk/src/built-in-ai.ts",
+              "packages/sdk/src/heuristic.ts",
+              "packages/sdk/src/heuristic.ts",
+              "packages/sdk/src/kv.ts",
+              "packages/sdk/src/model.ts",
+              "packages/sdk/src/model-cache.ts",
+              "packages/sdk/src/ollama.ts",
+              "packages/sdk/src/result-store.ts",
+              "packages/sdk/src/rooms.ts",
+              "packages/sdk/src/types.ts",
+              "packages/sdk/src/worker-bridge.ts"
+            ],
+            "importedBy": [],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/kv.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/model-cache.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/hooks/use-model-cache.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/model.ts": {
+            "imports": [
+              "packages/sdk/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/hooks/use-model.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/ollama.ts": {
+            "imports": [
+              "packages/sdk/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/hooks/use-ollama.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/result-store.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/hooks/use-result-store.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/rooms.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/types.ts": {
+            "imports": [],
+            "importedBy": [
+              "packages/sdk/src/agent.ts",
+              "packages/sdk/src/hooks/use-model.ts",
+              "packages/sdk/src/hooks/use-ollama.ts",
+              "packages/sdk/src/index.ts",
+              "packages/sdk/src/model.ts",
+              "packages/sdk/src/ollama.ts",
+              "packages/sdk/src/worker-bridge.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/ui.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/sdk/src"
+          },
+          "packages/sdk/src/worker-bridge.ts": {
+            "imports": [
+              "packages/sdk/src/types.ts"
+            ],
+            "importedBy": [
+              "packages/sdk/src/hooks/use-worker-inference.ts",
+              "packages/sdk/src/index.ts"
+            ],
+            "dir": "packages/sdk/src"
+          },
+          "packages/agents/browser-automation/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/agents/browser-automation/src"
+          },
+          "packages/agents/resume-parser/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/agents/resume-parser/src"
+          },
+          "packages/agents/sentiment/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/agents/sentiment/src"
+          },
+          "packages/agents/summarizer/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/agents/summarizer/src"
+          },
+          "packages/agents/unit-converter/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/agents/unit-converter/src"
+          },
+          "packages/agents/writing-assistant/src/index.ts": {
+            "imports": [],
+            "importedBy": [],
+            "dir": "packages/agents/writing-assistant/src"
+          },
+          "workers/host/src/api.ts": {
+            "imports": [
+              "workers/host/src/index.ts"
+            ],
+            "importedBy": [
+              "workers/host/src/index.ts"
+            ],
+            "dir": "workers/host/src"
+          },
+          "workers/host/src/index.ts": {
+            "imports": [
+              "workers/host/src/api.ts"
+            ],
+            "importedBy": [
+              "workers/host/src/api.ts"
+            ],
+            "dir": "workers/host/src"
+          },
+          "workers/mcp/src/index.ts": {
+            "imports": [
+              "workers/mcp/src/session.ts",
+              "workers/mcp/src/oauth-provider.ts"
+            ],
+            "importedBy": [],
+            "dir": "workers/mcp/src"
+          },
+          "workers/mcp/src/oauth-provider.ts": {
+            "imports": [
+              "workers/mcp/src/session.ts"
+            ],
+            "importedBy": [
+              "workers/mcp/src/index.ts"
+            ],
+            "dir": "workers/mcp/src"
+          },
+          "workers/mcp/src/session.ts": {
+            "imports": [],
+            "importedBy": [
+              "workers/mcp/src/index.ts",
+              "workers/mcp/src/oauth-provider.ts"
+            ],
+            "dir": "workers/mcp/src"
+          }
+        },
+        "containerSvg": "",
+        "assessment": {
+          "pattern": "modular",
+          "patternDescription": "Modular architecture — code organized by feature/responsibility.",
+          "layering": "clean",
+          "stability": [
+            {
+              "package": "packages/cli/src/commands",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/cli/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/compliance/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/extension/src",
+              "instability": 0.45,
+              "role": "balanced"
+            },
+            {
+              "package": "packages/extension/src/popup",
+              "instability": 0.67,
+              "role": "balanced"
+            },
+            {
+              "package": "packages/extension/src/sidepanel",
+              "instability": 0.67,
+              "role": "balanced"
+            },
+            {
+              "package": "packages/sdk/src",
+              "instability": 0.48,
+              "role": "balanced"
+            },
+            {
+              "package": "packages/sdk/src/hooks",
+              "instability": 0.6,
+              "role": "balanced"
+            },
+            {
+              "package": "packages/agents/browser-automation/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/agents/resume-parser/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/agents/sentiment/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/agents/summarizer/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/agents/unit-converter/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "packages/agents/writing-assistant/src",
+              "instability": 0,
+              "role": "stable (hard to change)"
+            },
+            {
+              "package": "workers/host/src",
+              "instability": 0.5,
+              "role": "balanced"
+            },
+            {
+              "package": "workers/mcp/src",
+              "instability": 0.5,
+              "role": "balanced"
+            }
+          ],
+          "crossCoupling": 25,
+          "cohesion": 69,
+          "rating": "excellent",
+          "insights": [
+            "Clean layering — dependencies flow in one direction without violations.",
+            "Low cross-coupling (25%) — packages are well-isolated.",
+            "Stable foundation detected — core modules rarely change.",
+            "No god modules — healthy dependency distribution."
+          ]
+        }
+      },
+      "issues": [
+        {
+          "severity": "error",
+          "message": "Circular: api → index → api",
+          "file": "workers/host/src/api.ts",
+          "rule": "circular-dep"
+        },
+        {
+          "severity": "warning",
+          "message": "High fan-out: imports 19 modules — hard to test in isolation",
+          "file": "packages/sdk/src/index.ts",
+          "rule": "high-fan-out"
+        }
+      ],
+      "duration": 12
+    },
+    {
+      "name": "performance",
+      "score": 100,
+      "grade": "A",
+      "details": {
+        "filesScanned": 50,
+        "barrelImports": 0,
+        "heavyDeps": 0,
+        "dynamicOpportunities": 0,
+        "cssInJsRuntime": 0,
+        "deadExports": 0,
+        "unusedFiles": 0,
+        "unusedDeps": 0,
+        "deadCodeTool": "knip"
+      },
+      "issues": [
+        {
+          "severity": "info",
+          "message": "Large destructured import — if from a barrel, only imported items should be bundled",
+          "file": "packages/extension/src/background.ts",
+          "line": 9,
+          "rule": "large-import"
+        },
+        {
+          "severity": "info",
+          "message": "Large destructured import — if from a barrel, only imported items should be bundled",
+          "file": "packages/sdk/src/agent-evolve.ts",
+          "line": 12,
+          "rule": "large-import"
+        }
+      ],
+      "duration": 17985
+    },
+    {
+      "name": "confusion",
+      "score": 0,
+      "grade": "F",
+      "details": {
+        "fileConfusability": 3,
+        "genericNames": 53,
+        "exportCollisions": 6,
+        "ambiguousAbbrevs": 2,
+        "filesScanned": 50
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Similar filenames: App ↔ api (edit distance 2)",
+          "file": "packages/extension/src/popup/App.tsx",
+          "rule": "similar-filename"
+        },
+        {
+          "severity": "warning",
+          "message": "Similar filenames: App ↔ api (edit distance 2)",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "rule": "similar-filename"
+        },
+        {
+          "severity": "warning",
+          "message": "Similar filenames: hooks ↔ rooms (edit distance 2)",
+          "file": "packages/sdk/src/hooks.ts",
+          "rule": "similar-filename"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/extension/src/background.ts",
+          "line": 99,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/extension/src/content.ts",
+          "line": 65,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: fn — use a descriptive name",
+          "file": "packages/extension/src/player.ts",
+          "line": 122,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/extension/src/player.ts",
+          "line": 123,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: input — use a descriptive name",
+          "file": "packages/extension/src/player.ts",
+          "line": 191,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: input — use a descriptive name",
+          "file": "packages/extension/src/player.ts",
+          "line": 212,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: val — use a descriptive name",
+          "file": "packages/extension/src/recorder.ts",
+          "line": 32,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "line": 14,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "line": 58,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/extension/src/sidepanel/App.tsx",
+          "line": 127,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "packages/extension/src/store.ts",
+          "line": 32,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "packages/extension/src/store.ts",
+          "line": 44,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/extension/src/store.ts",
+          "line": 54,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: fn — use a descriptive name",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 126,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 127,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 171,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 183,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 193,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: input — use a descriptive name",
+          "file": "packages/extension/src/trainer.ts",
+          "line": 222,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/agent-config.ts",
+          "line": 120,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/agent-config.ts",
+          "line": 137,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/auth.ts",
+          "line": 18,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "packages/sdk/src/auth.ts",
+          "line": 22,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/auth.ts",
+          "line": 44,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 182,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 190,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "packages/sdk/src/built-in-ai.ts",
+          "line": 203,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: remove — use a descriptive name",
+          "file": "packages/sdk/src/hooks/use-result-store.ts",
+          "line": 36,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: run — use a descriptive name",
+          "file": "packages/sdk/src/hooks/use-worker-inference.ts",
+          "line": 39,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/hooks/use-worker-inference.ts",
+          "line": 45,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/kv.ts",
+          "line": 12,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/kv.ts",
+          "line": 39,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/ollama.ts",
+          "line": 26,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/ollama.ts",
+          "line": 57,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "packages/sdk/src/ollama.ts",
+          "line": 100,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "packages/sdk/src/ollama.ts",
+          "line": 106,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: val — use a descriptive name",
+          "file": "packages/agents/browser-automation/src/index.ts",
+          "line": 55,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: fn — use a descriptive name",
+          "file": "packages/agents/browser-automation/src/index.ts",
+          "line": 189,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: temp — use a descriptive name",
+          "file": "packages/agents/sentiment/src/index.ts",
+          "line": 55,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "packages/agents/unit-converter/src/index.ts",
+          "line": 76,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: body — use a descriptive name",
+          "file": "workers/host/src/api.ts",
+          "line": 299,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 29,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 40,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: res — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 59,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 82,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 212,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 254,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 275,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: data — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 296,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: result — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 316,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: output — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 401,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: val — use a descriptive name",
+          "file": "workers/mcp/src/index.ts",
+          "line": 436,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "warning",
+          "message": "Generic variable: body — use a descriptive name",
+          "file": "workers/mcp/src/session.ts",
+          "line": 18,
+          "rule": "generic-name"
+        },
+        {
+          "severity": "error",
+          "message": "Export collision: \"startRecording\" exported from 2 files — LLMs may reference the wrong one",
+          "file": "packages/extension/src/recorder.ts, packages/agents/browser-automation/src/index.ts",
+          "rule": "export-collision"
+        },
+        {
+          "severity": "error",
+          "message": "Export collision: \"RecordedAction\" exported from 2 files — LLMs may reference the wrong one",
+          "file": "packages/extension/src/types.ts, packages/agents/browser-automation/src/index.ts",
+          "rule": "export-collision"
+        },
+        {
+          "severity": "error",
+          "message": "Export collision: \"EvolutionEntry\" exported from 2 files — LLMs may reference the wrong one",
+          "file": "packages/extension/src/types.ts, packages/sdk/src/agent-config.ts",
+          "rule": "export-collision"
+        },
+        {
+          "severity": "error",
+          "message": "Export collision: \"AgentConfig\" exported from 2 files — LLMs may reference the wrong one",
+          "file": "packages/sdk/src/agent-config.ts, packages/sdk/src/types.ts",
+          "rule": "export-collision"
+        },
+        {
+          "severity": "error",
+          "message": "Export collision: \"createDefaultConfig\" exported from 2 files — LLMs may reference the wrong one",
+          "file": "packages/agents/summarizer/src/index.ts, packages/agents/writing-assistant/src/index.ts",
+          "rule": "export-collision"
+        },
+        {
+          "severity": "error",
+          "message": "Export collision: \"buildPromptFromConfig\" exported from 2 files — LLMs may reference the wrong one",
+          "file": "packages/agents/summarizer/src/index.ts, packages/agents/writing-assistant/src/index.ts",
+          "rule": "export-collision"
+        },
+        {
+          "severity": "warning",
+          "message": "Ambiguous abbreviation \"config\" in filename — could mean: which configuration?",
+          "file": "packages/sdk/src/agent-config.ts",
+          "rule": "ambiguous-abbreviation"
+        },
+        {
+          "severity": "warning",
+          "message": "Ambiguous abbreviation \"auth\" in filename — could mean: authentication OR authorization",
+          "file": "packages/sdk/src/auth.ts",
+          "rule": "ambiguous-abbreviation"
+        }
+      ],
+      "duration": 19
+    },
+    {
+      "name": "context",
+      "score": 84,
+      "grade": "B",
+      "details": {
+        "filesScanned": 50,
+        "totalTokens": 65430,
+        "avgTokensPerFile": 1309,
+        "avgImportsPerFile": 1.3,
+        "highTokenFiles": 2,
+        "heavyImportFiles": 1,
+        "circularDeps": 1,
+        "contextSinks": 0
+      },
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "~6981 tokens (>4000) — large context cost for LLMs",
+          "file": "workers/host/src/api.ts",
+          "rule": "high-token-count"
+        },
+        {
+          "severity": "warning",
+          "message": "~6195 tokens (>4000) — large context cost for LLMs",
+          "file": "workers/mcp/src/index.ts",
+          "rule": "high-token-count"
+        },
+        {
+          "severity": "warning",
+          "message": "19 imports (>15) — consider splitting or co-locating",
+          "file": "packages/sdk/src/index.ts",
+          "rule": "heavy-imports"
+        },
+        {
+          "severity": "error",
+          "message": "Circular dependency: workers/host/src/api.ts → workers/host/src/index.ts → workers/host/src/api.ts",
+          "rule": "circular-dependency"
+        }
+      ],
+      "duration": 9
+    },
+    {
+      "name": "doc-coherence",
+      "score": 0,
+      "grade": "F",
+      "details": {
+        "premium": true,
+        "comingSoon": true,
+        "reason": "Set VCQA_PRO_KEY to enable LLM-powered analysis",
+        "docFiles": [
+          "README.md"
+        ],
+        "hasJSDoc": true,
+        "description": "Detects contradictions between documentation and code. Finds stale README claims, incorrect JSDoc, and misleading comments."
+      },
+      "issues": [],
+      "duration": 5
+    },
+    {
+      "name": "code-coherence",
+      "score": 0,
+      "grade": "F",
+      "details": {
+        "premium": true,
+        "comingSoon": true,
+        "reason": "Set VCQA_PRO_KEY to enable LLM-powered analysis",
+        "filesAnalyzed": 50,
+        "totalExports": 161,
+        "totalFunctions": 180,
+        "description": "Detects internal contradictions: inconsistent validation, conflicting defaults, naming drift, and behavioral mismatches."
+      },
+      "issues": [],
+      "duration": 5
+    }
+  ],
+  "meta": {
+    "cwd": "/Users/serge/dev/stores/fags/platform",
+    "node": "v22.21.1",
+    "duration": 47852,
+    "stack": {
+      "language": "typescript",
+      "framework": "react",
+      "bundler": "vite",
+      "testRunner": "vitest",
+      "linter": "biome",
+      "packageManager": "pnpm"
+    },
+    "workspace": {
+      "isMonorepo": true,
+      "tool": "pnpm",
+      "packages": [
+        {
+          "name": "agents",
+          "path": "packages/agents",
+          "hasSrc": false,
+          "hasRootCode": false,
+          "hasTests": false,
+          "hasLinter": false
+        },
+        {
+          "name": "backend",
+          "path": "packages/backend",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/cli",
+          "path": "packages/cli",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/compliance",
+          "path": "packages/compliance",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/extension",
+          "path": "packages/extension",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "quality",
+          "path": "packages/quality",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/sdk",
+          "path": "packages/sdk",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/browser-automation",
+          "path": "packages/agents/browser-automation",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/resume-parser",
+          "path": "packages/agents/resume-parser",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/sentiment",
+          "path": "packages/agents/sentiment",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/summarizer",
+          "path": "packages/agents/summarizer",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/unit-converter",
+          "path": "packages/agents/unit-converter",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/writing-assistant",
+          "path": "packages/agents/writing-assistant",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "@freebiostore/host",
+          "path": "workers/host",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        },
+        {
+          "name": "freebiostore-mcp",
+          "path": "workers/mcp",
+          "hasSrc": true,
+          "hasRootCode": false,
+          "hasTests": true,
+          "hasLinter": false
+        }
+      ],
+      "srcRoots": [
+        "packages/backend/src",
+        "packages/cli/src",
+        "packages/compliance/src",
+        "packages/extension/src",
+        "packages/quality/src",
+        "packages/sdk/src",
+        "packages/agents/browser-automation/src",
+        "packages/agents/resume-parser/src",
+        "packages/agents/sentiment/src",
+        "packages/agents/summarizer/src",
+        "packages/agents/unit-converter/src",
+        "packages/agents/writing-assistant/src",
+        "workers/host/src",
+        "workers/mcp/src"
+      ]
+    },
+    "repoUrl": "https://github.com/FreeBioStore/platform",
+    "branch": "main"
+  }
+}

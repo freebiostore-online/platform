@@ -1,0 +1,24 @@
+{
+  "name": "@freebiostore/resume-parser",
+  "version": "1.0.0",
+  "description": "Parse resumes into structured JSON. Heuristic agent — pure JS, no model, evolved from 500+ resume examples.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "sideEffects": false
+}

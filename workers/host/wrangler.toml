@@ -1,0 +1,34 @@
+name = "freebiostore-host"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+workers_dev = false
+
+[[routes]]
+pattern = "freebiostore.online/*"
+zone_name = "freebiostore.online"
+
+[[routes]]
+pattern = "*.freebiostore.online/*"
+zone_name = "freebiostore.online"
+
+[vars]
+GITHUB_CLIENT_ID = "Ov23linoTyxg6znK9LmO"
+
+[[r2_buckets]]
+binding = "AGENTS"
+bucket_name = "fbs-items"
+
+[durable_objects]
+bindings = [
+  { name = "MIRROR_ROOMS", class_name = "MirrorRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["MirrorRoom"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fags"
+database_id = "2f5cd397-8566-4e45-a76c-84553b701c02"
+migrations_dir = "migrations"

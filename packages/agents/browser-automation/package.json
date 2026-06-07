@@ -1,0 +1,14 @@
+{
+  "name": "@freebiostore/browser-automation",
+  "version": "1.0.0",
+  "description": "Record browser actions, condense into deterministic JS via LLM, replay without AI. The Playwright-in-browser pattern.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc", "typecheck": "tsc --noEmit" },
+  "devDependencies": { "typescript": "^5.7.0" },
+  "sideEffects": false
+}

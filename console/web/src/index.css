@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

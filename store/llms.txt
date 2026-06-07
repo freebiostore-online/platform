@@ -1,0 +1,36 @@
+# FreeAgentStore
+
+> FreeAgentStore is a free, open-source platform for browser-based AI tools. Three types: Libraries (pure TypeScript heuristics, npm-publishable), Models (ONNX via Transformers.js, runs on user's GPU), and Agents (use user's own API key via encrypted proxy). 49 agents across 10 categories. Every agent is MIT-licensed, privacy-first, zero tracking. For the full AI agent guide, see [SKILLS.md](https://freeagentstore.online/skills.md).
+
+## AI Agent Integration
+
+- [SKILLS.md](https://freeagentstore.online/skills.md): Complete platform guide for AI agents. Agent types, SDK reference, CLI commands, deploy flow, compliance rules, template scaffolding.
+- [MCP Server](https://mcp.freeagentstore.online/mcp): Remote MCP server. 11 tools: list_agents, agent_info, deploy_status, create_agent, delete_agent, write_file, read_file, list_files, upload_to_r2, platform_guide, sdk_reference. Connect with `npx mcp-remote https://mcp.freeagentstore.online/mcp`.
+- [Registry](https://freeagentstore.online/pkg/): ESM packages for all library agents. Import directly: `import { analyzeSentiment } from 'https://freeagentstore.online/pkg/sentiment/index.js'`.
+
+## Agent Types
+
+- **Libraries** (29): Pure TypeScript. Heuristic classifiers evolved by LLMs from data. Sentiment, emotion, language detection, date parsing, address parsing, name parsing, profanity filtering, intent/urgency/formality/topic/clickbait/sarcasm/question detection, code detection, JSON formatting, hashing, regex building, unit conversion, steering behaviors, behavior trees, physics simulation, name generation, icon search, avatar styling.
+- **Models** (13): Transformers.js + heuristic post-processing. Food analysis, plant identification, semantic search, document scanning, receipt scanning, FAQ matching, plagiarism checking, meeting summarization, scene description, voice journaling. Models: MobileViT (20MB), MiniLM (23MB), Whisper Tiny (40MB), TrOCR (130MB), DETR (160MB).
+- **Agents** (7): Chrome Built-in AI (Gemini Nano) or user's API key via platform proxy. Summarizer, writing assistant, code explainer, voice notes, mood palette, browser automation, document chatbot.
+
+## Quick Start
+
+```bash
+# Use an agent via npm
+npm install @freeagentstore/sentiment
+import { analyzeSentiment } from '@freeagentstore/sentiment'
+
+# Build your own
+npx @freeagentstore/cli init my-agent --template heuristic
+cd my-agent && npm run dev
+npx @freeagentstore/cli publish
+```
+
+## Links
+
+- Store: https://freeagentstore.online
+- GitHub: https://github.com/FreeAgentStore (51 repos)
+- Console: https://freeagentstore.online/console/
+- API Keys: https://freeagentstore.online/v1/keys
+- Pro tier: https://proagentstore.online

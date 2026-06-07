@@ -1,0 +1,32 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: cd web && npm install
+      - run: cd web && npx vite build
+      - run: cp web/public/kokoro-worker.js web/dist/kokoro-worker.js
+
+      - name: Install wrangler
+        run: npm install -g wrangler
+
+      - name: Upload to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          cd web/dist
+          for file in $(find . -type f -not -path './.wrangler/*'); do
+            key="agents/${{ github.event.repository.name }}/${file#./}"
+            echo "Uploading $key"
+            wrangler r2 object put "fbs-items/$key" --file="$file" --remote
+          done

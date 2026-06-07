@@ -1,0 +1,13 @@
+{
+  "name": "AGENTNAME",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "engines": { "node": ">=22" },
+  "pnpm": { "onlyBuiltDependencies": ["esbuild"] },
+  "scripts": {
+    "dev": "pnpm --filter @AGENTNAME/web dev",
+    "build": "pnpm --filter @AGENTNAME/web build",
+    "preview": "pnpm --filter @AGENTNAME/web preview",
+    "typecheck": "pnpm --filter @AGENTNAME/web exec tsc -b"
+  }
+}

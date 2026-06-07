@@ -1,0 +1,24 @@
+{
+  "name": "AGENTNAME",
+  "description": "DESCRIPTION",
+  "version": "1.0.0",
+  "task": "TASK",
+  "category": "CATEGORY",
+  "models": [
+    {
+      "repo": "onnx-community/AGENTNAME",
+      "size": "0MB",
+      "backend": ["webgpu", "wasm"],
+      "task": "TASK"
+    }
+  ],
+  "estimatedDownload": "0MB",
+  "input": [],
+  "output": [],
+  "requiresWebGPU": false,
+  "requiresOllama": false,
+  "requiresWebContainers": false,
+  "offlineCapable": true,
+  "desktopOnly": true,
+  "runtimeType": "model"
+}

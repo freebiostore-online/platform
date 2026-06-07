@@ -1,0 +1,14 @@
+{
+  "name": "@freebiostore/writing-assistant",
+  "version": "1.0.0",
+  "description": "Config-driven writing assistant. Trained on YOUR examples to match YOUR style. Uses Chrome Built-in AI.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc", "typecheck": "tsc --noEmit" },
+  "devDependencies": { "typescript": "^5.7.0" },
+  "sideEffects": false
+}

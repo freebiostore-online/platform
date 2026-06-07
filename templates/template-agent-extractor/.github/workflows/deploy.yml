@@ -1,0 +1,69 @@
+name: Deploy to R2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.repository }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build
+        env:
+          VITE_APP_VERSION: ${{ github.event.repository.name }}@${{ github.run_number }}
+          VITE_COMMIT_SHA: ${{ github.sha }}
+          VITE_BUILD_DATE: ${{ github.event.head_commit.timestamp }}
+        run: pnpm build
+
+      - name: Verify build output
+        run: |
+          test -d ./web/dist || { echo "::error::No build output at web/dist"; exit 1; }
+          test -n "$(ls -A ./web/dist)" || { echo "::error::web/dist is empty"; exit 1; }
+
+      - name: Write build info
+        run: |
+          SIZE=$(du -sb ./web/dist | cut -f1)
+          echo "{\"size\":${SIZE}}" > ./web/dist/.buildinfo.json
+
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+        run: |
+          aws s3 sync ./web/dist "s3://fbs-items/agents/${GITHUB_REPOSITORY##*/}/" \
+            --endpoint-url "https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com" \
+            --delete \
+            --no-progress
+          echo "Deployed agents/${GITHUB_REPOSITORY##*/} from ${GITHUB_SHA::7}"
+
+      - name: Verify route
+        if: always()
+        run: |
+          AGENT_ID="${GITHUB_REPOSITORY##*/}"
+          URL="https://freebiostore.online/a/${AGENT_ID}/"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL" --max-time 10 || echo "000")
+          if [ "$STATUS" = "530" ] || [ "$STATUS" = "522" ] || [ "$STATUS" = "000" ]; then
+            echo "::warning::Deployed to R2 but ${URL} returned HTTP ${STATUS} (not routed). Run 'fags publish --name ${AGENT_ID} -y' to register the route."
+          else
+            echo "Live at ${URL} (HTTP ${STATUS})"
+          fi

@@ -1,0 +1,17 @@
+{
+  "name": "AGENTNAME",
+  "description": "DESCRIPTION",
+  "version": "1.0.0",
+  "task": "TASK",
+  "category": "CATEGORY",
+  "models": [],
+  "estimatedDownload": "0MB",
+  "input": ["text/plain"],
+  "output": ["application/json"],
+  "requiresWebGPU": false,
+  "requiresOllama": false,
+  "requiresWebContainers": false,
+  "offlineCapable": true,
+  "desktopOnly": false,
+  "runtimeType": "heuristic"
+}

@@ -1,0 +1,70 @@
+{
+  "name": "@freebiostore/sdk",
+  "version": "0.1.0",
+  "description": "Browser SDK for AI tools on freebiostore.online — model loading, Web Worker inference, Ollama bridge, auth, per-user KV, rooms, React hooks, and UI components.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks.d.ts",
+      "import": "./dist/hooks.js"
+    },
+    "./ui": {
+      "types": "./dist/ui.d.ts",
+      "import": "./dist/ui.js"
+    },
+    "./mirror": {
+      "types": "./dist/mirror.d.ts",
+      "import": "./dist/mirror.js"
+    },
+    "./langchain": {
+      "types": "./dist/langchain.d.ts",
+      "import": "./dist/langchain.js"
+    }
+  },
+  "homepage": "https://github.com/FreeBioStore/platform#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeBioStore/platform.git",
+    "directory": "packages/sdk"
+  },
+  "keywords": [
+    "freebiostore",
+    "sdk",
+    "ai",
+    "webgpu",
+    "wasm",
+    "inference",
+    "ollama",
+    "browser-ai",
+    "transformers-js"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "typescript": "^5.7.0"
+  },
+  "sideEffects": false
+}

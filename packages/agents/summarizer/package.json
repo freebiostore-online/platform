@@ -1,0 +1,14 @@
+{
+  "name": "@freebiostore/summarizer",
+  "version": "1.0.0",
+  "description": "Config-driven summarizer. Trained for your document type — meeting notes, research papers, legal briefs. Built-in AI + heuristic fallback.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc", "typecheck": "tsc --noEmit" },
+  "devDependencies": { "typescript": "^5.7.0" },
+  "sideEffects": false
+}
