@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Relations Graph — FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#262626}
+body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);overflow:hidden;height:100vh}
+header{border-bottom:1px solid var(--line);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;position:relative;z-index:20}
+.brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+.brand-emoji{font-size:1.4rem}.brand-name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+nav{display:flex;gap:.85rem;font-size:.82rem;font-weight:600;margin-left:auto}
+nav a{color:var(--muted);text-decoration:none}nav a:hover{color:var(--ink)}
+nav a.active{color:var(--accent)}
+canvas{display:block;cursor:grab}
+canvas:active{cursor:grabbing}
+#search{position:absolute;top:60px;left:1rem;z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.4rem .7rem;color:var(--ink);font-family:inherit;font-size:.82rem;width:220px;outline:none}
+#search:focus{border-color:var(--accent)}
+#search::placeholder{color:#525252}
+#legend{position:absolute;bottom:1rem;left:1rem;z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.6rem .8rem;font-size:.72rem}
+.leg-row{display:flex;align-items:center;gap:.4rem;margin:.15rem 0}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+#info-panel{position:absolute;top:60px;right:1rem;z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem;width:280px;display:none;font-size:.82rem}
+#info-panel h3{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:.3rem}
+#info-panel .ip-type{font-size:.72rem;color:var(--accent);font-weight:600;margin-bottom:.4rem}
+#info-panel .ip-desc{color:var(--muted);font-size:.78rem;line-height:1.5;margin-bottom:.5rem}
+#info-panel .ip-conn{font-size:.72rem;color:#a3a3a3}
+#info-panel .ip-link{display:inline-block;margin-top:.5rem;color:var(--accent);text-decoration:none;font-weight:600;font-size:.78rem}
+#info-panel .ip-link:hover{text-decoration:underline}
+#info-panel .ip-close{position:absolute;top:.5rem;right:.7rem;cursor:pointer;color:var(--muted);font-size:1rem;background:none;border:none;font-family:inherit}
+</style>
+</head>
+<body>
+<header>
+<a href="/" class="brand"><span class="brand-emoji">&#x1F9EC;</span><span class="brand-name">FreeBioStore</span></a>
+<nav><a href="/">All</a><a href="/institute/">Institute</a><a href="/relations/" class="active">Relations</a><a href="/collections/">Paths</a></nav>
+</header>
+<input id="search" type="text" placeholder="Search simulations...">
+<div id="legend">
+<div class="leg-row"><div class="leg-dot" style="background:#10b981"></div> Simulation</div>
+<div class="leg-row"><div class="leg-dot" style="background:#3b82f6"></div> Institute</div>
+<div class="leg-row"><div class="leg-dot" style="background:#22c55e"></div> SDK</div>
+</div>
+<div id="info-panel">
+<button class="ip-close" onclick="closePanel()">&times;</button>
+<h3 id="ip-name"></h3>
+<div id="ip-type" class="ip-type"></div>
+<div id="ip-desc" class="ip-desc"></div>
+<div id="ip-conn" class="ip-conn"></div>
+<a id="ip-link" class="ip-link" href="#">Open &rarr;</a>
+</div>
+<canvas id="graph"></canvas>
+<script>
+const STORE = {
+  accent: '#10b981', name: 'FreeBioStore', emoji: '\u{1F9EC}',
+  itemPath: '/items/', registryKey: 'robots',
+  institute: [
+    { id: 'inst-bioinformatics', name: 'Bioinformatics', href: '/institute/bioinformatics.html', concepts: ['sequence','alignment','blast','genome'] },
+    { id: 'inst-crispr', name: 'CRISPR', href: '/institute/crispr.html', concepts: ['crispr','gene','editing','cas9'] },
+    { id: 'inst-genomics', name: 'Genomics', href: '/institute/genomics.html', concepts: ['dna','gene','genome','replication','expression'] },
+    { id: 'inst-molecular', name: 'Molecular Biology', href: '/institute/molecular-biology.html', concepts: ['molecular','protein','enzyme','cell'] },
+    { id: 'inst-protein', name: 'Protein Structure', href: '/institute/protein-structure.html', concepts: ['protein','fold','structure','amino'] }
+  ],
+  sdk: [
+    { id: 'sdk-molvis', name: 'Molecular Visualizer', concepts: ['molecule','3d','structure','visualization'] },
+    { id: 'sdk-seqtools', name: 'Sequence Tools', concepts: ['dna','sequence','codon','amino'] },
+    { id: 'sdk-simengine', name: 'Simulation Engine', concepts: ['simulation','dynamics','physics','model'] }
+  ]
+};
+
+const canvas = document.getElementById('graph');
+const ctx = canvas.getContext('2d');
+const searchInput = document.getElementById('search');
+const infoPanel = document.getElementById('info-panel');
+let W, H, dpr;
+let nodes = [], edges = [];
+let dragging = null, dragOffX = 0, dragOffY = 0;
+let panX = 0, panY = 0, zoom = 1;
+let isPanning = false, panStartX = 0, panStartY = 0, panStartPX = 0, panStartPY = 0;
+let selectedNode = null;
+let searchTerm = '';
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight - 48;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+async function loadData() {
+  let items = [];
+  try {
+    const resp = await fetch('/registry.json');
+    const data = await resp.json();
+    items = data[STORE.registryKey] || [];
+  } catch(e) {}
+
+  const cx = W / 2, cy = H / 2;
+  items.forEach((item, i) => {
+    const angle = (i / items.length) * Math.PI * 2;
+    const r = 150 + Math.random() * 120;
+    nodes.push({
+      id: item.id, name: item.name, type: 'sim',
+      category: item.category, desc: item.description || '',
+      icon: item.icon, iconBg: item.iconBg || STORE.accent,
+      href: STORE.itemPath + item.id + '/',
+      x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r,
+      vx: 0, vy: 0, radius: 8, connections: 0
+    });
+  });
+
+  STORE.institute.forEach((inst, i) => {
+    const angle = (i / STORE.institute.length) * Math.PI * 2 + 0.5;
+    nodes.push({
+      id: inst.id, name: inst.name, type: 'institute',
+      category: '', desc: 'Institute educational page', concepts: inst.concepts,
+      href: inst.href, x: cx + Math.cos(angle) * 280, y: cy + Math.sin(angle) * 280,
+      vx: 0, vy: 0, radius: 10, connections: 0
+    });
+  });
+
+  STORE.sdk.forEach((s, i) => {
+    const angle = (i / STORE.sdk.length) * Math.PI * 2 + 1;
+    nodes.push({
+      id: s.id, name: s.name, type: 'sdk',
+      category: '', desc: 'SDK component', concepts: s.concepts,
+      href: '#', x: cx + Math.cos(angle) * 320, y: cy + Math.sin(angle) * 320,
+      vx: 0, vy: 0, radius: 9, connections: 0
+    });
+  });
+
+  const sims = nodes.filter(n => n.type === 'sim');
+  const catMap = {};
+  sims.forEach(n => { (catMap[n.category] = catMap[n.category] || []).push(n); });
+  Object.values(catMap).forEach(group => {
+    for (let i = 0; i < group.length; i++)
+      for (let j = i + 1; j < group.length; j++)
+        edges.push({ a: group[i].id, b: group[j].id, type: 'category' });
+  });
+
+  const conceptNodes = nodes.filter(n => n.concepts);
+  sims.forEach(sim => {
+    const words = (sim.name + ' ' + sim.desc + ' ' + sim.category).toLowerCase();
+    conceptNodes.forEach(cn => {
+      if (cn.concepts.some(c => words.includes(c)))
+        edges.push({ a: sim.id, b: cn.id, type: 'concept' });
+    });
+  });
+
+  edges.forEach(e => {
+    const na = nodes.find(n => n.id === e.a);
+    const nb = nodes.find(n => n.id === e.b);
+    if (na) na.connections++;
+    if (nb) nb.connections++;
+  });
+  nodes.forEach(n => { n.radius = 6 + Math.min(n.connections, 12) * 1.2; });
+}
+
+function simulate() {
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], b = nodes[j];
+      let dx = b.x - a.x, dy = b.y - a.y;
+      let d = Math.sqrt(dx * dx + dy * dy) || 1;
+      let force = 800 / (d * d);
+      a.vx -= (dx / d) * force; a.vy -= (dy / d) * force;
+      b.vx += (dx / d) * force; b.vy += (dy / d) * force;
+    }
+  }
+  edges.forEach(e => {
+    const a = nodeMap[e.a], b = nodeMap[e.b];
+    if (!a || !b) return;
+    let dx = b.x - a.x, dy = b.y - a.y;
+    let d = Math.sqrt(dx * dx + dy * dy) || 1;
+    let target = e.type === 'category' ? 80 : 120;
+    let force = (d - target) * 0.003;
+    a.vx += (dx / d) * force; a.vy += (dy / d) * force;
+    b.vx -= (dx / d) * force; b.vy -= (dy / d) * force;
+  });
+  const cx = W / 2, cy = H / 2;
+  nodes.forEach(n => {
+    n.vx += (cx - n.x) * 0.0005;
+    n.vy += (cy - n.y) * 0.0005;
+    if (n === dragging) return;
+    n.vx *= 0.85; n.vy *= 0.85;
+    n.x += n.vx; n.y += n.vy;
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(panX, panY);
+  ctx.scale(zoom, zoom);
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+  const matchIds = new Set();
+  if (searchTerm) nodes.forEach(n => { if (n.name.toLowerCase().includes(searchTerm)) matchIds.add(n.id); });
+  const selEdges = new Set();
+  if (selectedNode) edges.forEach((e, i) => { if (e.a === selectedNode.id || e.b === selectedNode.id) selEdges.add(i); });
+
+  edges.forEach((e, i) => {
+    const a = nodeMap[e.a], b = nodeMap[e.b];
+    if (!a || !b) return;
+    let alpha = 0.12;
+    if (selectedNode) alpha = selEdges.has(i) ? 0.5 : 0.04;
+    if (searchTerm && !matchIds.has(e.a) && !matchIds.has(e.b)) alpha = 0.03;
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+    ctx.strokeStyle = e.type === 'category' ? `rgba(16,185,129,${alpha})` : `rgba(100,150,255,${alpha})`;
+    ctx.lineWidth = e.type === 'category' ? 1.2 : 0.8;
+    ctx.stroke();
+  });
+
+  nodes.forEach(n => {
+    let alpha = 1;
+    if (searchTerm && !matchIds.has(n.id)) alpha = 0.15;
+    if (selectedNode && selectedNode.id !== n.id && !edges.some(e => (e.a === selectedNode.id && e.b === n.id) || (e.b === selectedNode.id && e.a === n.id))) alpha = selectedNode ? 0.2 : 1;
+    const color = n.type === 'sim' ? STORE.accent : n.type === 'institute' ? '#3b82f6' : '#22c55e';
+    ctx.globalAlpha = alpha;
+    ctx.beginPath(); ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+    if (selectedNode && selectedNode.id === n.id) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
+    if (zoom > 0.5 || (selectedNode && (selectedNode.id === n.id || edges.some(e => (e.a === selectedNode.id && e.b === n.id) || (e.b === selectedNode.id && e.a === n.id))))) {
+      ctx.fillStyle = `rgba(250,250,250,${alpha})`;
+      ctx.font = `600 ${10 / Math.max(zoom, 0.6)}px Manrope, system-ui`;
+      ctx.textAlign = 'center';
+      ctx.fillText(n.name, n.x, n.y + n.radius + 12);
+    }
+    ctx.globalAlpha = 1;
+  });
+  ctx.restore();
+}
+
+function loop() { simulate(); draw(); requestAnimationFrame(loop); }
+
+function screenToWorld(sx, sy) { return { x: (sx - panX) / zoom, y: (sy - panY) / zoom }; }
+function findNode(sx, sy) {
+  const { x, y } = screenToWorld(sx, sy);
+  let best = null, bestD = Infinity;
+  nodes.forEach(n => { const d = Math.sqrt((n.x - x) ** 2 + (n.y - y) ** 2); if (d < n.radius + 5 && d < bestD) { best = n; bestD = d; } });
+  return best;
+}
+
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+  const node = findNode(sx, sy);
+  if (node) { dragging = node; const wp = screenToWorld(sx, sy); dragOffX = node.x - wp.x; dragOffY = node.y - wp.y; }
+  else { isPanning = true; panStartX = e.clientX; panStartY = e.clientY; panStartPX = panX; panStartPY = panY; }
+});
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  if (dragging) { const wp = screenToWorld(e.clientX - rect.left, e.clientY - rect.top); dragging.x = wp.x + dragOffX; dragging.y = wp.y + dragOffY; dragging.vx = 0; dragging.vy = 0; }
+  else if (isPanning) { panX = panStartPX + (e.clientX - panStartX); panY = panStartPY + (e.clientY - panStartY); }
+});
+canvas.addEventListener('mouseup', e => {
+  if (dragging && !isPanning) { const rect = canvas.getBoundingClientRect(); const node = findNode(e.clientX - rect.left, e.clientY - rect.top); if (node && node === dragging) selectNode(node); }
+  dragging = null; isPanning = false;
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const oldZoom = zoom;
+  zoom *= e.deltaY < 0 ? 1.08 : 0.92;
+  zoom = Math.max(0.2, Math.min(4, zoom));
+  panX = mx - (mx - panX) * (zoom / oldZoom);
+  panY = my - (my - panY) * (zoom / oldZoom);
+}, { passive: false });
+
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) { const t = e.touches[0]; const rect = canvas.getBoundingClientRect(); const sx = t.clientX - rect.left, sy = t.clientY - rect.top; const node = findNode(sx, sy); if (node) { dragging = node; const wp = screenToWorld(sx, sy); dragOffX = node.x - wp.x; dragOffY = node.y - wp.y; } else { isPanning = true; panStartX = t.clientX; panStartY = t.clientY; panStartPX = panX; panStartPY = panY; } }
+}, { passive: true });
+canvas.addEventListener('touchmove', e => {
+  if (e.touches.length === 1) { const t = e.touches[0]; const rect = canvas.getBoundingClientRect(); if (dragging) { const wp = screenToWorld(t.clientX - rect.left, t.clientY - rect.top); dragging.x = wp.x + dragOffX; dragging.y = wp.y + dragOffY; dragging.vx = 0; dragging.vy = 0; } else if (isPanning) { panX = panStartPX + (t.clientX - panStartX); panY = panStartPY + (t.clientY - panStartY); } }
+}, { passive: true });
+canvas.addEventListener('touchend', () => { if (dragging) selectNode(dragging); dragging = null; isPanning = false; }, { passive: true });
+
+function selectNode(node) {
+  selectedNode = node;
+  document.getElementById('ip-name').textContent = node.name;
+  document.getElementById('ip-type').textContent = node.type === 'sim' ? 'Simulation' : node.type === 'institute' ? 'Institute Page' : 'SDK Component';
+  document.getElementById('ip-desc').textContent = node.desc;
+  const connCount = edges.filter(e => e.a === node.id || e.b === node.id).length;
+  document.getElementById('ip-conn').textContent = connCount + ' connections';
+  const link = document.getElementById('ip-link');
+  link.href = node.href; link.style.display = node.href === '#' ? 'none' : '';
+  infoPanel.style.display = 'block';
+}
+function closePanel() { infoPanel.style.display = 'none'; selectedNode = null; }
+searchInput.addEventListener('input', e => { searchTerm = e.target.value.toLowerCase(); });
+loadData().then(() => loop());
+</script>
+</body>
+</html>
