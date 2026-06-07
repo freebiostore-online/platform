@@ -1,55 +1,19 @@
-name: Deploy Store to R2
+name: Deploy Store
 on:
   push:
     branches: [main]
     paths:
       - 'store/**'
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-concurrency:
-  group: deploy-store
-  cancel-in-progress: true
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: cloudflare/wrangler-action@v3
         with:
-          node-version: 22
-
-      - name: Build index page
-        run: node store/build-index.js
-
-      - name: Build detail pages
-        run: node store/build-details.js
-
-      - name: Upload store to R2
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: |
-          aws s3 sync store/ s3://fbs-items/store/ \
-            --endpoint-url https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            --exclude '.gitignore' \
-            --exclude 'partials/*' \
-            --exclude 'templates/*' \
-            --exclude 'build-index.js' \
-            --exclude 'build-details.js' \
-            --exclude 'dist/*' \
-            --exclude 'console/*' \
-            --delete
-
-      - name: Upload console to R2
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: |
-          aws s3 sync store/console/ s3://fbs-items/console/ \
-            --endpoint-url https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            --delete
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy store --project-name freebiostore
