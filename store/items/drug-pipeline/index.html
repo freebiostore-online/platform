@@ -15,6 +15,8 @@ h1{text-align:center;color:#10b981;font-size:1.8rem;margin-bottom:8px}
 .pipeline-stage.done{border-color:#22c55e;box-shadow:0 0 12px #22c55e33}
 .pipeline-stage .label{font-size:0.75rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
 .pipeline-stage .name{font-size:1rem;color:#e2e8f0;font-weight:600;margin-top:4px}
+.pipeline-stage .status{font-size:0.7rem;color:#64748b;margin-top:2px}
+.pipeline-stage.done .status{color:#22c55e}
 .arrow{color:#10b981;font-size:1.5rem;font-weight:bold}
 .steps{display:flex;flex-direction:column;gap:24px;max-width:920px;margin:0 auto}
 .step{background:#0c1410;border:1px solid #1a2f26;border-radius:16px;padding:24px;transition:all .3s}
@@ -24,16 +26,17 @@ h1{text-align:center;color:#10b981;font-size:1.8rem;margin-bottom:8px}
 .step-num{width:32px;height:32px;border-radius:50%;background:#0f1f1a;color:#10b981;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:0.9rem;border:2px solid #10b98144}
 .step.done .step-num{background:#22c55e22;color:#22c55e;border-color:#22c55e}
 .step-title{font-size:1.1rem;font-weight:600}
-.step-desc{color:#94a3b8;font-size:0.85rem;margin-bottom:16px}
+.step-desc{color:#94a3b8;font-size:0.85rem;margin-bottom:16px;line-height:1.5}
 .controls{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
 button{background:#10b981;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:0.9rem;font-weight:500;transition:all .2s}
-button:hover{background:#059669}
-button:disabled{opacity:0.4;cursor:default}
+button:hover{background:#059669;transform:translateY(-1px)}
+button:disabled{opacity:0.4;cursor:default;transform:none}
 button.secondary{background:#0f1f1a;border:1px solid #1a2f26;color:#94a3b8}
 button.secondary:hover{border-color:#10b981;color:#6ee7b7}
-button.run-all{background:linear-gradient(135deg,#10b981,#34d399);padding:14px 32px;font-size:1rem;font-weight:600;display:block;margin:24px auto 0;color:#022c22}
-.output-box{background:#070d0a;border:1px solid #1a2f26;border-radius:8px;padding:12px 16px;margin-top:12px;font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.6;max-height:260px;overflow-y:auto;white-space:pre-wrap}
-input,textarea,select{background:#070d0a;border:1px solid #1a2f26;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:0.9rem;font-family:inherit;width:100%}
+button.run-all{background:linear-gradient(135deg,#10b981,#34d399);padding:14px 32px;font-size:1rem;font-weight:600;display:block;margin:24px auto 0;color:#022c22;box-shadow:0 4px 20px #10b98144}
+.output-box{background:#070d0a;border:1px solid #1a2f26;border-radius:8px;padding:12px 16px;margin-top:12px;font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.6;max-height:280px;overflow-y:auto;white-space:pre-wrap}
+input,textarea,select{background:#070d0a;border:1px solid #1a2f26;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:0.9rem;font-family:inherit;width:100%;transition:border-color .2s}
+input:focus,textarea:focus{border-color:#10b981;outline:none}
 textarea{resize:vertical;min-height:50px;font-family:'Courier New',monospace}
 .result-label{color:#10b981;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-top:8px}
 .seq-display{font-family:'Courier New',monospace;font-size:0.85rem;word-break:break-all;padding:8px;background:#070d0a;border-radius:6px;margin:6px 0}
@@ -42,14 +45,30 @@ textarea{resize:vertical;min-height:50px;font-family:'Courier New',monospace}
 .ss-h{background:#ef444433;color:#f87171;padding:2px 4px;border-radius:2px;font-family:monospace;font-size:0.8rem}
 .ss-e{background:#3b82f633;color:#60a5fa;padding:2px 4px;border-radius:2px;font-family:monospace;font-size:0.8rem}
 .ss-c{background:#1e293b;color:#94a3b8;padding:2px 4px;border-radius:2px;font-family:monospace;font-size:0.8rem}
-.legend{display:flex;gap:16px;margin:8px 0;font-size:0.8rem}
-.feed-arrow{text-align:center;color:#10b981;font-size:1.2rem;margin:4px 0;opacity:0;transition:opacity .3s}
+.legend{display:flex;gap:16px;margin:8px 0;font-size:0.8rem;flex-wrap:wrap}
+.feed-arrow{text-align:center;color:#10b981;font-size:1.2rem;margin:4px 0;opacity:0;transition:opacity .5s}
 .feed-arrow.visible{opacity:1}
+.feed-arrow .feed-label{font-size:0.75rem;color:#64748b}
 .drug-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.drug-form label{font-size:0.85rem;color:#94a3b8}
-.verdict{text-align:center;font-size:1.3rem;font-weight:700;padding:16px;border-radius:12px;margin-top:16px}
+.drug-form label{font-size:0.85rem;color:#94a3b8;display:block;margin-bottom:4px}
+.drug-presets{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.drug-presets button{padding:6px 12px;font-size:0.8rem}
+.verdict{text-align:center;font-size:1.3rem;font-weight:700;padding:16px;border-radius:12px;margin-top:16px;transition:all .3s}
 .verdict.pass{background:#22c55e22;color:#22c55e;border:2px solid #22c55e44}
 .verdict.fail{background:#ef444422;color:#ef4444;border:2px solid #ef444444}
+.bio-info{display:flex;gap:16px;margin:12px 0;font-size:0.8rem;flex-wrap:wrap}
+.bio-info .info-card{background:#0f1f1a;padding:8px 12px;border-radius:6px;flex:1;text-align:center;min-width:80px}
+.bio-info .info-card .val{color:#6ee7b7;font-size:1.1rem;font-weight:700;font-family:monospace}
+.bio-info .info-card .lbl{color:#64748b;font-size:0.7rem;text-transform:uppercase;margin-top:2px}
+.lipinski-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.lip-check{background:#0f1f1a;border:1px solid #1a2f26;border-radius:6px;padding:8px 12px;font-size:0.8rem;flex:1;min-width:120px}
+.lip-check.pass{border-color:#22c55e44;color:#22c55e}
+.lip-check.fail{border-color:#ef444444;color:#ef4444}
+.lip-check .lip-label{color:#94a3b8;font-size:0.7rem}
+.lip-check .lip-val{font-family:monospace;font-weight:600;margin-top:2px}
+.codon-table-mini{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0}
+.codon-chip{background:#0f1f1a;border:1px solid #1a2f26;border-radius:4px;padding:3px 6px;font-family:monospace;font-size:0.7rem}
+.codon-chip .codon{color:#f472b6}.codon-chip .amino{color:#fbbf24;font-weight:bold}
 </style>
 </head>
 <body>
@@ -57,34 +76,51 @@ textarea{resize:vertical;min-height:50px;font-family:'Courier New',monospace}
 <p class="subtitle">DNA Sequence &rarr; Protein Structure &rarr; Drug Docking Score</p>
 
 <div class="pipeline-flow">
-  <div class="pipeline-stage" id="ps1"><div class="label">Step 1</div><div class="name">Gene Expression</div></div>
+  <div class="pipeline-stage" id="ps1">
+    <div class="label">Step 1</div>
+    <div class="name">Gene Expression</div>
+    <div class="status" id="ps1-status">Waiting</div>
+  </div>
   <div class="arrow">&rarr;</div>
-  <div class="pipeline-stage" id="ps2"><div class="label">Step 2</div><div class="name">Structure Predict</div></div>
+  <div class="pipeline-stage" id="ps2">
+    <div class="label">Step 2</div>
+    <div class="name">Structure Predict</div>
+    <div class="status" id="ps2-status">Waiting</div>
+  </div>
   <div class="arrow">&rarr;</div>
-  <div class="pipeline-stage" id="ps3"><div class="label">Step 3</div><div class="name">Drug Docking</div></div>
+  <div class="pipeline-stage" id="ps3">
+    <div class="label">Step 3</div>
+    <div class="name">Drug Docking</div>
+    <div class="status" id="ps3-status">Waiting</div>
+  </div>
 </div>
 
 <div class="steps">
   <div class="step" id="step1">
     <div class="step-header"><div class="step-num">1</div><div class="step-title">Gene Expression: DNA &rarr; mRNA &rarr; Protein</div></div>
-    <p class="step-desc">Enter a DNA coding sequence. It will be transcribed to mRNA, then translated to an amino acid sequence using the standard genetic code.</p>
-    <textarea id="dna-input" placeholder="Enter DNA sequence (e.g., ATGGCTAGCAACTTCGAG...)">ATGGCTAGCAACTACGAGAAAGCTGCACTGGATCAGATCCTGAAAGAAATCGCG</textarea>
+    <p class="step-desc">Enter a DNA coding sequence (must start with ATG). The central dogma of molecular biology: DNA is transcribed to mRNA (T&rarr;U), then mRNA codons are translated into amino acids using the standard genetic code. Translation stops at a stop codon (UAA, UAG, UGA).</p>
+    <textarea id="dna-input" placeholder="Enter DNA sequence (must start with ATG)...">ATGGCTAGCAACTACGAGAAAGCTGCACTGGATCAGATCCTGAAAGAAATCGCGTATGACTTTGCCAAC</textarea>
     <div class="controls">
       <button onclick="runStep1()">Transcribe &amp; Translate</button>
-      <button class="secondary" onclick="loadSample()">Load Sample Gene</button>
+      <button class="secondary" onclick="loadSample('insulin')">Insulin Fragment</button>
+      <button class="secondary" onclick="loadSample('hemoglobin')">Hemoglobin Fragment</button>
+      <button class="secondary" onclick="loadSample('custom')">Short Peptide</button>
     </div>
     <div class="output-box" id="step1-output" style="display:none"></div>
   </div>
 
-  <div class="feed-arrow" id="feed1">&darr; Amino acid sequence feeds into structure prediction</div>
+  <div class="feed-arrow" id="feed1">
+    &darr;
+    <div class="feed-label">Amino acid sequence feeds into structure prediction</div>
+  </div>
 
   <div class="step" id="step2">
     <div class="step-header"><div class="step-num">2</div><div class="step-title">Secondary Structure Prediction (Chou-Fasman)</div></div>
-    <p class="step-desc">Predicts alpha-helix (H), beta-sheet (E), and coil (C) regions using simplified Chou-Fasman propensity values for each amino acid.</p>
+    <p class="step-desc">Each amino acid has propensity values for alpha-helix and beta-sheet conformations. A sliding window averages these propensities. Residues above threshold are assigned helix (H) or sheet (E); others become coil (C). This simplified model captures real structural trends.</p>
     <div class="legend">
-      <span><span class="ss-h">H</span> Alpha Helix</span>
-      <span><span class="ss-e">E</span> Beta Sheet</span>
-      <span><span class="ss-c">C</span> Coil</span>
+      <span><span class="ss-h">H</span> Alpha Helix (Pa &gt; 1.03)</span>
+      <span><span class="ss-e">E</span> Beta Sheet (Pb &gt; 1.05)</span>
+      <span><span class="ss-c">C</span> Coil/Turn</span>
     </div>
     <div id="step2-content"></div>
     <div class="controls">
@@ -93,26 +129,35 @@ textarea{resize:vertical;min-height:50px;font-family:'Courier New',monospace}
     <div class="output-box" id="step2-output" style="display:none"></div>
   </div>
 
-  <div class="feed-arrow" id="feed2">&darr; Protein properties feed into drug docking</div>
+  <div class="feed-arrow" id="feed2">
+    &darr;
+    <div class="feed-label">Protein properties feed into drug docking</div>
+  </div>
 
   <div class="step" id="step3">
     <div class="step-header"><div class="step-num">3</div><div class="step-title">Drug Candidate Screening</div></div>
-    <p class="step-desc">Enter a drug molecule (SMILES notation). Lipinski's Rule of Five is evaluated, then a simplified binding compatibility score is computed against the target protein.</p>
+    <p class="step-desc">Enter a drug molecule in SMILES notation. We evaluate Lipinski's Rule of Five (drug-likeness filter used in pharmaceutical screening) and compute a simplified binding compatibility score against the target protein based on size, polarity, and flexibility matching.</p>
     <div class="drug-form">
       <div>
         <label>Drug Name</label>
         <input type="text" id="drug-name" value="Aspirin" />
       </div>
       <div>
-        <label>SMILES</label>
+        <label>SMILES Notation</label>
         <input type="text" id="drug-smiles" value="CC(=O)Oc1ccccc1C(=O)O" />
       </div>
     </div>
-    <div class="controls">
-      <button onclick="runStep3()" id="btn-step3" disabled>Screen Drug</button>
+    <div class="drug-presets">
+      <button class="secondary" onclick="loadDrug('Aspirin','CC(=O)Oc1ccccc1C(=O)O')">Aspirin</button>
       <button class="secondary" onclick="loadDrug('Ibuprofen','CC(C)Cc1ccc(cc1)C(C)C(=O)O')">Ibuprofen</button>
       <button class="secondary" onclick="loadDrug('Caffeine','Cn1c(=O)c2c(ncn2C)n(C)c1=O')">Caffeine</button>
+      <button class="secondary" onclick="loadDrug('Acetaminophen','CC(=O)Nc1ccc(O)cc1')">Acetaminophen</button>
+      <button class="secondary" onclick="loadDrug('Penicillin','CC1(C)SC2C(NC(=O)Cc3ccccc3)C(=O)N2C1C(=O)O')">Penicillin</button>
     </div>
+    <div class="controls">
+      <button onclick="runStep3()" id="btn-step3" disabled>Screen Drug</button>
+    </div>
+    <div id="lipinski-display"></div>
     <div class="output-box" id="step3-output" style="display:none"></div>
     <div id="verdict"></div>
   </div>
@@ -131,14 +176,21 @@ const CODON_TABLE = {
   'UGU':'C','UGC':'C','UGA':'*','UGG':'W','CGU':'R','CGC':'R','CGA':'R','CGG':'R',
   'AGU':'S','AGC':'S','AGA':'R','AGG':'R','GGU':'G','GGC':'G','GGA':'G','GGG':'G'
 };
+const AA_NAMES = {A:'Ala',R:'Arg',N:'Asn',D:'Asp',C:'Cys',E:'Glu',Q:'Gln',G:'Gly',H:'His',I:'Ile',L:'Leu',K:'Lys',M:'Met',F:'Phe',P:'Pro',S:'Ser',T:'Thr',W:'Trp',Y:'Tyr',V:'Val'};
 const CF_HELIX = {A:1.42,L:1.21,E:1.51,M:1.45,Q:1.11,K:1.16,R:0.98,H:1.00,V:1.06,I:1.08,Y:0.69,C:0.70,W:1.08,F:1.13,T:0.83,G:0.57,N:0.67,P:0.57,S:0.77,D:1.01};
 const CF_SHEET = {A:0.83,L:1.30,E:0.37,M:1.05,Q:1.10,K:0.74,R:0.93,H:0.87,V:1.70,I:1.60,Y:1.47,C:1.19,W:1.37,F:1.38,T:1.19,G:0.75,N:0.89,P:0.55,S:0.75,D:0.54};
 
 let aaSequence = '';
 let structureInfo = null;
 
-function loadSample() {
-  document.getElementById('dna-input').value = 'ATGGCTAGCAACTACGAGAAAGCTGCACTGGATCAGATCCTGAAAGAAATCGCGTATGACTTTGCCAAC';
+const SAMPLES = {
+  insulin: 'ATGTTCGTGAACCAGCACCTGTGCGGCTCTCACCTGGTGGAAGCTCTGTACCTGGTGTGCGGCGAGCGCGGCTTCTTCTACACCCCGAAGACCCGCCGCGAG',
+  hemoglobin: 'ATGGTGCACCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGCTGCTG',
+  custom: 'ATGGCTAGCAACTACGAGAAAGCTGCACTG'
+};
+
+function loadSample(name) {
+  document.getElementById('dna-input').value = SAMPLES[name] || SAMPLES.custom;
 }
 
 function loadDrug(name, smiles) {
@@ -151,17 +203,35 @@ function runStep1() {
   if (dna.length < 3) return;
   const mrna = dna.replace(/T/g, 'U');
   aaSequence = '';
+  const codons = [];
   for (let i = 0; i + 2 < mrna.length; i += 3) {
     const codon = mrna.substr(i, 3);
     const aa = CODON_TABLE[codon] || '?';
+    codons.push({ codon, aa });
     if (aa === '*') break;
     aaSequence += aa;
   }
+
+  // Build codon chips visualization
+  let codonHTML = '<div class="codon-table-mini">';
+  codons.forEach(c => {
+    const stopClass = c.aa === '*' ? 'style="border-color:#ef444444"' : '';
+    codonHTML += `<div class="codon-chip" ${stopClass}><span class="codon">${c.codon}</span> &rarr; <span class="amino">${c.aa === '*' ? 'STOP' : c.aa}</span></div>`;
+  });
+  codonHTML += '</div>';
+
   const out = document.getElementById('step1-output');
   out.style.display = 'block';
-  out.innerHTML = `<span class="result-label">DNA (${dna.length} bp)</span>\n<span class="dna">${dna}</span>\n\n<span class="result-label">mRNA</span>\n<span class="mrna">${mrna}</span>\n\n<span class="result-label">Protein (${aaSequence.length} aa)</span>\n<span class="aa">${aaSequence}</span>`;
+  out.innerHTML = `<span class="result-label">DNA Template (${dna.length} bp)</span>\n<span class="dna">${dna}</span>\n\n` +
+    `<span class="result-label">mRNA Transcript</span>\n<span class="mrna">${mrna}</span>\n\n` +
+    `<span class="result-label">Codon Translation</span>\n${codonHTML}\n` +
+    `<span class="result-label">Protein (${aaSequence.length} residues)</span>\n<span class="aa">${aaSequence}</span>\n\n` +
+    `<span style="color:#94a3b8">Full names: ${aaSequence.split('').map(a => AA_NAMES[a] || a).join('-')}</span>\n` +
+    `<span style="color:#94a3b8">Molecular weight (est): ~${(aaSequence.length * 110).toLocaleString()} Da</span>`;
+
   document.getElementById('step1').classList.add('done');
   document.getElementById('ps1').classList.add('done');
+  document.getElementById('ps1-status').textContent = `${aaSequence.length} aa`;
   document.getElementById('feed1').classList.add('visible');
   document.getElementById('btn-step2').disabled = false;
 }
@@ -169,10 +239,11 @@ function runStep1() {
 function runStep2() {
   if (!aaSequence) return;
   const structure = [];
+  const hScores = [], eScores = [];
   const WINDOW = 4;
+
   for (let i = 0; i < aaSequence.length; i++) {
-    let hScore = 0, eScore = 0;
-    let count = 0;
+    let hScore = 0, eScore = 0, count = 0;
     for (let j = Math.max(0, i - WINDOW); j <= Math.min(aaSequence.length - 1, i + WINDOW); j++) {
       const aa = aaSequence[j];
       hScore += (CF_HELIX[aa] || 1.0);
@@ -181,55 +252,84 @@ function runStep2() {
     }
     hScore /= count;
     eScore /= count;
+    hScores.push(hScore);
+    eScores.push(eScore);
     if (hScore > 1.03 && hScore >= eScore) structure.push('H');
     else if (eScore > 1.05 && eScore > hScore) structure.push('E');
     else structure.push('C');
   }
-  const helixPct = (structure.filter(s => s === 'H').length / structure.length * 100).toFixed(1);
-  const sheetPct = (structure.filter(s => s === 'E').length / structure.length * 100).toFixed(1);
-  const coilPct = (structure.filter(s => s === 'C').length / structure.length * 100).toFixed(1);
-  structureInfo = { structure, helixPct, sheetPct, coilPct, length: aaSequence.length };
 
-  let structHTML = '<div class="struct-row">';
+  const helixCount = structure.filter(s => s === 'H').length;
+  const sheetCount = structure.filter(s => s === 'E').length;
+  const coilCount = structure.filter(s => s === 'C').length;
+  const helixPct = (helixCount / structure.length * 100).toFixed(1);
+  const sheetPct = (sheetCount / structure.length * 100).toFixed(1);
+  const coilPct = (coilCount / structure.length * 100).toFixed(1);
+  structureInfo = { structure, helixPct, sheetPct, coilPct, length: aaSequence.length, hScores, eScores };
+
+  // Build structure visualization
+  let structHTML = '<div style="margin:12px 0">';
+  structHTML += '<div class="struct-row">';
   for (let i = 0; i < aaSequence.length; i++) {
-    structHTML += `<span class="ss-${structure[i].toLowerCase()}" title="${aaSequence[i]}">${aaSequence[i]}</span>`;
+    structHTML += `<span class="ss-${structure[i].toLowerCase()}" title="${AA_NAMES[aaSequence[i]] || aaSequence[i]}: Pa=${hScores[i].toFixed(2)} Pb=${eScores[i].toFixed(2)}">${aaSequence[i]}</span>`;
   }
   structHTML += '</div><div class="struct-row">';
   for (let i = 0; i < structure.length; i++) {
     structHTML += `<span class="ss-${structure[i].toLowerCase()}">${structure[i]}</span>`;
   }
+  structHTML += '</div></div>';
+
+  // Info cards
+  structHTML += '<div class="bio-info">';
+  structHTML += `<div class="info-card"><div class="val">${helixCount}</div><div class="lbl">Helix (${helixPct}%)</div></div>`;
+  structHTML += `<div class="info-card"><div class="val">${sheetCount}</div><div class="lbl">Sheet (${sheetPct}%)</div></div>`;
+  structHTML += `<div class="info-card"><div class="val">${coilCount}</div><div class="lbl">Coil (${coilPct}%)</div></div>`;
+  structHTML += `<div class="info-card"><div class="val">${Math.max(1, Math.floor(parseFloat(coilPct) / 15))}</div><div class="lbl">Binding sites</div></div>`;
   structHTML += '</div>';
+
   document.getElementById('step2-content').innerHTML = structHTML;
 
   const out = document.getElementById('step2-output');
   out.style.display = 'block';
-  out.innerHTML = `<span class="result-label">Structure Composition</span>\nAlpha Helix: ${helixPct}%  |  Beta Sheet: ${sheetPct}%  |  Coil: ${coilPct}%\nProtein Length: ${aaSequence.length} residues\nPredicted binding pockets: ${Math.max(1, Math.floor(parseFloat(coilPct) / 15))} (coil-rich regions)`;
+  let propDetails = '';
+  for (let i = 0; i < Math.min(10, aaSequence.length); i++) {
+    propDetails += `  ${aaSequence[i]} (${AA_NAMES[aaSequence[i]]}): Pa=${hScores[i].toFixed(3)} Pb=${eScores[i].toFixed(3)} -> ${structure[i]}\n`;
+  }
+  if (aaSequence.length > 10) propDetails += `  ... (${aaSequence.length - 10} more residues)\n`;
+
+  out.innerHTML = `<span class="result-label">Chou-Fasman Prediction</span>\n` +
+    `Window size: ${WINDOW * 2 + 1} residues\nThresholds: helix > 1.03, sheet > 1.05\n\n` +
+    `<span class="result-label">Per-residue propensities</span>\n${propDetails}\n` +
+    `<span class="result-label">Composition</span>\n` +
+    `Alpha helix: ${helixPct}% (${helixCount}/${structure.length})\n` +
+    `Beta sheet:  ${sheetPct}% (${sheetCount}/${structure.length})\n` +
+    `Coil/turn:   ${coilPct}% (${coilCount}/${structure.length})\n\n` +
+    `Predicted binding pockets: ${Math.max(1, Math.floor(parseFloat(coilPct) / 15))} (coil-rich loop regions)`;
 
   document.getElementById('step2').classList.add('done');
   document.getElementById('ps2').classList.add('done');
+  document.getElementById('ps2-status').textContent = `${helixPct}% helix`;
   document.getElementById('feed2').classList.add('visible');
   document.getElementById('btn-step3').disabled = false;
 }
 
 function parseSMILES(smiles) {
-  const atoms = smiles.replace(/[^A-Za-z]/g, '');
-  let mw = 0, hDonors = 0, hAcceptors = 0, rotBonds = 0, rings = 0;
-  const carbons = (smiles.match(/C/g) || []).length - (smiles.match(/Cl/g) || []).length;
-  const nitrogens = (smiles.match(/N/g) || []).length;
+  const carbons = (smiles.match(/C(?![lra])/g) || []).length + (smiles.match(/c/g) || []).length;
+  const nitrogens = (smiles.match(/N/g) || []).length + (smiles.match(/n/g) || []).length;
   const oxygens = (smiles.match(/O/g) || []).length;
   const sulfurs = (smiles.match(/S/g) || []).length;
-  const hydrogens = carbons * 2 + 2 + nitrogens - oxygens;
-  mw = carbons * 12 + (Math.max(0, hydrogens)) * 1 + nitrogens * 14 + oxygens * 16 + sulfurs * 32;
-  hDonors = (smiles.match(/O(?=[^=]|$)/g) || []).length + (smiles.match(/N(?=[^=]|$)/g) || []).length;
-  hAcceptors = oxygens + nitrogens;
-  rotBonds = Math.max(0, (smiles.match(/-|[^=()]/g) || []).length / 4 - 2);
-  rings = (smiles.match(/[0-9]/g) || []).length / 2 + (smiles.match(/c/g) || []).length / 5;
-  const logP = (carbons * 0.5 - oxygens * 1.2 - nitrogens * 0.8 + 0.5).toFixed(2);
-  return {
-    mw: Math.round(mw), hDonors: Math.min(hDonors, 8), hAcceptors: Math.min(hAcceptors, 12),
-    rotBonds: Math.round(rotBonds), rings: Math.round(rings), logP: parseFloat(logP),
-    carbons, nitrogens, oxygens, formula: `C${carbons}H${Math.max(0,hydrogens)}${nitrogens?'N'+nitrogens:''}${oxygens?'O'+oxygens:''}${sulfurs?'S'+sulfurs:''}`
-  };
+  const chlorines = (smiles.match(/Cl/g) || []).length;
+  const hydrogens = Math.max(0, carbons * 2 + 2 + nitrogens - oxygens - chlorines * 2);
+  const mw = carbons * 12 + hydrogens + nitrogens * 14 + oxygens * 16 + sulfurs * 32 + chlorines * 35.5;
+  const hDonors = Math.min((smiles.match(/O(?!=)/g) || []).length + (smiles.match(/N(?!=)/g) || []).length, 8);
+  const hAcceptors = Math.min(oxygens + nitrogens, 12);
+  const singleBonds = (smiles.match(/[A-Z][a-z]?[A-Z]/g) || []).length;
+  const rotBonds = Math.max(0, Math.round(singleBonds + carbons / 3 - 2));
+  const rings = (smiles.match(/[0-9]/g) || []).length / 2 + Math.floor((smiles.match(/c/g) || []).length / 5);
+  const logP = parseFloat((carbons * 0.5 - oxygens * 1.2 - nitrogens * 0.8 + sulfurs * 0.6 + 0.5).toFixed(2));
+  const tpsa = oxygens * 20.23 + nitrogens * 26.02;
+  const formula = `C${carbons}H${hydrogens}${nitrogens?'N'+nitrogens:''}${oxygens?'O'+oxygens:''}${sulfurs?'S'+sulfurs:''}${chlorines?'Cl'+chlorines:''}`;
+  return { mw: Math.round(mw), hDonors, hAcceptors, rotBonds, rings: Math.round(rings), logP, carbons, nitrogens, oxygens, formula, tpsa: Math.round(tpsa) };
 }
 
 function runStep3() {
@@ -238,6 +338,7 @@ function runStep3() {
   const smiles = document.getElementById('drug-smiles').value;
   const mol = parseSMILES(smiles);
 
+  // Lipinski's Rule of Five
   const lip1 = mol.mw <= 500;
   const lip2 = mol.logP <= 5;
   const lip3 = mol.hDonors <= 5;
@@ -245,29 +346,41 @@ function runStep3() {
   const lipinski = [lip1, lip2, lip3, lip4].filter(Boolean).length;
   const lipinskiPass = lipinski >= 3;
 
+  // Lipinski display
+  let lipHTML = '<div class="lipinski-row">';
+  lipHTML += `<div class="lip-check ${lip1?'pass':'fail'}"><div class="lip-label">MW &leq; 500</div><div class="lip-val">${mol.mw} Da ${lip1?'PASS':'FAIL'}</div></div>`;
+  lipHTML += `<div class="lip-check ${lip2?'pass':'fail'}"><div class="lip-label">LogP &leq; 5</div><div class="lip-val">${mol.logP} ${lip2?'PASS':'FAIL'}</div></div>`;
+  lipHTML += `<div class="lip-check ${lip3?'pass':'fail'}"><div class="lip-label">H-Donors &leq; 5</div><div class="lip-val">${mol.hDonors} ${lip3?'PASS':'FAIL'}</div></div>`;
+  lipHTML += `<div class="lip-check ${lip4?'pass':'fail'}"><div class="lip-label">H-Acceptors &leq; 10</div><div class="lip-val">${mol.hAcceptors} ${lip4?'PASS':'FAIL'}</div></div>`;
+  lipHTML += '</div>';
+  document.getElementById('lipinski-display').innerHTML = lipHTML;
+
+  // Binding compatibility scoring
   const sizeFit = Math.max(0, 100 - Math.abs(mol.mw - structureInfo.length * 8) / 3);
   const polarFit = Math.max(0, 100 - Math.abs(mol.hAcceptors * 10 - parseFloat(structureInfo.coilPct)) * 2);
   const flexFit = Math.max(0, 100 - Math.abs(mol.rotBonds * 5 - parseFloat(structureInfo.helixPct)));
-  const dockingScore = ((sizeFit * 0.4 + polarFit * 0.35 + flexFit * 0.25) * (lipinskiPass ? 1 : 0.5)).toFixed(1);
+  const tpsaFit = Math.max(0, 100 - Math.abs(mol.tpsa - 80) / 2);
+  const dockingScore = ((sizeFit * 0.3 + polarFit * 0.25 + flexFit * 0.2 + tpsaFit * 0.25) * (lipinskiPass ? 1 : 0.5)).toFixed(1);
   const dockingPass = parseFloat(dockingScore) >= 50;
 
   const out = document.getElementById('step3-output');
   out.style.display = 'block';
-  out.innerHTML = `<span class="result-label">Molecule: ${name}</span>
-SMILES: ${smiles}
-Formula: ${mol.formula}   MW: ${mol.mw} Da   LogP: ${mol.logP}
-
-<span class="result-label">Lipinski's Rule of Five (${lipinski}/4 pass)</span>
-  MW <= 500:        ${mol.mw.toString().padEnd(8)} ${lip1 ? 'PASS' : 'FAIL'}
-  LogP <= 5:        ${mol.logP.toString().padEnd(8)} ${lip2 ? 'PASS' : 'FAIL'}
-  H-Donors <= 5:    ${mol.hDonors.toString().padEnd(8)} ${lip3 ? 'PASS' : 'FAIL'}
-  H-Acceptors <= 10:${mol.hAcceptors.toString().padEnd(8)} ${lip4 ? 'PASS' : 'FAIL'}
-
-<span class="result-label">Binding Compatibility Score</span>
-  Size fit:     ${sizeFit.toFixed(1)}%  (MW vs protein length)
-  Polarity fit: ${polarFit.toFixed(1)}%  (H-acceptors vs coil regions)
-  Flex fit:     ${flexFit.toFixed(1)}%  (rotatable bonds vs helix content)
-  <span style="color:${dockingPass ? '#22c55e' : '#ef4444'}">Combined:     ${dockingScore}%</span>`;
+  out.innerHTML = `<span class="result-label">Molecule: ${name}</span>\n` +
+    `SMILES:   ${smiles}\n` +
+    `Formula:  ${mol.formula}\n` +
+    `MW: ${mol.mw} Da | LogP: ${mol.logP} | TPSA: ${mol.tpsa} A^2\n` +
+    `Rotatable bonds: ${mol.rotBonds} | Rings: ${mol.rings}\n\n` +
+    `<span class="result-label">Lipinski's Rule of Five (${lipinski}/4 pass)</span>\n` +
+    `  MW <= 500:         ${mol.mw.toString().padEnd(8)} ${lip1 ? 'PASS' : 'FAIL'}\n` +
+    `  LogP <= 5:         ${mol.logP.toString().padEnd(8)} ${lip2 ? 'PASS' : 'FAIL'}\n` +
+    `  H-Donors <= 5:     ${mol.hDonors.toString().padEnd(8)} ${lip3 ? 'PASS' : 'FAIL'}\n` +
+    `  H-Acceptors <= 10: ${mol.hAcceptors.toString().padEnd(8)} ${lip4 ? 'PASS' : 'FAIL'}\n\n` +
+    `<span class="result-label">Binding Compatibility Score</span>\n` +
+    `  Size fit:      ${sizeFit.toFixed(1)}%  (MW vs protein size)\n` +
+    `  Polarity fit:  ${polarFit.toFixed(1)}%  (H-acceptors vs coil regions)\n` +
+    `  Flexibility:   ${flexFit.toFixed(1)}%  (rotatable bonds vs helix content)\n` +
+    `  TPSA fit:      ${tpsaFit.toFixed(1)}%  (polar surface area vs ideal ~80)\n` +
+    `  <span style="color:${dockingPass ? '#22c55e' : '#ef4444'}">Combined:        ${dockingScore}%</span>`;
 
   const v = document.getElementById('verdict');
   const pass = lipinskiPass && dockingPass;
@@ -276,6 +389,7 @@ Formula: ${mol.formula}   MW: ${mol.mw} Da   LogP: ${mol.logP}
 
   document.getElementById('step3').classList.add('done');
   document.getElementById('ps3').classList.add('done');
+  document.getElementById('ps3-status').textContent = pass ? 'PASS' : 'FAIL';
 }
 
 async function runPipeline() {
@@ -283,24 +397,31 @@ async function runPipeline() {
   document.querySelectorAll('.pipeline-stage').forEach(s => s.classList.remove('done', 'active'));
   document.querySelectorAll('.feed-arrow').forEach(a => a.classList.remove('visible'));
   document.getElementById('step2-content').innerHTML = '';
+  document.getElementById('lipinski-display').innerHTML = '';
   document.getElementById('verdict').innerHTML = '';
   ['step1-output','step2-output','step3-output'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['ps1-status','ps2-status','ps3-status'].forEach(id => document.getElementById(id).textContent = 'Waiting');
 
   document.getElementById('ps1').classList.add('active');
   document.getElementById('step1').classList.add('active');
-  await sleep(400);
+  document.getElementById('ps1-status').textContent = 'Running...';
+  await sleep(500);
   runStep1();
   document.getElementById('step1').classList.remove('active');
-  await sleep(600);
+  await sleep(700);
+
   document.getElementById('ps2').classList.add('active');
   document.getElementById('step2').classList.add('active');
-  await sleep(400);
+  document.getElementById('ps2-status').textContent = 'Running...';
+  await sleep(500);
   runStep2();
   document.getElementById('step2').classList.remove('active');
-  await sleep(600);
+  await sleep(700);
+
   document.getElementById('ps3').classList.add('active');
   document.getElementById('step3').classList.add('active');
-  await sleep(400);
+  document.getElementById('ps3-status').textContent = 'Running...';
+  await sleep(500);
   runStep3();
   document.getElementById('step3').classList.remove('active');
   document.getElementById('ps3').classList.remove('active');
@@ -308,5 +429,6 @@ async function runPipeline() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
+<script src="/related.js"></script>
 </body>
 </html>

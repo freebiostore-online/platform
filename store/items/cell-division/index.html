@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mitosis &amp; Meiosis Visualizer | FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--text:#fafafa;--muted:#888;--accent:#10b981;--panel:#111;--border:#1a1a1a;--dark:#080808}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+.back{position:absolute;top:16px;left:20px;font-size:13px;font-weight:600;opacity:.7}
+.back:hover{opacity:1}
+header{text-align:center;padding:20px 20px 10px;border-bottom:1px solid var(--border)}
+header h1{font-size:1.4rem;font-weight:700;color:var(--accent)}
+header p{font-size:.82rem;color:var(--muted);margin-top:4px}
+.layout{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 280px;gap:14px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+h2{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+canvas{display:block;width:100%;border-radius:8px;background:var(--dark)}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn:hover{background:#059669}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-sec{background:var(--border);color:var(--accent);border:1px solid #252525}
+.btn-sec:hover{background:#1f1f1f}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.tabs{display:flex;gap:0;margin-bottom:14px}
+.tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:700;background:var(--dark);border:1px solid var(--border);color:#555;cursor:pointer;transition:all .15s}
+.tab:first-child{border-radius:6px 0 0 6px}
+.tab:last-child{border-radius:0 6px 6px 0}
+.tab.active{background:#10b98120;color:var(--accent);border-color:var(--accent)}
+.phases{display:flex;gap:0;margin:10px 0}
+.phase{flex:1;padding:6px 2px;text-align:center;font-size:10px;font-weight:600;background:var(--dark);border:1px solid var(--border);color:#444;transition:all .15s}
+.phase:first-child{border-radius:6px 0 0 6px}
+.phase:last-child{border-radius:0 6px 6px 0}
+.phase.active{background:#10b98120;color:var(--accent);border-color:var(--accent)}
+.phase.done{background:#10b98110;color:#059669;border-color:#10b98155}
+.info{background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;line-height:1.7;color:var(--muted);margin-top:10px}
+.info strong{color:var(--text)}
+.stat{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #1a1a1a}
+.stat .label{color:var(--muted)}
+.stat .val{color:var(--accent);font-weight:700}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-top:8px}
+.legend span{display:flex;align-items:center;gap:3px}
+.legend .dot{width:8px;height:8px;border-radius:50%}
+.speed-ctrl{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin-top:8px}
+.speed-ctrl input{accent-color:var(--accent);width:80px}
+</style>
+</head>
+<body>
+<a href="/" class="back">FreeBioStore</a>
+<header>
+  <h1>Mitosis & Meiosis Visualizer</h1>
+  <p>Step through each phase of cell division with animated chromosomes</p>
+</header>
+
+<div class="layout">
+  <div class="panel">
+    <div class="tabs">
+      <div class="tab active" id="tabMitosis" onclick="setMode('mitosis')">Mitosis</div>
+      <div class="tab" id="tabMeiosis" onclick="setMode('meiosis')">Meiosis</div>
+    </div>
+    <div class="phases" id="phaseBar"></div>
+    <canvas id="canvas" height="440"></canvas>
+    <div class="btn-row">
+      <button class="btn" id="btnPrev" onclick="prevPhase()" disabled>Previous</button>
+      <button class="btn" id="btnNext" onclick="nextPhase()">Next Phase</button>
+      <button class="btn" onclick="autoPlay()" id="btnAuto">Auto Play</button>
+      <button class="btn btn-sec" onclick="resetDiv()">Reset</button>
+    </div>
+    <div class="speed-ctrl">
+      <span>Speed:</span>
+      <input type="range" id="speedSlider" min="1" max="5" value="2">
+      <span id="speedVal">2x</span>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:#ef4444"></span> Maternal</span>
+      <span><span class="dot" style="background:#3b82f6"></span> Paternal</span>
+      <span><span class="dot" style="background:#a855f7"></span> Spindle fibers</span>
+      <span><span class="dot" style="background:#f59e0b"></span> Centromere</span>
+    </div>
+  </div>
+
+  <div class="panel" style="overflow-y:auto;max-height:calc(100vh - 80px)">
+    <h2>Current Phase</h2>
+    <div id="phaseName" style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:8px">Interphase</div>
+    <div class="info" id="phaseInfo">The cell is in its normal state. DNA is unwound as chromatin. The cell grows and prepares for division by replicating its DNA.</div>
+
+    <h2 style="margin-top:16px">Cell Stats</h2>
+    <div class="stat"><span class="label">Mode</span><span class="val" id="sMode">Mitosis</span></div>
+    <div class="stat"><span class="label">Phase</span><span class="val" id="sPhase">Interphase</span></div>
+    <div class="stat"><span class="label">Chromosome count (n)</span><span class="val" id="sChrom">2n = 4</span></div>
+    <div class="stat"><span class="label">DNA content</span><span class="val" id="sDNA">2C</span></div>
+    <div class="stat"><span class="label">Cells</span><span class="val" id="sCells">1</span></div>
+    <div class="stat"><span class="label">Crossing over</span><span class="val" id="sCross">N/A</span></div>
+
+    <h2 style="margin-top:16px">Comparison</h2>
+    <div class="info">
+      <strong>Mitosis:</strong> 1 cell -> 2 identical diploid (2n) cells. Used for growth and repair.<br><br>
+      <strong>Meiosis:</strong> 1 cell -> 4 unique haploid (n) cells. Used for gamete production. Includes crossing over for genetic diversity.
+    </div>
+  </div>
+</div>
+
+<script>
+const MITOSIS_PHASES=['Interphase','Prophase','Prometaphase','Metaphase','Anaphase','Telophase','Cytokinesis'];
+const MEIOSIS_PHASES=['Interphase','Prophase I','Metaphase I','Anaphase I','Telophase I','Prophase II','Metaphase II','Anaphase II','Telophase II','Cytokinesis'];
+const MITOSIS_INFO=[
+  'The cell is in its normal state. DNA exists as unwound chromatin. The cell grows and replicates its DNA (S phase), producing sister chromatids joined at centromeres.',
+  'Chromatin condenses into visible chromosomes. Each chromosome consists of two sister chromatids. The mitotic spindle begins to form from centrosomes.',
+  'The nuclear envelope breaks down. Spindle fibers attach to chromosomes at their kinetochores (near centromeres). Chromosomes begin moving toward the cell center.',
+  'All chromosomes align at the metaphase plate (cell equator). Each sister chromatid pair is connected to spindle fibers from opposite poles. The cell checks alignment before proceeding.',
+  'Sister chromatids separate as cohesin proteins are cleaved. Motor proteins pull chromatids to opposite poles. The cell elongates. Each pole now has a complete set of chromosomes.',
+  'Chromosomes arrive at the poles and begin to decondense. Nuclear envelopes reform around each set of chromosomes. The spindle disassembles.',
+  'The cytoplasm divides (cleavage furrow in animal cells). Two genetically identical daughter cells are produced, each with the full complement of chromosomes (2n).'
+];
+const MEIOSIS_INFO=[
+  'DNA replicates during S phase. The cell prepares for two rounds of division. Each chromosome is duplicated into sister chromatids.',
+  'Homologous chromosomes pair up (synapsis) forming tetrads. Crossing over occurs: homologs exchange genetic segments at chiasmata, creating new allele combinations. This is a key source of genetic diversity.',
+  'Homologous pairs (not individual chromatids) align at the metaphase plate. The orientation of each pair is random (independent assortment), further increasing genetic variation.',
+  'Homologous chromosomes separate and move to opposite poles. Sister chromatids remain joined. Each pole receives one chromosome from each homologous pair. The chromosome number is halved.',
+  'Chromosomes arrive at poles. Nuclear envelopes may briefly reform. Each cell now has half the original chromosome number (haploid). A brief interkinesis may occur (no DNA replication).',
+  'In each haploid cell, chromosomes re-condense. New spindle fibers form. This resembles mitotic prophase but with half the chromosomes.',
+  'Chromosomes align at the metaphase plate in each cell. Sister chromatids are attached to spindle fibers from opposite poles.',
+  'Sister chromatids finally separate and move to opposite poles. This is similar to mitotic anaphase.',
+  'Chromatids arrive at poles and decondense. Nuclear envelopes reform. Cytokinesis produces four haploid cells.',
+  'Four genetically unique haploid cells are produced. Each has half the chromosome number (n) and a unique combination of alleles due to crossing over and independent assortment.'
+];
+
+let mode='mitosis',phaseIdx=0,animId=null,autoTimer=null,speed=2;
+let t=0;
+
+document.getElementById('speedSlider').addEventListener('input',e=>{
+  speed=+e.target.value;
+  document.getElementById('speedVal').textContent=speed+'x';
+});
+
+function getPhases(){return mode==='mitosis'?MITOSIS_PHASES:MEIOSIS_PHASES;}
+function getInfo(){return mode==='mitosis'?MITOSIS_INFO:MEIOSIS_INFO;}
+
+function setMode(m){
+  mode=m;
+  document.getElementById('tabMitosis').classList.toggle('active',m==='mitosis');
+  document.getElementById('tabMeiosis').classList.toggle('active',m==='meiosis');
+  resetDiv();
+}
+
+function buildPhaseBar(){
+  const bar=document.getElementById('phaseBar');
+  const phases=getPhases();
+  bar.innerHTML=phases.map((p,i)=>{
+    let cls='phase';
+    if(i<phaseIdx)cls+=' done';
+    if(i===phaseIdx)cls+=' active';
+    return `<div class="${cls}">${p.replace(' I','I').replace(' II','II')}</div>`;
+  }).join('');
+}
+
+function updateUI(){
+  buildPhaseBar();
+  const phases=getPhases();
+  const info=getInfo();
+  document.getElementById('phaseName').textContent=phases[phaseIdx];
+  document.getElementById('phaseInfo').innerHTML=info[phaseIdx];
+  document.getElementById('sMode').textContent=mode==='mitosis'?'Mitosis':'Meiosis';
+  document.getElementById('sPhase').textContent=phases[phaseIdx];
+  document.getElementById('btnPrev').disabled=phaseIdx===0;
+  document.getElementById('btnNext').disabled=phaseIdx===phases.length-1;
+
+  // chromosome count, DNA content, cells
+  let chrom,dna,cells,cross='N/A';
+  if(mode==='mitosis'){
+    chrom='2n = 4';
+    dna=phaseIdx===0?'2C -> 4C':phaseIdx<=4?'4C':'2C';
+    cells=phaseIdx>=6?'2':'1';
+    if(phaseIdx===0)dna='2C (replicating to 4C)';
+  }else{
+    if(phaseIdx<=3){chrom='2n = 4';dna=phaseIdx===0?'2C -> 4C':'4C';cells='1';}
+    else if(phaseIdx===4){chrom='n = 2';dna='2C';cells='2';}
+    else if(phaseIdx<=7){chrom='n = 2';dna='2C';cells='2';}
+    else if(phaseIdx===8){chrom='n = 2';dna='1C';cells='4';}
+    else{chrom='n = 2';dna='1C';cells='4';}
+    cross=phaseIdx>=1&&phaseIdx<=3?'Yes (chiasmata)':'No';
+  }
+  document.getElementById('sChrom').textContent=chrom;
+  document.getElementById('sDNA').textContent=dna;
+  document.getElementById('sCells').textContent=cells;
+  document.getElementById('sCross').textContent=cross;
+}
+
+function nextPhase(){
+  const phases=getPhases();
+  if(phaseIdx<phases.length-1){phaseIdx++;t=0;updateUI();}
+}
+function prevPhase(){
+  if(phaseIdx>0){phaseIdx--;t=0;updateUI();}
+}
+
+function autoPlay(){
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null;document.getElementById('btnAuto').textContent='Auto Play';return;}
+  document.getElementById('btnAuto').textContent='Pause';
+  autoTimer=setInterval(()=>{
+    const phases=getPhases();
+    if(phaseIdx<phases.length-1){nextPhase();}
+    else{clearInterval(autoTimer);autoTimer=null;document.getElementById('btnAuto').textContent='Auto Play';}
+  },2000/speed);
+}
+
+function resetDiv(){
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null;document.getElementById('btnAuto').textContent='Auto Play';}
+  phaseIdx=0;t=0;updateUI();
+}
+
+// Drawing
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+function resizeCanvas(){
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=440*dpr;
+  ctx.scale(dpr,dpr);
+}
+window.addEventListener('resize',resizeCanvas);
+resizeCanvas();
+
+function drawCell(cx,cy,r,phase,cellIdx){
+  // cell membrane
+  ctx.strokeStyle='#10b98140';ctx.lineWidth=2;
+  if(phase==='Cytokinesis'){
+    // pinching
+    const pinch=Math.sin(t*2)*r*0.3;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,r,r-Math.abs(pinch),0,0,Math.PI*2);
+    ctx.stroke();
+    ctx.fillStyle='#10b98108';ctx.fill();
+  }else{
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#10b98108';ctx.fill();
+  }
+
+  // nucleus (breaks down in prometaphase onward)
+  if(phase==='Interphase'||phase==='Prophase'||phase==='Prophase I'||phase==='Prophase II'){
+    ctx.strokeStyle='#ffffff15';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(cx,cy,r*0.6,0,Math.PI*2);ctx.stroke();
+  }
+}
+
+function drawChromosomeX(x,y,size,color,angle){
+  ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+  ctx.strokeStyle=color;ctx.lineWidth=3;ctx.lineCap='round';
+  // two arms crossing
+  ctx.beginPath();ctx.moveTo(-size,-size);ctx.lineTo(size,size);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(size,-size);ctx.lineTo(-size,size);ctx.stroke();
+  // centromere
+  ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(0,0,2.5,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+function drawChromosomeI(x,y,size,color,angle){
+  ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+  ctx.strokeStyle=color;ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(0,-size);ctx.lineTo(0,size);ctx.stroke();
+  ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(0,0,2,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+function drawSpindleFibers(cx,cy,r,targets){
+  ctx.strokeStyle='#a855f720';ctx.lineWidth=0.8;
+  targets.forEach(([tx,ty])=>{
+    ctx.beginPath();ctx.moveTo(cx-r*0.9,cy);ctx.lineTo(tx,ty);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx+r*0.9,cy);ctx.lineTo(tx,ty);ctx.stroke();
+  });
+}
+
+function drawCrossingOver(x,y,size){
+  ctx.strokeStyle='#ef4444';ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x-size,y-size*0.8);ctx.bezierCurveTo(x,y-size*0.3,x,y+size*0.3,x+size,y+size*0.8);ctx.stroke();
+  ctx.strokeStyle='#3b82f6';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(x+size,y-size*0.8);ctx.bezierCurveTo(x,y-size*0.3,x,y+size*0.3,x-size,y+size*0.8);ctx.stroke();
+  ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fafafa';ctx.font='9px Manrope,system-ui';ctx.textAlign='center';
+  ctx.fillText('chiasma',x,y+size+12);ctx.textAlign='start';
+}
+
+function render(){
+  const W=canvas.offsetWidth,H=440;
+  ctx.clearRect(0,0,W,H);
+  t+=0.016*speed;
+
+  const cx=W/2,cy=H/2,r=Math.min(W,H)*0.28;
+  const phases=getPhases();
+  const phase=phases[phaseIdx];
+
+  // label
+  ctx.fillStyle='#10b981';ctx.font='bold 14px Manrope,system-ui';ctx.textAlign='center';
+  ctx.fillText(phase,cx,28);
+  ctx.textAlign='start';
+
+  if(mode==='mitosis') drawMitosis(cx,cy,r,phase,W,H);
+  else drawMeiosisScene(cx,cy,r,phase,W,H);
+
+  animId=requestAnimationFrame(render);
+}
+
+function drawMitosis(cx,cy,r,phase,W,H){
+  const s=r*0.12;
+  const osc=Math.sin(t*2)*0.15;
+
+  if(phase==='Interphase'){
+    drawCell(cx,cy,r,phase);
+    // diffuse chromatin
+    ctx.globalAlpha=0.3;
+    for(let i=0;i<12;i++){
+      const a=i/12*Math.PI*2+osc;
+      const d=r*0.3+Math.sin(t+i)*r*0.1;
+      ctx.fillStyle=i%2===0?'#ef4444':'#3b82f6';
+      ctx.beginPath();ctx.arc(cx+Math.cos(a)*d,cy+Math.sin(a)*d,2,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+  else if(phase==='Prophase'){
+    drawCell(cx,cy,r,phase);
+    // condensed chromosomes
+    drawChromosomeX(cx-s*2,cy-s,s,'#ef4444',osc);
+    drawChromosomeX(cx+s*2,cy-s,s,'#ef4444',osc*0.7);
+    drawChromosomeX(cx-s*2,cy+s*1.5,s,'#3b82f6',-osc);
+    drawChromosomeX(cx+s*2,cy+s*1.5,s,'#3b82f6',-osc*0.7);
+  }
+  else if(phase==='Prometaphase'){
+    drawCell(cx,cy,r,phase);
+    const targets=[[cx-s*1.5,cy-s*0.5],[cx+s*1.5,cy-s*0.5],[cx-s*1.5,cy+s],[cx+s*1.5,cy+s]];
+    drawSpindleFibers(cx,cy,r,targets);
+    drawChromosomeX(cx-s*1.5,cy-s*0.5,s,'#ef4444',osc*0.5);
+    drawChromosomeX(cx+s*1.5,cy-s*0.5,s,'#ef4444',osc*0.3);
+    drawChromosomeX(cx-s*1.5,cy+s,s,'#3b82f6',-osc*0.5);
+    drawChromosomeX(cx+s*1.5,cy+s,s,'#3b82f6',-osc*0.3);
+  }
+  else if(phase==='Metaphase'){
+    drawCell(cx,cy,r,phase);
+    const targets=[[cx-s*2,cy],[cx+s*0.5,cy],[cx-s*0.5,cy],[cx+s*2,cy]];
+    drawSpindleFibers(cx,cy,r,targets);
+    // aligned at metaphase plate
+    ctx.strokeStyle='#ffffff10';ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(cx,cy-r);ctx.lineTo(cx,cy+r);ctx.stroke();ctx.setLineDash([]);
+    drawChromosomeX(cx-s*0.8,cy-s*1.5,s,'#ef4444',0);
+    drawChromosomeX(cx+s*0.8,cy-s*0.3,s,'#ef4444',0);
+    drawChromosomeX(cx-s*0.8,cy+s*0.3,s,'#3b82f6',0);
+    drawChromosomeX(cx+s*0.8,cy+s*1.5,s,'#3b82f6',0);
+    ctx.fillStyle='#555';ctx.font='9px Manrope,system-ui';ctx.textAlign='center';
+    ctx.fillText('metaphase plate',cx,cy+r+16);ctx.textAlign='start';
+  }
+  else if(phase==='Anaphase'){
+    drawCell(cx,cy,r,phase);
+    const sep=Math.min(t*8,r*0.5);
+    drawSpindleFibers(cx,cy,r,[[cx-sep,cy-s],[cx-sep,cy+s],[cx+sep,cy-s],[cx+sep,cy+s]]);
+    // separated chromatids moving to poles
+    drawChromosomeI(cx-sep,cy-s,s,'#ef4444',0);
+    drawChromosomeI(cx-sep,cy+s,s,'#3b82f6',0);
+    drawChromosomeI(cx+sep,cy-s,s,'#ef4444',0);
+    drawChromosomeI(cx+sep,cy+s,s,'#3b82f6',0);
+    // pole labels
+    ctx.fillStyle='#555';ctx.font='9px Manrope,system-ui';ctx.textAlign='center';
+    ctx.fillText('pole',cx-r*0.7,cy+r+16);ctx.fillText('pole',cx+r*0.7,cy+r+16);ctx.textAlign='start';
+  }
+  else if(phase==='Telophase'){
+    drawCell(cx,cy,r,phase);
+    const d=r*0.5;
+    // nuclear envelopes reforming
+    ctx.strokeStyle='#ffffff10';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx-d,cy,r*0.35,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.arc(cx+d,cy,r*0.35,0,Math.PI*2);ctx.stroke();
+    drawChromosomeI(cx-d,cy-s*0.5,s*0.7,'#ef4444',0);
+    drawChromosomeI(cx-d,cy+s*0.5,s*0.7,'#3b82f6',0);
+    drawChromosomeI(cx+d,cy-s*0.5,s*0.7,'#ef4444',0);
+    drawChromosomeI(cx+d,cy+s*0.5,s*0.7,'#3b82f6',0);
+    // cleavage furrow
+    ctx.strokeStyle='#f59e0b40';ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(cx,cy-r);ctx.lineTo(cx,cy+r);ctx.stroke();ctx.setLineDash([]);
+  }
+  else if(phase==='Cytokinesis'){
+    const sep=r*1.1;
+    // two daughter cells
+    drawCell(cx-sep*0.5,cy,r*0.65,phase);
+    drawCell(cx+sep*0.5,cy,r*0.65,phase);
+    ctx.strokeStyle='#ffffff10';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx-sep*0.5,cy,r*0.35,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.arc(cx+sep*0.5,cy,r*0.35,0,Math.PI*2);ctx.stroke();
+    drawChromosomeI(cx-sep*0.5,cy-s*0.3,s*0.6,'#ef4444',0);
+    drawChromosomeI(cx-sep*0.5,cy+s*0.3,s*0.6,'#3b82f6',0);
+    drawChromosomeI(cx+sep*0.5,cy-s*0.3,s*0.6,'#ef4444',0);
+    drawChromosomeI(cx+sep*0.5,cy+s*0.3,s*0.6,'#3b82f6',0);
+    ctx.fillStyle='#10b981';ctx.font='11px Manrope,system-ui';ctx.textAlign='center';
+    ctx.fillText('2n',cx-sep*0.5,cy+r*0.65+18);
+    ctx.fillText('2n',cx+sep*0.5,cy+r*0.65+18);
+    ctx.fillText('2 identical diploid daughter cells',cx,cy+r*0.65+36);
+    ctx.textAlign='start';
+  }
+}
+
+function drawMeiosisScene(cx,cy,r,phase,W,H){
+  const s=r*0.1;
+  const osc=Math.sin(t*2)*0.15;
+
+  if(phase==='Interphase'){
+    drawCell(cx,cy,r,phase);
+    ctx.globalAlpha=0.3;
+    for(let i=0;i<12;i++){
+      const a=i/12*Math.PI*2+osc;
+      const d=r*0.3+Math.sin(t+i)*r*0.1;
+      ctx.fillStyle=i%2===0?'#ef4444':'#3b82f6';
+      ctx.beginPath();ctx.arc(cx+Math.cos(a)*d,cy+Math.sin(a)*d,2,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+  else if(phase==='Prophase I'){
+    drawCell(cx,cy,r,phase);
+    // homologous pairs + crossing over
+    drawCrossingOver(cx-s*2,cy-s,s*1.5);
+    drawCrossingOver(cx+s*2,cy+s*1.5,s*1.5);
+    ctx.fillStyle='#fafafa';ctx.font='10px Manrope,system-ui';ctx.textAlign='center';
+    ctx.fillText('Synapsis & Crossing Over',cx,cy+r+16);ctx.textAlign='start';
+  }
+  else if(phase==='Metaphase I'){
+    drawCell(cx,cy,r,phase);
+    ctx.strokeStyle='#ffffff10';ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(cx,cy-r);ctx.lineTo(cx,cy+r);ctx.stroke();ctx.setLineDash([]);
+    // homologous pairs at plate
+    drawChromosomeX(cx-s,cy-s*1.5,s,'#ef4444',0);
+    drawChromosomeX(cx+s,cy-s*1.5,s,'#3b82f6',0);
+    drawChromosomeX(cx-s,cy+s*1.5,s,'#ef4444',0);
+    drawChromosomeX(cx+s,cy+s*1.5,s,'#3b82f6',0);
+    drawSpindleFibers(cx,cy,r,[[cx,cy-s*1.5],[cx,cy+s*1.5]]);
+    ctx.fillStyle='#555';ctx.font='9px Manrope,system-ui';ctx.textAlign='center';
+    ctx.fillText('homologous pairs aligned',cx,cy+r+16);ctx.textAlign='start';
+  }
+  else if(phase==='Anaphase I'){
+    drawCell(cx,cy,r,phase);
+    const sep=Math.min(t*8,r*0.45);
+    drawSpindleFibers(cx,cy,r,[[cx-sep,cy-s],[cx-sep,cy+s],[cx+sep,cy-s],[cx+sep,cy+s]]);
+    // homologs separate (not sister chromatids)
+    drawChromosomeX(cx-sep,cy-s,s,'#ef4444',0);
+    drawChromosomeX(cx-sep,cy+s,s,'#ef4444',0);
+    drawChromosomeX(cx+sep,cy-s,s,'#3b82f6',0);
+    drawChromosomeX(cx+sep,cy+s,s,'#3b82f6',0);
+  }
+  else if(phase==='Telophase I'){
+    const sep=r*0.9;
+    drawCell(cx-sep*0.5,cy,r*0.6,phase);
+    drawCell(cx+sep*0.5,cy,r*0.6,phase);
+    drawChromosomeX(cx-sep*0.5,cy-s*0.5,s*0.8,'#ef4444',0);
+    drawChromosomeX(cx-sep*0.5,cy+s*0.5,s*0.8,'#ef4444',0);
+    drawChromosomeX(cx+sep*0.5,cy-s*0.5,s*0.8,'#3b82f6',0);
+    drawChromosomeX(cx+sep*0.5,cy+s*0.5,s*0.8,'#3b82f6',0);
+    ctx.fillStyle='#10b981';ctx.font='10px Manrope,system-ui';ctx.textAlign='center';
+    ctx.fillText('n (haploid)',cx-sep*0.5,cy+r*0.6+16);
+    ctx.fillText('n (haploid)',cx+sep*0.5,cy+r*0.6+16);ctx.textAlign='start';
+  }
+  else if(phase==='Prophase II'){
+    const sep=r*0.9;
+    drawCell(cx-sep*0.5,cy,r*0.55,phase);
+    drawCell(cx+sep*0.5,cy,r*0.55,phase);
+    drawChromosomeX(cx-sep*0.5,cy-s*0.3,s*0.7,'#ef4444',osc);
+    drawChromosomeX(cx-sep*0.5,cy+s*0.3,s*0.7,'#ef4444',-osc);
+    drawChromosomeX(cx+sep*0.5,cy-s*0.3,s*0.7,'#3b82f6',osc);
+    drawChromosomeX(cx+sep*0.5,cy+s*0.3,s*0.7,'#3b82f6',-osc);
+  }
+  else if(phase==='Metaphase II'){
+    const sep=r*0.9;
+    drawCell(cx-sep*0.5,cy,r*0.55,phase);
+    drawCell(cx+sep*0.5,cy,r*0.55,phase);
+    ctx.strokeStyle='#ffffff08';ctx.setLineDash([2,2]);
+    ctx.beginPath();ctx.moveTo(cx-sep*0.5,cy-r*0.55);ctx.lineTo(cx-sep*0.5,cy+r*0.55);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx+sep*0.5,cy-r*0.55);ctx.lineTo(cx+sep*0.5,cy+r*0.55);ctx.stroke();
+    ctx.setLineDash([]);
+    drawChromosomeX(cx-sep*0.5,cy-s*0.3,s*0.7,'#ef4444',0);
+    drawChromosomeX(cx-sep*0.5,cy+s*0.3,s*0.7,'#ef4444',0);
+    drawChromosomeX(cx+sep*0.5,cy-s*0.3,s*0.7,'#3b82f6',0);
+    drawChromosomeX(cx+sep*0.5,cy+s*0.3,s*0.7,'#3b82f6',0);
+  }
+  else if(phase==='Anaphase II'){
+    const sep=r*0.9;
+    const s2=Math.min(t*6,r*0.22);
+    drawCell(cx-sep*0.5,cy,r*0.55,phase);
+    drawCell(cx+sep*0.5,cy,r*0.55,phase);
+    // sister chromatids separate
+    drawChromosomeI(cx-sep*0.5-s2,cy-s*0.3,s*0.6,'#ef4444',0);
+    drawChromosomeI(cx-sep*0.5+s2,cy-s*0.3,s*0.6,'#ef4444',0);
+    drawChromosomeI(cx-sep*0.5-s2,cy+s*0.3,s*0.6,'#ef4444',0);
+    drawChromosomeI(cx-sep*0.5+s2,cy+s*0.3,s*0.6,'#ef4444',0);
+    drawChromosomeI(cx+sep*0.5-s2,cy-s*0.3,s*0.6,'#3b82f6',0);
+    drawChromosomeI(cx+sep*0.5+s2,cy-s*0.3,s*0.6,'#3b82f6',0);
+    drawChromosomeI(cx+sep*0.5-s2,cy+s*0.3,s*0.6,'#3b82f6',0);
+    drawChromosomeI(cx+sep*0.5+s2,cy+s*0.3,s*0.6,'#3b82f6',0);
+  }
+  else if(phase==='Telophase II'){
+    const positions=[{x:cx-r*0.8,y:cy-r*0.45},{x:cx+r*0.8,y:cy-r*0.45},{x:cx-r*0.8,y:cy+r*0.45},{x:cx+r*0.8,y:cy+r*0.45}];
+    const colors=['#ef4444','#3b82f6','#ef4444','#3b82f6'];
+    positions.forEach((p,i)=>{
+      drawCell(p.x,p.y,r*0.35,phase);
+      ctx.strokeStyle='#ffffff08';ctx.lineWidth=1;
+      ctx.beginPath();ctx.arc(p.x,p.y,r*0.2,0,Math.PI*2);ctx.stroke();
+      drawChromosomeI(p.x-s*0.2,p.y,s*0.4,colors[i],0);
+      drawChromosomeI(p.x+s*0.2,p.y,s*0.4,colors[i],0);
+    });
+  }
+  else if(phase==='Cytokinesis'){
+    const positions=[{x:cx-r*0.8,y:cy-r*0.45},{x:cx+r*0.8,y:cy-r*0.45},{x:cx-r*0.8,y:cy+r*0.45},{x:cx+r*0.8,y:cy+r*0.45}];
+    const colors=['#ef4444','#3b82f6','#ef4444','#3b82f6'];
+    positions.forEach((p,i)=>{
+      drawCell(p.x,p.y,r*0.33,phase);
+      drawChromosomeI(p.x-s*0.15,p.y,s*0.35,colors[i],0);
+      drawChromosomeI(p.x+s*0.15,p.y,s*0.35,colors[i],0);
+    });
+    ctx.fillStyle='#10b981';ctx.font='11px Manrope,system-ui';ctx.textAlign='center';
+    ctx.fillText('4 unique haploid (n) gametes',cx,cy+r+16);
+    positions.forEach(p=>{ctx.fillText('n',p.x,p.y+r*0.33+14);});
+    ctx.textAlign='start';
+  }
+}
+
+updateUI();
+render();
+</script>
+<script src="/related.js"></script>
+</body>
+</html>

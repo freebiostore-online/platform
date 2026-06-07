@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosystem Population Dynamics | FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--text:#fafafa;--muted:#888;--accent:#10b981;--panel:#111;--border:#1a1a1a;--dark:#080808}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+.back{position:absolute;top:16px;left:20px;font-size:13px;font-weight:600;opacity:.7}
+.back:hover{opacity:1}
+header{text-align:center;padding:20px 20px 10px;border-bottom:1px solid var(--border)}
+header h1{font-size:1.4rem;font-weight:700;color:var(--accent)}
+header p{font-size:.82rem;color:var(--muted);margin-top:4px}
+.layout{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 300px;gap:14px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+h2{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+canvas{display:block;width:100%;border-radius:8px;background:var(--dark)}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn:hover{background:#059669}
+.btn-sec{background:var(--border);color:var(--accent);border:1px solid #252525}
+.btn-sec:hover{background:#1f1f1f}
+.btn-danger{background:#dc2626;color:#fff;border:none}
+.btn-danger:hover{background:#b91c1c}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.ctrl{margin-bottom:10px}
+.ctrl label{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px}
+.ctrl .row{display:flex;align-items:center;gap:8px}
+.ctrl input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.ctrl .val{font-size:12px;font-weight:700;color:var(--accent);min-width:40px;text-align:right}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.stat-card{background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center}
+.stat-card .label{font-size:9px;color:var(--muted);text-transform:uppercase}
+.stat-card .value{font-size:18px;font-weight:700}
+.stat-card.prey .value{color:#4ade80}
+.stat-card.pred .value{color:#ef4444}
+.stat-card.food .value{color:#fbbf24}
+.stat-card.time .value{color:var(--accent)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-top:8px}
+.legend span{display:flex;align-items:center;gap:3px}
+.legend .dot{width:8px;height:8px;border-radius:50%}
+.info{background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:10px;line-height:1.6;color:var(--muted);margin-top:10px}
+.info strong{color:var(--text)}
+</style>
+</head>
+<body>
+<a href="/" class="back">FreeBioStore</a>
+<header>
+  <h1>Ecosystem Population Dynamics</h1>
+  <p>Lotka-Volterra predator-prey simulation with food sources and carrying capacity</p>
+</header>
+
+<div class="layout">
+  <div class="panel">
+    <h2>Ecosystem</h2>
+    <canvas id="worldCanvas" height="380"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#4ade80"></span> Prey</span>
+      <span><span class="dot" style="background:#ef4444"></span> Predators</span>
+      <span><span class="dot" style="background:#fbbf24"></span> Food</span>
+      <span>Click canvas to add food</span>
+    </div>
+
+    <h2 style="margin-top:14px">Population Graph</h2>
+    <canvas id="graphCanvas" height="180"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#4ade80"></span> Prey population</span>
+      <span><span class="dot" style="background:#ef4444"></span> Predator population</span>
+      <span><span class="dot" style="background:#fbbf24"></span> Food count</span>
+    </div>
+  </div>
+
+  <div class="panel" style="overflow-y:auto;max-height:calc(100vh - 80px)">
+    <h2>Population</h2>
+    <div class="stats">
+      <div class="stat-card prey"><div class="label">Prey</div><div class="value" id="sPrey">0</div></div>
+      <div class="stat-card pred"><div class="label">Predators</div><div class="value" id="sPred">0</div></div>
+      <div class="stat-card food"><div class="label">Food</div><div class="value" id="sFood">0</div></div>
+      <div class="stat-card time"><div class="label">Time</div><div class="value" id="sTime">0</div></div>
+    </div>
+
+    <h2>Prey Parameters</h2>
+    <div class="ctrl"><label>Birth rate</label><div class="row"><input type="range" id="rPreyBirth" min="0.01" max="0.15" step="0.005" value="0.05"><span class="val" id="vPreyBirth">0.05</span></div></div>
+    <div class="ctrl"><label>Max population (carrying capacity)</label><div class="row"><input type="range" id="rPreyCap" min="20" max="300" value="150"><span class="val" id="vPreyCap">150</span></div></div>
+    <div class="ctrl"><label>Speed</label><div class="row"><input type="range" id="rPreySpeed" min="0.5" max="4" step="0.25" value="1.5"><span class="val" id="vPreySpeed">1.5</span></div></div>
+
+    <h2>Predator Parameters</h2>
+    <div class="ctrl"><label>Kill rate (per encounter)</label><div class="row"><input type="range" id="rPredKill" min="0.1" max="1" step="0.05" value="0.5"><span class="val" id="vPredKill">0.5</span></div></div>
+    <div class="ctrl"><label>Death rate (starvation)</label><div class="row"><input type="range" id="rPredDeath" min="0.001" max="0.02" step="0.001" value="0.005"><span class="val" id="vPredDeath">0.005</span></div></div>
+    <div class="ctrl"><label>Reproduction threshold (kills to reproduce)</label><div class="row"><input type="range" id="rPredRepro" min="1" max="8" value="3"><span class="val" id="vPredRepro">3</span></div></div>
+    <div class="ctrl"><label>Speed</label><div class="row"><input type="range" id="rPredSpeed" min="0.5" max="5" step="0.25" value="2"><span class="val" id="vPredSpeed">2</span></div></div>
+
+    <h2>Food</h2>
+    <div class="ctrl"><label>Spawn rate</label><div class="row"><input type="range" id="rFoodRate" min="0" max="0.5" step="0.02" value="0.15"><span class="val" id="vFoodRate">0.15</span></div></div>
+    <div class="ctrl"><label>Max food</label><div class="row"><input type="range" id="rFoodMax" min="10" max="200" value="80"><span class="val" id="vFoodMax">80</span></div></div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="addPrey(10)">+10 Prey</button>
+      <button class="btn btn-danger" onclick="addPredators(5)">+5 Predators</button>
+      <button class="btn btn-sec" onclick="resetSim()">Reset</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="togglePause()" id="btnPause">Pause</button>
+      <button class="btn btn-sec" onclick="triggerEvent('plague')">Plague</button>
+      <button class="btn btn-sec" onclick="triggerEvent('feast')">Food Bloom</button>
+    </div>
+
+    <div class="info">
+      <strong>Lotka-Volterra model:</strong> Predator and prey populations oscillate in cycles. When prey is abundant, predators thrive and grow. As predators increase, prey declines. Then predators starve and decline, allowing prey to recover. Food sources add a third trophic level creating cascade effects.
+    </div>
+  </div>
+</div>
+
+<script>
+// Parameters
+let P={
+  preyBirth:0.05,preyCap:150,preySpeed:1.5,
+  predKill:0.5,predDeath:0.005,predRepro:3,predSpeed:2,
+  foodRate:0.15,foodMax:80
+};
+
+function bindSlider(id,display,key){
+  const el=document.getElementById(id);
+  el.addEventListener('input',e=>{
+    P[key]=+e.target.value;
+    document.getElementById(display).textContent=e.target.value;
+  });
+}
+bindSlider('rPreyBirth','vPreyBirth','preyBirth');
+bindSlider('rPreyCap','vPreyCap','preyCap');
+bindSlider('rPreySpeed','vPreySpeed','preySpeed');
+bindSlider('rPredKill','vPredKill','predKill');
+bindSlider('rPredDeath','vPredDeath','predDeath');
+bindSlider('rPredRepro','vPredRepro','predRepro');
+bindSlider('rPredSpeed','vPredSpeed','predSpeed');
+bindSlider('rFoodRate','vFoodRate','foodRate');
+bindSlider('rFoodMax','vFoodMax','foodMax');
+
+// State
+let prey=[],predators=[],food=[];
+let history={prey:[],pred:[],food:[]};
+let time=0,paused=false;
+let W=600,H=380;
+
+const wCanvas=document.getElementById('worldCanvas');
+const wCtx=wCanvas.getContext('2d');
+const gCanvas=document.getElementById('graphCanvas');
+const gCtx=gCanvas.getContext('2d');
+
+function resizeCanvases(){
+  const dpr=window.devicePixelRatio||1;
+  W=wCanvas.offsetWidth;H=380;
+  wCanvas.width=W*dpr;wCanvas.height=H*dpr;
+  wCtx.setTransform(dpr,0,0,dpr,0,0);
+  gCanvas.width=gCanvas.offsetWidth*dpr;gCanvas.height=180*dpr;
+  gCtx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize',resizeCanvases);
+
+wCanvas.addEventListener('click',e=>{
+  const rect=wCanvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)*(W/rect.width);
+  const y=(e.clientY-rect.top)*(H/rect.height);
+  for(let i=0;i<5;i++){
+    food.push({x:x+Math.random()*20-10,y:y+Math.random()*20-10,energy:1});
+  }
+});
+
+function makePrey(x,y){
+  return{
+    x:x||Math.random()*W,y:y||Math.random()*H,
+    vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,
+    energy:1,age:0
+  };
+}
+function makePredator(x,y){
+  return{
+    x:x||Math.random()*W,y:y||Math.random()*H,
+    vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,
+    energy:1,kills:0,age:0
+  };
+}
+
+function addPrey(n){for(let i=0;i<n;i++)prey.push(makePrey());}
+function addPredators(n){for(let i=0;i<n;i++)predators.push(makePredator());}
+
+function initSim(){
+  prey=[];predators=[];food=[];
+  history={prey:[],pred:[],food:[]};
+  time=0;
+  addPrey(40);
+  addPredators(8);
+  for(let i=0;i<30;i++)food.push({x:Math.random()*W,y:Math.random()*H,energy:1});
+}
+
+function resetSim(){initSim();}
+
+function togglePause(){
+  paused=!paused;
+  document.getElementById('btnPause').textContent=paused?'Resume':'Pause';
+}
+
+function triggerEvent(type){
+  if(type==='plague'){
+    prey=prey.filter(()=>Math.random()>0.5);
+  }else if(type==='feast'){
+    for(let i=0;i<40;i++)food.push({x:Math.random()*W,y:Math.random()*H,energy:1});
+  }
+}
+
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+
+function update(){
+  if(paused)return;
+  time++;
+
+  // Spawn food
+  if(food.length<P.foodMax&&Math.random()<P.foodRate){
+    food.push({x:Math.random()*W,y:Math.random()*H,energy:1});
+  }
+
+  // Update prey
+  const newPrey=[];
+  prey.forEach(p=>{
+    p.age++;
+    // Move toward nearest food
+    let nearestFood=null,minD=Infinity;
+    food.forEach(f=>{const d=dist(p,f);if(d<minD){minD=d;nearestFood=f;}});
+    if(nearestFood&&minD<150){
+      const dx=nearestFood.x-p.x,dy=nearestFood.y-p.y;
+      const len=Math.hypot(dx,dy)||1;
+      p.vx+=dx/len*0.3;p.vy+=dy/len*0.3;
+    }
+    // Flee from nearest predator
+    let nearestPred=null,minPD=Infinity;
+    predators.forEach(pr=>{const d=dist(p,pr);if(d<minPD){minPD=d;nearestPred=pr;}});
+    if(nearestPred&&minPD<80){
+      const dx=p.x-nearestPred.x,dy=p.y-nearestPred.y;
+      const len=Math.hypot(dx,dy)||1;
+      p.vx+=dx/len*0.5;p.vy+=dy/len*0.5;
+    }
+    // Random wander
+    p.vx+=(Math.random()-0.5)*0.2;
+    p.vy+=(Math.random()-0.5)*0.2;
+    // Limit speed
+    const spd=Math.hypot(p.vx,p.vy);
+    if(spd>P.preySpeed){p.vx=p.vx/spd*P.preySpeed;p.vy=p.vy/spd*P.preySpeed;}
+    p.x+=p.vx;p.y+=p.vy;
+    // Wrap
+    if(p.x<0)p.x+=W;if(p.x>W)p.x-=W;
+    if(p.y<0)p.y+=H;if(p.y>H)p.y-=H;
+    // Eat food
+    for(let i=food.length-1;i>=0;i--){
+      if(dist(p,food[i])<10){
+        p.energy+=0.5;
+        food.splice(i,1);
+        break;
+      }
+    }
+    // Reproduce
+    if(p.energy>1.5&&prey.length<P.preyCap&&Math.random()<P.preyBirth){
+      p.energy-=0.6;
+      newPrey.push(makePrey(p.x+Math.random()*10-5,p.y+Math.random()*10-5));
+    }
+    // Energy decay
+    p.energy-=0.002;
+  });
+  prey=prey.concat(newPrey).filter(p=>p.energy>0);
+
+  // Update predators
+  const newPred=[];
+  predators.forEach(pr=>{
+    pr.age++;
+    // Move toward nearest prey
+    let nearestPrey=null,minD=Infinity;
+    prey.forEach(p=>{const d=dist(pr,p);if(d<minD){minD=d;nearestPrey=p;}});
+    if(nearestPrey){
+      const dx=nearestPrey.x-pr.x,dy=nearestPrey.y-pr.y;
+      const len=Math.hypot(dx,dy)||1;
+      pr.vx+=dx/len*0.4;pr.vy+=dy/len*0.4;
+    }
+    pr.vx+=(Math.random()-0.5)*0.15;
+    pr.vy+=(Math.random()-0.5)*0.15;
+    const spd=Math.hypot(pr.vx,pr.vy);
+    if(spd>P.predSpeed){pr.vx=pr.vx/spd*P.predSpeed;pr.vy=pr.vy/spd*P.predSpeed;}
+    pr.x+=pr.vx;pr.y+=pr.vy;
+    if(pr.x<0)pr.x+=W;if(pr.x>W)pr.x-=W;
+    if(pr.y<0)pr.y+=H;if(pr.y>H)pr.y-=H;
+    // Hunt prey
+    for(let i=prey.length-1;i>=0;i--){
+      if(dist(pr,prey[i])<12&&Math.random()<P.predKill){
+        pr.energy+=0.8;
+        pr.kills++;
+        prey.splice(i,1);
+        break;
+      }
+    }
+    // Reproduce
+    if(pr.kills>=P.predRepro&&pr.energy>0.8){
+      pr.kills=0;pr.energy-=0.5;
+      newPred.push(makePredator(pr.x+Math.random()*10-5,pr.y+Math.random()*10-5));
+    }
+    // Energy decay (starvation)
+    pr.energy-=P.predDeath;
+  });
+  predators=predators.concat(newPred).filter(pr=>pr.energy>0);
+
+  // Record history
+  if(time%3===0){
+    history.prey.push(prey.length);
+    history.pred.push(predators.length);
+    history.food.push(food.length);
+    const maxHist=400;
+    if(history.prey.length>maxHist){
+      history.prey.shift();history.pred.shift();history.food.shift();
+    }
+  }
+
+  // Update stats
+  document.getElementById('sPrey').textContent=prey.length;
+  document.getElementById('sPred').textContent=predators.length;
+  document.getElementById('sFood').textContent=food.length;
+  document.getElementById('sTime').textContent=Math.floor(time/60);
+}
+
+function drawWorld(){
+  wCtx.clearRect(0,0,W,H);
+  // Food
+  wCtx.fillStyle='#fbbf24';
+  food.forEach(f=>{
+    wCtx.globalAlpha=0.6;
+    wCtx.beginPath();wCtx.arc(f.x,f.y,2.5,0,Math.PI*2);wCtx.fill();
+  });
+  wCtx.globalAlpha=1;
+  // Prey
+  prey.forEach(p=>{
+    const alpha=Math.min(1,p.energy);
+    wCtx.fillStyle=`rgba(74,222,128,${alpha})`;
+    wCtx.beginPath();wCtx.arc(p.x,p.y,3.5,0,Math.PI*2);wCtx.fill();
+    // direction indicator
+    wCtx.strokeStyle=`rgba(74,222,128,${alpha*0.5})`;
+    wCtx.lineWidth=1;
+    wCtx.beginPath();
+    wCtx.moveTo(p.x,p.y);
+    wCtx.lineTo(p.x+p.vx*3,p.y+p.vy*3);
+    wCtx.stroke();
+  });
+  // Predators
+  predators.forEach(pr=>{
+    const alpha=Math.min(1,pr.energy);
+    wCtx.fillStyle=`rgba(239,68,68,${alpha})`;
+    wCtx.beginPath();wCtx.arc(pr.x,pr.y,5,0,Math.PI*2);wCtx.fill();
+    // eyes
+    wCtx.fillStyle=`rgba(255,255,255,${alpha*0.8})`;
+    const angle=Math.atan2(pr.vy,pr.vx);
+    wCtx.beginPath();wCtx.arc(pr.x+Math.cos(angle-0.3)*3,pr.y+Math.sin(angle-0.3)*3,1,0,Math.PI*2);wCtx.fill();
+    wCtx.beginPath();wCtx.arc(pr.x+Math.cos(angle+0.3)*3,pr.y+Math.sin(angle+0.3)*3,1,0,Math.PI*2);wCtx.fill();
+  });
+  // border
+  wCtx.strokeStyle='#1a1a1a';wCtx.lineWidth=1;
+  wCtx.strokeRect(0,0,W,H);
+}
+
+function drawGraph(){
+  const gW=gCanvas.offsetWidth,gH=180;
+  gCtx.clearRect(0,0,gW,gH);
+  const px=40,py=10,pw=gW-55,ph=gH-30;
+  // axes
+  gCtx.strokeStyle='#252525';gCtx.lineWidth=1;
+  gCtx.beginPath();gCtx.moveTo(px,py);gCtx.lineTo(px,py+ph);gCtx.lineTo(px+pw,py+ph);gCtx.stroke();
+  // grid
+  for(let i=1;i<=4;i++){
+    const y=py+ph-i/4*ph;
+    gCtx.strokeStyle='#151515';gCtx.beginPath();gCtx.moveTo(px,y);gCtx.lineTo(px+pw,y);gCtx.stroke();
+  }
+  gCtx.fillStyle='#555';gCtx.font='9px Manrope,system-ui';
+  gCtx.textAlign='center';gCtx.fillText('Time',px+pw/2,gH-2);
+  gCtx.textAlign='start';
+
+  if(history.prey.length<2)return;
+  const maxVal=Math.max(
+    Math.max(...history.prey,1),
+    Math.max(...history.pred,1),
+    Math.max(...history.food,1)
+  )*1.15;
+  const len=history.prey.length;
+
+  // y-axis labels
+  gCtx.fillStyle='#444';gCtx.font='9px Manrope,system-ui';gCtx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    gCtx.fillText(Math.round(maxVal*i/4),px-4,py+ph-i/4*ph+3);
+  }
+  gCtx.textAlign='start';
+
+  function plotLine(data,color){
+    gCtx.strokeStyle=color;gCtx.lineWidth=1.5;gCtx.beginPath();
+    data.forEach((v,i)=>{
+      const x=px+i/(len-1)*pw;
+      const y=py+ph-v/maxVal*ph;
+      i===0?gCtx.moveTo(x,y):gCtx.lineTo(x,y);
+    });
+    gCtx.stroke();
+  }
+  plotLine(history.food,'#fbbf2466');
+  plotLine(history.prey,'#4ade80');
+  plotLine(history.pred,'#ef4444');
+}
+
+function loop(){
+  update();
+  drawWorld();
+  drawGraph();
+  requestAnimationFrame(loop);
+}
+
+resizeCanvases();
+initSim();
+loop();
+</script>
+<script src="/related.js"></script>
+</body>
+</html>

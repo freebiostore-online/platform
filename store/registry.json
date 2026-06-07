@@ -1,6 +1,18 @@
 {
   "robots": [
     {
+      "id": "drug-pipeline",
+      "name": "Drug Discovery Pipeline",
+      "description": "Chain",
+      "storeType": " DNA \u2192 protein structure \u2192 drug screening. Lipinski scoring, binding compatibility.",
+      "category": "behavior",
+      "icon": "pipelines",
+      "iconBg": "\ud83d\udc8a:#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
       "id": "protein-folder",
       "name": "Protein Folder",
       "description": "2D lattice HP model folding. Drag residues to minimize energy. Simulated annealing auto-fold. Known optimal energies.",
@@ -152,6 +164,30 @@
       "category": "evolution",
       "icon": "\ud83d\udcc8",
       "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "cell-division",
+      "name": "Cell Division",
+      "description": "Mitosis & meiosis visualizer. Step through prophase, metaphase, anaphase, telophase. Crossing over in meiosis. Chromosome count tracking.",
+      "storeType": "behavior",
+      "category": "cell-biology",
+      "icon": "\ud83e\udda0",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "ecosystem-sim",
+      "name": "Ecosystem Dynamics",
+      "description": "Lotka-Volterra predator-prey simulation. Animated populations, real-time graphs, food chains, carrying capacity, cascade events.",
+      "storeType": "behavior",
+      "category": "ecology",
+      "icon": "\ud83c\udf0d",
+      "iconBg": "#22c55e",
       "creator": "serge-ivo",
       "creatorName": "Serge",
       "creatorAvatar": "https://github.com/serge-ivo.png?size=96"

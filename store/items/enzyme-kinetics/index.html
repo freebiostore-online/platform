@@ -1,153 +1,447 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Enzyme Kinetics - FreeBioStore</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enzyme Kinetics Lab | FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;color:#e0e0e0;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
-h1{color:#10b981;margin:18px 0 6px;font-size:1.4rem}
-.desc{color:#999;font-size:.85rem;margin-bottom:12px}
-.layout{display:flex;gap:12px;margin:8px;flex-wrap:wrap;justify-content:center}
-canvas{background:#111;border:1px solid #333;border-radius:6px}
-.controls{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap;justify-content:center}
-.controls label{font-size:.8rem;color:#aaa}
-.controls input[type=range]{width:80px;accent-color:#10b981}
-.controls select{background:#222;color:#e0e0e0;border:1px solid #444;padding:3px 8px;border-radius:4px;font-size:.8rem}
-footer{margin-top:auto;padding:12px;font-size:.7rem;color:#555}
-footer a{color:#10b981;text-decoration:none}
+:root{--bg:#0a0a0a;--text:#fafafa;--muted:#888;--accent:#10b981;--panel:#111;--border:#1a1a1a;--dark:#080808}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+.back{position:absolute;top:16px;left:20px;font-size:13px;font-weight:600;opacity:.7}
+.back:hover{opacity:1}
+header{text-align:center;padding:20px 20px 10px;border-bottom:1px solid var(--border)}
+header h1{font-size:1.4rem;font-weight:700;color:var(--accent)}
+header p{font-size:.82rem;color:var(--muted);margin-top:4px}
+.layout{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+.full{grid-column:1/-1}
+h2{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+canvas{display:block;width:100%;border-radius:6px;background:var(--dark);cursor:crosshair}
+.controls{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
+.ctrl{display:flex;flex-direction:column;gap:3px}
+.ctrl label{font-size:11px;color:var(--muted);font-weight:600}
+.ctrl .row{display:flex;align-items:center;gap:8px}
+.ctrl input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.ctrl .val{font-size:12px;font-weight:700;color:var(--accent);min-width:36px;text-align:right}
+select{background:#181818;color:var(--text);border:1px solid #252525;padding:6px 10px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;width:100%}
+.info-box{background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;line-height:1.7;color:var(--muted)}
+.info-box strong{color:var(--text)}
+.legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.params{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.param{background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center}
+.param .label{font-size:10px;color:var(--muted)}
+.param .value{font-size:16px;font-weight:700;color:var(--accent)}
+.tabs{display:flex;gap:0;margin-bottom:10px}
+.tab{flex:1;padding:7px;text-align:center;font-size:11px;font-weight:600;background:var(--dark);border:1px solid var(--border);color:#555;cursor:pointer;transition:all .15s}
+.tab:first-child{border-radius:6px 0 0 6px}
+.tab:last-child{border-radius:0 6px 6px 0}
+.tab.active{background:#10b98120;color:var(--accent);border-color:var(--accent)}
+.reaction-anim{height:60px;position:relative;overflow:hidden;border-radius:6px;background:var(--dark);border:1px solid var(--border);margin-top:8px}
 </style>
 </head>
 <body>
-<h1>Enzyme Kinetics</h1>
-<p class="desc">Michaelis-Menten model with Lineweaver-Burk plot and inhibitor modes</p>
-<div class="layout">
-<canvas id="mm" width="360" height="300"></canvas>
-<canvas id="lb" width="360" height="300"></canvas>
-</div>
-<div class="controls">
-<label>Vmax <input type="range" id="vmax" min="5" max="100" value="50"><span id="vmaxV">50</span></label>
-<label>Km <input type="range" id="km" min="1" max="50" value="10"><span id="kmV">10</span></label>
-<label>[S] <input type="range" id="sub" min="0.5" max="100" step="0.5" value="20"><span id="subV">20</span></label>
-<label>Inhibitor: <select id="inhib"><option value="none">None</option><option value="comp">Competitive</option><option value="uncomp">Uncompetitive</option><option value="noncomp">Non-competitive</option></select></label>
-<label>[I] <input type="range" id="inh" min="0" max="30" value="0"><span id="inhV">0</span></label>
-<label>Ki <input type="range" id="ki" min="1" max="20" value="5"><span id="kiV">5</span></label>
-</div>
-<footer><a href="/items/">FreeBioStore</a></footer>
-<script>
-const mc=document.getElementById('mm'),mctx=mc.getContext('2d');
-const lc=document.getElementById('lb'),lctx=lc.getContext('2d');
-let Vmax=50,Km=10,S=20,inhibType='none',I=0,Ki=5;
+<a href="/" class="back">FreeBioStore</a>
+<header>
+  <h1>Enzyme Kinetics Lab</h1>
+  <p>Michaelis-Menten kinetics with inhibitors, Lineweaver-Burk plots, and real-time reaction animation</p>
+</header>
 
-function bind(id,sp,cb){document.getElementById(id).addEventListener('input',e=>{cb(+e.value);document.getElementById(sp).textContent=e.value;draw()});}
-bind('vmax','vmaxV',v=>Vmax=v);bind('km','kmV',v=>Km=v);bind('sub','subV',v=>S=v);
-bind('inh','inhV',v=>I=v);bind('ki','kiV',v=>Ki=v);
-document.getElementById('inhib').addEventListener('change',e=>{inhibType=e.value;draw();});
+<div class="layout">
+  <div class="panel">
+    <h2>Michaelis-Menten Plot</h2>
+    <canvas id="mmCanvas" height="300"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#555"></span> Uninhibited</span>
+      <span><span class="dot" style="background:var(--accent)"></span> Current</span>
+      <span><span class="dot" style="background:#fff"></span> [S] marker</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Lineweaver-Burk Plot (1/v vs 1/[S])</h2>
+    <canvas id="lbCanvas" height="300"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#555"></span> Uninhibited</span>
+      <span><span class="dot" style="background:var(--accent)"></span> + Inhibitor</span>
+    </div>
+  </div>
+
+  <div class="panel full">
+    <h2>Controls</h2>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Vmax (max velocity)</label>
+        <div class="row"><input type="range" id="rVmax" min="5" max="120" value="60"><span class="val" id="vVmax">60</span></div>
+      </div>
+      <div class="ctrl">
+        <label>Km (Michaelis constant)</label>
+        <div class="row"><input type="range" id="rKm" min="1" max="60" value="15"><span class="val" id="vKm">15</span></div>
+      </div>
+      <div class="ctrl">
+        <label>[S] Substrate concentration</label>
+        <div class="row"><input type="range" id="rS" min="0.5" max="120" step="0.5" value="30"><span class="val" id="vS">30</span></div>
+      </div>
+      <div class="ctrl">
+        <label>Inhibitor type</label>
+        <select id="selInhib">
+          <option value="none">None</option>
+          <option value="comp">Competitive</option>
+          <option value="uncomp">Uncompetitive</option>
+          <option value="noncomp">Non-competitive</option>
+        </select>
+      </div>
+      <div class="ctrl">
+        <label>[I] Inhibitor concentration</label>
+        <div class="row"><input type="range" id="rI" min="0" max="40" value="0"><span class="val" id="vI">0</span></div>
+      </div>
+      <div class="ctrl">
+        <label>Ki (inhibition constant)</label>
+        <div class="row"><input type="range" id="rKi" min="1" max="30" value="8"><span class="val" id="vKi">8</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Apparent Parameters</h2>
+    <div class="params">
+      <div class="param"><div class="label">Vmax (apparent)</div><div class="value" id="pVmax">60.0</div></div>
+      <div class="param"><div class="label">Km (apparent)</div><div class="value" id="pKm">15.0</div></div>
+      <div class="param"><div class="label">Current v</div><div class="value" id="pV">-</div></div>
+      <div class="param"><div class="label">v / Vmax</div><div class="value" id="pRatio">-</div></div>
+    </div>
+    <h2 style="margin-top:14px">Reaction Animation</h2>
+    <canvas id="rxnCanvas" height="80"></canvas>
+  </div>
+
+  <div class="panel">
+    <h2>How Inhibitors Work</h2>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab(0)">Competitive</div>
+      <div class="tab" onclick="showTab(1)">Uncompetitive</div>
+      <div class="tab" onclick="showTab(2)">Non-competitive</div>
+    </div>
+    <div class="info-box" id="infoBox">
+      <strong>Competitive inhibition:</strong> The inhibitor competes with substrate for the active site. Increases apparent Km (lower affinity) but Vmax remains unchanged. On the Lineweaver-Burk plot, lines intersect at the y-axis (same 1/Vmax). Overcome by increasing [S].
+    </div>
+  </div>
+</div>
+
+<script>
+const INFO=[
+  '<strong>Competitive inhibition:</strong> The inhibitor competes with substrate for the active site. Increases apparent Km (lower affinity) but Vmax remains unchanged. On the Lineweaver-Burk plot, lines intersect at the y-axis (same 1/Vmax). Overcome by increasing [S].',
+  '<strong>Uncompetitive inhibition:</strong> The inhibitor binds only to the enzyme-substrate complex (ES), not free enzyme. Both apparent Vmax and Km decrease by the same factor. On the Lineweaver-Burk plot, lines are parallel (same slope). Cannot be overcome by increasing [S].',
+  '<strong>Non-competitive inhibition:</strong> The inhibitor binds enzyme regardless of substrate binding (at an allosteric site). Apparent Vmax decreases but Km stays the same. On the Lineweaver-Burk plot, lines intersect on the x-axis (same -1/Km). Cannot be overcome by increasing [S].'
+];
+
+let Vmax=60, Km=15, S=30, inhibType='none', I_conc=0, Ki=8;
+let particles=[];
+
+function bind(sliderId, displayId, setter){
+  const el=document.getElementById(sliderId);
+  el.addEventListener('input',e=>{
+    const v=+e.target.value;
+    setter(v);
+    document.getElementById(displayId).textContent=v;
+    draw();
+  });
+}
+bind('rVmax','vVmax',v=>Vmax=v);
+bind('rKm','vKm',v=>Km=v);
+bind('rS','vS',v=>S=v);
+bind('rI','vI',v=>I_conc=v);
+bind('rKi','vKi',v=>Ki=v);
+document.getElementById('selInhib').addEventListener('change',e=>{inhibType=e.target.value;draw();});
+
+function showTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.getElementById('infoBox').innerHTML=INFO[i];
+}
 
 function rate(s,vmax,km,iType,iConc,ki){
-  if(iType==='comp') return vmax*s/(km*(1+iConc/ki)+s);
-  if(iType==='uncomp') return vmax*s/((km+s)*(1+iConc/ki));
-  if(iType==='noncomp') return vmax*s/((km*(1+iConc/ki)+s)*(1+iConc/ki));
+  if(iType==='comp')return vmax*s/(km*(1+iConc/ki)+s);
+  if(iType==='uncomp')return vmax*s/((km+s)*(1+iConc/ki));
+  if(iType==='noncomp')return vmax*s/((km*(1+iConc/ki)+s)*(1+iConc/ki));
   return vmax*s/(km+s);
 }
 
-function apparentParams(vmax,km,iType,iConc,ki){
-  if(iType==='comp') return{Vmax:vmax,Km:km*(1+iConc/ki)};
-  if(iType==='uncomp') return{Vmax:vmax/(1+iConc/ki),Km:km/(1+iConc/ki)};
-  if(iType==='noncomp') return{Vmax:vmax/(1+iConc/ki),Km:km};
-  return{Vmax:vmax,Km:km};
+function apparent(vmax,km,iType,iConc,ki){
+  if(iType==='comp')return{V:vmax,K:km*(1+iConc/ki)};
+  if(iType==='uncomp')return{V:vmax/(1+iConc/ki),K:km/(1+iConc/ki)};
+  if(iType==='noncomp')return{V:vmax/(1+iConc/ki),K:km};
+  return{V:vmax,K:km};
 }
 
 function drawMM(){
-  mctx.fillStyle='#111';mctx.fillRect(0,0,360,300);
-  const px=50,py=20,pw=290,ph=240;
+  const canvas=document.getElementById('mmCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=300*dpr;
+  ctx.scale(dpr,dpr);
+  const W=canvas.offsetWidth,H=300;
+  ctx.clearRect(0,0,W,H);
+
+  const px=50,py=16,pw=W-70,ph=H-50;
+  const maxS=120,maxV=Vmax*1.15;
+
+  // grid
+  ctx.strokeStyle='#1a1a1a';ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=py+ph-i/5*ph;
+    ctx.beginPath();ctx.moveTo(px,y);ctx.lineTo(px+pw,y);ctx.stroke();
+  }
+  for(let i=0;i<=6;i++){
+    const x=px+i/6*pw;
+    ctx.beginPath();ctx.moveTo(x,py);ctx.lineTo(x,py+ph);ctx.stroke();
+  }
+
   // axes
-  mctx.strokeStyle='#444';mctx.lineWidth=1;
-  mctx.beginPath();mctx.moveTo(px,py);mctx.lineTo(px,py+ph);mctx.lineTo(px+pw,py+ph);mctx.stroke();
-  mctx.fillStyle='#888';mctx.font='10px system-ui';
-  mctx.fillText('[S]',px+pw/2,py+ph+16);
-  mctx.save();mctx.translate(12,py+ph/2);mctx.rotate(-Math.PI/2);mctx.fillText('v (rate)',0,0);mctx.restore();
-  mctx.fillStyle='#10b981';mctx.font='bold 11px system-ui';mctx.fillText('Michaelis-Menten',px,py-4);
-  // uninhibited curve
-  const maxS=100;
-  mctx.strokeStyle='#555';mctx.lineWidth=1.5;mctx.setLineDash([4,4]);mctx.beginPath();
+  ctx.strokeStyle='#333';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+ph);ctx.lineTo(px+pw,py+ph);ctx.stroke();
+  ctx.fillStyle='#666';ctx.font='11px Manrope,system-ui';
+  ctx.textAlign='center';ctx.fillText('[S] (substrate concentration)',px+pw/2,H-4);
+  ctx.save();ctx.translate(14,py+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('v (reaction rate)',0,0);ctx.restore();
+  ctx.textAlign='start';
+
+  // axis labels
+  ctx.fillStyle='#444';ctx.font='9px Manrope,system-ui';ctx.textAlign='center';
+  for(let i=0;i<=6;i++){ctx.fillText(Math.round(maxS*i/6),px+i/6*pw,py+ph+14);}
+  ctx.textAlign='right';
+  for(let i=0;i<=5;i++){ctx.fillText(Math.round(maxV*i/5),px-4,py+ph-i/5*ph+4);}
+  ctx.textAlign='start';
+
+  // title
+  ctx.fillStyle='var(--accent)';ctx.font='bold 12px Manrope,system-ui';
+  ctx.fillStyle='#10b981';ctx.fillText('Michaelis-Menten',px,py-3);
+
+  // uninhibited curve (dashed)
+  ctx.strokeStyle='#555';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();
   for(let s=0;s<=maxS;s+=0.5){
     const v=rate(s,Vmax,Km,'none',0,Ki);
-    const x=px+s/maxS*pw,y=py+ph-v/Vmax*ph*0.9;
-    s===0?mctx.moveTo(x,y):mctx.lineTo(x,y);
+    const x=px+s/maxS*pw,y=py+ph-v/maxV*ph;
+    s===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
   }
-  mctx.stroke();mctx.setLineDash([]);
-  // inhibited curve
-  mctx.strokeStyle='#10b981';mctx.lineWidth=2.5;mctx.beginPath();
+  ctx.stroke();ctx.setLineDash([]);
+
+  // inhibited curve (solid)
+  ctx.strokeStyle='#10b981';ctx.lineWidth=2.5;ctx.beginPath();
   for(let s=0;s<=maxS;s+=0.5){
-    const v=rate(s,Vmax,Km,inhibType,I,Ki);
-    const x=px+s/maxS*pw,y=py+ph-v/Vmax*ph*0.9;
-    s===0?mctx.moveTo(x,y):mctx.lineTo(x,y);
+    const v=rate(s,Vmax,Km,inhibType,I_conc,Ki);
+    const x=px+s/maxS*pw,y=py+ph-v/maxV*ph;
+    s===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
   }
-  mctx.stroke();
-  // current point
-  const cv=rate(S,Vmax,Km,inhibType,I,Ki);
-  const cx=px+S/maxS*pw,cy=py+ph-cv/Vmax*ph*0.9;
-  mctx.fillStyle='#fff';mctx.beginPath();mctx.arc(cx,cy,5,0,Math.PI*2);mctx.fill();
-  mctx.fillStyle='#ccc';mctx.font='10px system-ui';
-  mctx.fillText(`v=${cv.toFixed(1)}`,cx+8,cy-4);
-  // Vmax line
-  const ap=apparentParams(Vmax,Km,inhibType,I,Ki);
-  const vmaxY=py+ph-ap.Vmax/Vmax*ph*0.9;
-  mctx.strokeStyle='#10b98144';mctx.setLineDash([3,3]);mctx.beginPath();mctx.moveTo(px,vmaxY);mctx.lineTo(px+pw,vmaxY);mctx.stroke();mctx.setLineDash([]);
-  mctx.fillStyle='#10b981';mctx.font='9px system-ui';mctx.fillText(`Vmax'=${ap.Vmax.toFixed(1)}`,px+pw-70,vmaxY-4);
+  ctx.stroke();
+
+  // apparent Vmax line
+  const ap=apparent(Vmax,Km,inhibType,I_conc,Ki);
+  const vmaxY=py+ph-ap.V/maxV*ph;
+  ctx.strokeStyle='#10b98140';ctx.setLineDash([3,3]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(px,vmaxY);ctx.lineTo(px+pw,vmaxY);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#10b981';ctx.font='10px Manrope,system-ui';
+  ctx.fillText("Vmax'="+ap.V.toFixed(1),px+pw-80,vmaxY-5);
+
   // Km marker
-  const kmX=px+ap.Km/maxS*pw;
-  mctx.strokeStyle='#f59e0b44';mctx.setLineDash([3,3]);mctx.beginPath();mctx.moveTo(kmX,py);mctx.lineTo(kmX,py+ph);mctx.stroke();mctx.setLineDash([]);
-  mctx.fillStyle='#f59e0b';mctx.fillText(`Km'=${ap.Km.toFixed(1)}`,kmX+4,py+ph-10);
+  const kmX=px+ap.K/maxS*pw;
+  if(kmX<px+pw){
+    ctx.strokeStyle='#f59e0b40';ctx.setLineDash([3,3]);ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(kmX,py);ctx.lineTo(kmX,py+ph);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#f59e0b';ctx.font='10px Manrope,system-ui';
+    ctx.fillText("Km'="+ap.K.toFixed(1),kmX+4,py+ph-8);
+  }
+
+  // current [S] marker
+  const cv=rate(S,Vmax,Km,inhibType,I_conc,Ki);
+  const cx=px+S/maxS*pw,cy=py+ph-cv/maxV*ph;
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#10b981';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle='#ccc';ctx.font='11px Manrope,system-ui';
+  ctx.fillText('v='+cv.toFixed(1),cx+10,cy-5);
+
+  // dashed lines from marker to axes
+  ctx.strokeStyle='#ffffff20';ctx.setLineDash([2,3]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,py+ph);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,cy);ctx.stroke();
+  ctx.setLineDash([]);
 }
 
 function drawLB(){
-  lctx.fillStyle='#111';lctx.fillRect(0,0,360,300);
-  const px=60,py=20,pw=280,ph=240;
-  lctx.strokeStyle='#444';lctx.lineWidth=1;
-  lctx.beginPath();lctx.moveTo(px,py);lctx.lineTo(px,py+ph);lctx.lineTo(px+pw,py+ph);lctx.stroke();
-  lctx.fillStyle='#888';lctx.font='10px system-ui';
-  lctx.fillText('1/[S]',px+pw/2,py+ph+16);
-  lctx.save();lctx.translate(12,py+ph/2);lctx.rotate(-Math.PI/2);lctx.fillText('1/v',0,0);lctx.restore();
-  lctx.fillStyle='#10b981';lctx.font='bold 11px system-ui';lctx.fillText('Lineweaver-Burk',px,py-4);
-  // both lines
-  const maxInvS=0.5,minInvS=-0.15;
-  const range=maxInvS-minInvS;
-  function plotLB(vmax,km,color,dash){
+  const canvas=document.getElementById('lbCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=300*dpr;
+  ctx.scale(dpr,dpr);
+  const W=canvas.offsetWidth,H=300;
+  ctx.clearRect(0,0,W,H);
+
+  const px=60,py=16,pw=W-80,ph=H-50;
+  const minInvS=-0.15,maxInvS=0.5,range=maxInvS-minInvS;
+
+  // axes
+  ctx.strokeStyle='#333';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+ph);ctx.lineTo(px+pw,py+ph);ctx.stroke();
+  ctx.fillStyle='#666';ctx.font='11px Manrope,system-ui';ctx.textAlign='center';
+  ctx.fillText('1/[S]',px+pw/2,H-4);
+  ctx.save();ctx.translate(14,py+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('1/v',0,0);ctx.restore();
+  ctx.textAlign='start';
+
+  // title
+  ctx.fillStyle='#10b981';ctx.font='bold 12px Manrope,system-ui';
+  ctx.fillText('Lineweaver-Burk',px,py-3);
+
+  // origin line
+  const ox=px+(0-minInvS)/range*pw;
+  ctx.strokeStyle='#222';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(ox,py);ctx.lineTo(ox,py+ph);ctx.stroke();
+  ctx.fillStyle='#555';ctx.font='9px Manrope,system-ui';ctx.fillText('0',ox-3,py+ph+12);
+
+  function plotLine(vmax,km,color,dash){
     const slope=km/vmax,yint=1/vmax;
-    lctx.strokeStyle=color;lctx.lineWidth=2;if(dash)lctx.setLineDash(dash);
-    lctx.beginPath();
     const maxInvV=slope*maxInvS+yint;
-    const scale=ph*0.8/Math.max(maxInvV,0.1);
-    for(let invS=minInvS;invS<=maxInvS;invS+=0.005){
+    const scale=ph*0.75/Math.max(maxInvV,0.05);
+    ctx.strokeStyle=color;ctx.lineWidth=2;
+    if(dash)ctx.setLineDash(dash);
+    ctx.beginPath();
+    let started=false;
+    for(let invS=minInvS;invS<=maxInvS;invS+=0.003){
       const invV=slope*invS+yint;
       const x=px+(invS-minInvS)/range*pw;
       const y=py+ph-invV*scale;
-      if(y<py-20||y>py+ph+20) continue;
-      invS===minInvS?lctx.moveTo(x,y):lctx.lineTo(x,y);
+      if(y<py-30||y>py+ph+30)continue;
+      if(!started){ctx.moveTo(x,y);started=true;}
+      else ctx.lineTo(x,y);
     }
-    lctx.stroke();lctx.setLineDash([]);
+    ctx.stroke();ctx.setLineDash([]);
   }
+
   // uninhibited
-  plotLB(Vmax,Km,'#555',[4,4]);
+  plotLine(Vmax,Km,'#555',[5,4]);
   // inhibited
-  const ap=apparentParams(Vmax,Km,inhibType,I,Ki);
-  plotLB(ap.Vmax,ap.Km,'#10b981',null);
-  // origin marker
-  const ox=px+(0-minInvS)/range*pw;
-  lctx.strokeStyle='#333';lctx.beginPath();lctx.moveTo(ox,py);lctx.lineTo(ox,py+ph);lctx.stroke();
-  lctx.fillStyle='#666';lctx.font='9px system-ui';lctx.fillText('0',ox-3,py+ph+12);
-  // inhibitor label
+  const ap=apparent(Vmax,Km,inhibType,I_conc,Ki);
+  plotLine(ap.V,ap.K,'#10b981',null);
+
+  // inhibitor effect label
   if(inhibType!=='none'){
-    lctx.fillStyle='#f59e0b';lctx.font='10px system-ui';
-    const labels={comp:'Competitive: Km increases, Vmax same',uncomp:'Uncompetitive: both decrease',noncomp:'Non-competitive: Vmax decreases, Km same'};
-    lctx.fillText(labels[inhibType],px-40,py+ph+30);
+    const labels={
+      comp:'Competitive: same y-intercept, steeper slope',
+      uncomp:'Uncompetitive: parallel lines (same slope)',
+      noncomp:'Non-competitive: same x-intercept, higher y-int'
+    };
+    ctx.fillStyle='#f59e0b';ctx.font='10px Manrope,system-ui';
+    ctx.fillText(labels[inhibType],px-30,py+ph+30);
+  }
+
+  // x-intercept labels
+  ctx.fillStyle='#444';ctx.font='9px Manrope,system-ui';
+  const xiUn=-1/Km,xiIn=-1/ap.K;
+  const xPosUn=px+(xiUn-minInvS)/range*pw;
+  const xPosIn=px+(xiIn-minInvS)/range*pw;
+  if(xPosUn>px-10&&xPosUn<px+pw){
+    ctx.fillStyle='#555';ctx.fillText('-1/Km',xPosUn-12,py+ph+12);
   }
 }
 
-function draw(){drawMM();drawLB();}
+function drawReaction(){
+  const canvas=document.getElementById('rxnCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=80*dpr;
+  ctx.scale(dpr,dpr);
+  const W=canvas.offsetWidth,H=80;
+  ctx.clearRect(0,0,W,H);
+
+  const cv=rate(S,Vmax,Km,inhibType,I_conc,Ki);
+  const speed=cv/Vmax;
+  const now=performance.now()/1000;
+
+  // substrate particles (green circles on left)
+  const subCount=Math.round(S/120*20)+2;
+  ctx.fillStyle='#10b98160';
+  for(let i=0;i<subCount;i++){
+    const x=10+Math.sin(now*1.2+i*2.1)*15+i*8%(W*0.3);
+    const y=20+Math.cos(now*0.9+i*1.7)*20;
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+  }
+  ctx.fillStyle='#10b981';ctx.font='9px Manrope,system-ui';
+  ctx.fillText('Substrates',4,H-4);
+
+  // enzyme (center rectangle)
+  const eX=W*0.4,eY=H/2;
+  ctx.fillStyle='#f59e0b30';
+  ctx.fillRect(eX-20,eY-18,40,36);
+  ctx.strokeStyle='#f59e0b';ctx.lineWidth=1.5;
+  ctx.strokeRect(eX-20,eY-18,40,36);
+  // active site notch
+  ctx.fillStyle='var(--dark)';
+  ctx.fillStyle='#080808';
+  ctx.beginPath();ctx.arc(eX-20,eY,8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#f59e0b';ctx.font='9px Manrope,system-ui';ctx.textAlign='center';
+  ctx.fillText('Enzyme',eX,H-4);
+
+  // inhibitor (if active)
+  if(inhibType!=='none'&&I_conc>0){
+    ctx.fillStyle='#ef444460';
+    const iX=inhibType==='comp'?eX-20:eX+10;
+    const iY=inhibType==='comp'?eY:eY-14;
+    ctx.beginPath();ctx.arc(iX+Math.sin(now*2)*3,iY,6,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#ef4444';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(iX+Math.sin(now*2)*3,iY,6,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#ef4444';ctx.font='8px Manrope,system-ui';
+    ctx.fillText('I',iX+Math.sin(now*2)*3,iY+3);
+  }
+
+  // product particles (moving right, speed proportional to v)
+  ctx.fillStyle='#60a5fa60';
+  const prodCount=Math.round(speed*8)+1;
+  for(let i=0;i<prodCount;i++){
+    const phase=(now*speed*2+i*0.5)%3;
+    const x=eX+30+phase*(W*0.5/3);
+    const y=eY+Math.sin(now+i*1.3)*12;
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();
+  }
+  ctx.fillStyle='#60a5fa';ctx.font='9px Manrope,system-ui';
+  ctx.fillText('Products',W-50,H-4);
+
+  // arrow
+  ctx.strokeStyle='#333';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(eX+25,eY);ctx.lineTo(W-60,eY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W-64,eY-4);ctx.lineTo(W-58,eY);ctx.lineTo(W-64,eY+4);ctx.fill();
+
+  ctx.textAlign='start';
+}
+
+function updateParams(){
+  const ap=apparent(Vmax,Km,inhibType,I_conc,Ki);
+  const cv=rate(S,Vmax,Km,inhibType,I_conc,Ki);
+  document.getElementById('pVmax').textContent=ap.V.toFixed(1);
+  document.getElementById('pKm').textContent=ap.K.toFixed(1);
+  document.getElementById('pV').textContent=cv.toFixed(2);
+  document.getElementById('pRatio').textContent=(cv/Vmax*100).toFixed(1)+'%';
+}
+
+function draw(){
+  drawMM();
+  drawLB();
+  updateParams();
+}
+
+let animFrame;
+function animate(){
+  drawReaction();
+  animFrame=requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize',draw);
 draw();
+animate();
 </script>
+<script src="/related.js"></script>
 </body>
 </html>
