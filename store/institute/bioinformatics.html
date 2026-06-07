@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bioinformatics Tools — Biotech Institute</title>
+  <meta name="description" content="Essential bioinformatics tools and methods. BLAST, multiple alignment, phylogenetics, R/Bioconductor, Python/Biopython, and biological databases.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#262626}
+    body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--line);padding:.75rem 0}
+    header .container{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+    .brand-emoji{font-size:1.5rem}
+    .brand-text{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+    .brand-tag{font-size:.68rem;color:var(--muted)}
+    nav{display:flex;gap:1rem;font-size:.82rem;font-weight:600;margin-left:auto}
+    nav a{color:var(--muted)}nav a:hover{color:var(--ink)}
+    .hero{text-align:center;padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--line)}
+    .hero h1{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem}
+    .hero h1 em{color:var(--accent);font-style:normal}
+    .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:.95rem}
+    .toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1.5rem 0}
+    .toc h3{font-size:.85rem;font-weight:700;margin-bottom:.5rem;color:var(--accent)}
+    .toc ul{list-style:none;padding:0;columns:2}
+    .toc li{margin:.2rem 0}.toc a{color:#a3a3a3;font-size:.82rem}.toc a:hover{color:var(--ink)}
+    .section{margin-bottom:2rem;padding-top:1rem}
+    .section h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid var(--line)}
+    .section h3{font-size:.95rem;font-weight:700;margin:1rem 0 .35rem;color:#e5e5e5}
+    .section p,.section li{color:#a3a3a3;font-size:.88rem}
+    ul{padding-left:1.25rem;margin:.35rem 0}
+    li{margin-bottom:.3rem}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem;margin:.5rem 0}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.85rem;transition:border-color .15s}
+    .card:hover{border-color:var(--accent)}
+    .card h4{font-size:.85rem;font-weight:700;margin-bottom:.2rem}
+    .card h4 a{color:var(--ink)}.card p{font-size:.75rem;color:var(--muted);margin:0;line-height:1.5}
+    .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
+    code{background:#1a1a1a;padding:.15rem .35rem;border-radius:4px;font-size:.82rem;color:#e5e5e5}
+    pre{background:#1a1a1a;border:1px solid var(--line);border-radius:8px;padding:1rem;overflow-x:auto;margin:.5rem 0;font-size:.8rem;line-height:1.5;color:#e5e5e5}
+    footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/institute/" class="brand">
+        <span class="brand-emoji">🧬</span>
+        <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Powered by <a href="https://zensical.org" style="color:#525252">Zensical</a></span></span>
+      </a>
+      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology.html">Molecular</a><a href="/institute/crispr.html">CRISPR</a><a href="/institute/protein-structure.html">Proteins</a><a href="/institute/genomics.html">Genomics</a><a href="/institute/bioinformatics.html">Bioinfo</a><a href="/">Simulations</a></nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h1>Bioinformatics <em>Tools</em></h1>
+      <p>The computational toolkit of modern biology. From sequence searching to phylogenetic trees, and the programming languages and databases that make it all possible.</p>
+    </section>
+
+    <nav class="toc">
+      <h3>Contents</h3>
+      <ul>
+        <li><a href="#blast">BLAST</a></li>
+        <li><a href="#alignment">Multiple Alignment</a></li>
+        <li><a href="#phylogenetics">Phylogenetics</a></li>
+        <li><a href="#r-bioconductor">R / Bioconductor</a></li>
+        <li><a href="#python">Python / Biopython</a></li>
+        <li><a href="#databases">Biological Databases</a></li>
+        <li><a href="#pipelines">Analysis Pipelines</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
+    </nav>
+
+    <section class="section" id="blast">
+      <h2>BLAST</h2>
+      <p>BLAST (Basic Local Alignment Search Tool) is the most widely used bioinformatics program. Published by Altschul et al. in 1990, it searches sequence databases to find regions of similarity between a query sequence and database sequences. BLAST has been cited over 100,000 times — among the most cited papers in all of science.</p>
+
+      <h3>How BLAST Works</h3>
+      <ul>
+        <li><strong>Seeding</strong> — BLAST breaks the query into short words (default: 11-mers for DNA, 3-mers for protein). It looks for exact or near-exact matches of these words in the database. This initial step is fast because it uses a lookup table.</li>
+        <li><strong>Extension</strong> — from each seed hit, BLAST extends the alignment in both directions using dynamic programming. It stops when the score drops below a threshold (X-drop). This step is more expensive but only applied to promising seeds.</li>
+        <li><strong>Scoring</strong> — alignments are scored using substitution matrices. For proteins: BLOSUM62 (most common), PAM250 (distant homologs). For DNA: match/mismatch scores (+2/-3 default). Gap penalties: linear or affine (open + extend).</li>
+        <li><strong>E-value</strong> — Expected value. The number of alignments with this score or better that would be expected by chance in a database of this size. E-value < 1e-5 is usually significant for homology. E-value depends on database size and query length — not just the alignment score.</li>
+        <li><strong>Heuristic</strong> — BLAST is not guaranteed to find the optimal alignment (unlike Smith-Waterman). It trades sensitivity for speed. For exhaustive searches, use Smith-Waterman (slow) or DIAMOND/MMseqs2 (fast heuristic alternatives).</li>
+      </ul>
+
+      <h3>BLAST Programs</h3>
+      <ul>
+        <li><strong>blastn</strong> — nucleotide query vs nucleotide database. For DNA/RNA sequence similarity. Megablast (default on NCBI) is optimized for highly similar sequences.</li>
+        <li><strong>blastp</strong> — protein query vs protein database. The classic protein search. Uses BLOSUM62 by default.</li>
+        <li><strong>blastx</strong> — translated nucleotide query (all 6 reading frames) vs protein database. For finding protein homologs from a DNA query (e.g., EST or RNA-seq contigs).</li>
+        <li><strong>tblastn</strong> — protein query vs translated nucleotide database. For finding unannotated genes in genome assemblies.</li>
+        <li><strong>tblastx</strong> — translated nucleotide vs translated nucleotide. Slowest, most sensitive for divergent homologs. Rarely used due to computational cost.</li>
+        <li><strong>PSI-BLAST</strong> — Position-Specific Iterated BLAST. Builds a position-specific scoring matrix (PSSM) from initial hits, then searches again with the PSSM. Each iteration finds more distant homologs. Excellent for detecting remote homology. Risk: profile corruption from inclusion of false positives.</li>
+      </ul>
+
+      <h3>Running BLAST</h3>
+      <ul>
+        <li><strong>NCBI web BLAST</strong> — <a href="https://blast.ncbi.nlm.nih.gov">blast.ncbi.nlm.nih.gov</a>. Free, searches all GenBank sequences. Results in minutes. Best for individual queries.</li>
+        <li><strong>Command-line BLAST+</strong> — <code>makeblastdb -in ref.fasta -dbtype nucl</code> then <code>blastn -query reads.fasta -db ref -outfmt 6 -evalue 1e-10</code>. Install via conda or download from NCBI. Essential for batch processing.</li>
+        <li><strong>DIAMOND</strong> — 100-10,000x faster than BLAST for protein searches. Uses double indexing and spaced seeds. Standard for metagenomic protein annotation. <code>diamond blastp -d nr -q query.faa -o results.tsv</code></li>
+        <li><strong>MMseqs2</strong> — even faster than DIAMOND for clustering and searching. Used in the AlphaFold pipeline for building MSAs. By Martin Steinegger (Seoul National University).</li>
+      </ul>
+    </section>
+
+    <section class="section" id="alignment">
+      <h2>Multiple Sequence Alignment</h2>
+      <p>Multiple sequence alignment (MSA) simultaneously aligns three or more sequences to identify conserved regions, functional motifs, and evolutionary relationships. MSA is the starting point for phylogenetics, structure prediction, and functional annotation.</p>
+
+      <h3>Tools</h3>
+      <ul>
+        <li><strong>Clustal Omega</strong> — the successor to ClustalW. Uses guide-tree-based progressive alignment with HMM profiles. Handles thousands of sequences. The most recognized MSA tool name, though not always the most accurate. <a href="https://www.ebi.ac.uk/Tools/msa/clustalo/">Web server at EBI</a>.</li>
+        <li><strong>MUSCLE</strong> — Multiple Sequence Comparison by Log-Expectation. Iterative alignment: initial progressive alignment, then iterative refinement by tree bisection. MUSCLE5 (2021) by Robert Edgar uses ensemble methods and achieves high accuracy. Fast, widely used.</li>
+        <li><strong>MAFFT</strong> — Multiple Alignment using Fast Fourier Transform. Very fast for large datasets. Multiple strategies: L-INS-i (most accurate, O(n^3)), FFT-NS-2 (fast, O(n^2)), G-INS-i (global, accurate). Recommended for &gt;1,000 sequences.</li>
+        <li><strong>T-Coffee</strong> — combines information from pairwise alignments (libraries) to build a more consistent MSA. Slower but often more accurate than progressive-only methods. Structural T-Coffee (3D-Coffee, Expresso) uses structure information when available.</li>
+        <li><strong>HMMER</strong> — profile HMM-based alignment and search. Not a traditional MSA tool but builds probabilistic models (profile HMMs) from alignments. Used by Pfam to define protein family profiles. <code>hmmsearch</code> finds distant homologs missed by BLAST.</li>
+      </ul>
+
+      <h3>Alignment Visualization</h3>
+      <ul>
+        <li><strong>Jalview</strong> — Java-based MSA editor and viewer. Coloring by conservation, physicochemical properties, or custom schemes. Tree display, annotations, web service integration. The standard MSA viewer.</li>
+        <li><strong>AliView</strong> — lightweight, fast MSA viewer. Handles very large alignments (millions of sequences). Editing capabilities. Cross-platform.</li>
+        <li><strong>MView</strong> — command-line tool for reformatting and coloring MSA output. Useful for converting between formats (FASTA, CLUSTAL, PIR, MSF).</li>
+      </ul>
+
+      <h3>Alignment Quality</h3>
+      <ul>
+        <li>MSA accuracy depends heavily on sequence identity. Above 40% identity: most tools produce similar, reliable alignments. Between 20-40% ("twilight zone"): alignment becomes difficult and tool choice matters significantly. Below 20%: alignment is unreliable; structure-based alignment is preferred.</li>
+        <li><strong>Benchmarks</strong> — BAliBASE, PREFAB, SABmark provide reference alignments (often structure-based) for evaluating MSA accuracy. MAFFT L-INS-i and MUSCLE5 consistently rank highest.</li>
+        <li><strong>Trimming</strong> — remove poorly aligned columns before phylogenetic analysis. Tools: TrimAl (automated gap-based trimming), Gblocks (conservative block selection). Over-trimming can lose signal; under-trimming adds noise.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="phylogenetics">
+      <h2>Phylogenetics</h2>
+      <p>Phylogenetics reconstructs evolutionary relationships between sequences (or organisms) in the form of a tree. The tree topology shows which sequences share common ancestors, and branch lengths represent evolutionary distance (usually measured in substitutions per site).</p>
+
+      <h3>Tree-Building Methods</h3>
+      <ul>
+        <li><strong>Distance-based: Neighbor-Joining (NJ)</strong> — compute a distance matrix from the MSA, then agglomeratively build the tree by joining closest neighbors. Fast (O(n^3)), good for large datasets. Does not explicitly model evolution. Tool: MEGA, RapidNJ.</li>
+        <li><strong>Maximum Likelihood (ML)</strong> — find the tree topology and branch lengths that maximize the probability of observing the data (MSA) under a substitution model. Statistically rigorous. Computationally expensive. Current gold standard. Tools: <strong>IQ-TREE 2</strong> (fastest, automatic model selection via ModelFinder), <strong>RAxML-NG</strong> (optimized for large datasets, MPI-parallelized), <strong>PhyML</strong> (classic, user-friendly).</li>
+        <li><strong>Bayesian inference</strong> — explores tree space using MCMC (Markov Chain Monte Carlo). Produces a posterior distribution of trees with branch support (posterior probabilities). Computationally most expensive but provides the most information (uncertainty quantification). Tools: <strong>MrBayes</strong>, <strong>BEAST 2</strong> (adds molecular clock, divergence dating, phylogeography).</li>
+        <li><strong>Maximum Parsimony</strong> — find the tree that requires the fewest evolutionary changes. Simple conceptually but statistically inconsistent (can converge on the wrong tree for unequal rates — long-branch attraction). Largely superseded by ML and Bayesian methods. Tool: PAUP*, TNT.</li>
+      </ul>
+
+      <h3>Substitution Models</h3>
+      <ul>
+        <li><strong>DNA</strong> — JC69 (simplest: equal rates, equal frequencies), K2P/K80 (transition/transversion bias), HKY85 (unequal base frequencies + ti/tv bias), GTR (General Time Reversible: most complex, 6 rate parameters). Plus gamma (+G) for rate variation among sites and invariable sites (+I).</li>
+        <li><strong>Protein</strong> — WAG, LG, JTT, Dayhoff. Empirical matrices derived from large protein alignments. LG is the current default in most tools. ModelFinder (IQ-TREE) automatically selects the best model using BIC.</li>
+        <li><strong>Codon models</strong> — model DNA evolution at the codon level, distinguishing synonymous (dS) from non-synonymous (dN) substitutions. dN/dS (omega): omega &lt; 1 = purifying selection, omega = 1 = neutral, omega &gt; 1 = positive selection. Tools: PAML (codeml), HyPhy.</li>
+      </ul>
+
+      <h3>Branch Support</h3>
+      <ul>
+        <li><strong>Bootstrap</strong> — resample alignment columns with replacement (typically 1,000 replicates), rebuild tree from each resampled dataset, count how often each branch appears. Values &gt;70% are generally considered well-supported. Ultrafast bootstrap (UFBoot2 in IQ-TREE) is 10-40x faster with comparable accuracy.</li>
+        <li><strong>aLRT (approximate Likelihood Ratio Test)</strong> — faster alternative to bootstrap. Tests whether the ML tree topology for a branch is significantly better than the NNI (nearest-neighbor interchange) alternative. SH-aLRT values &gt;80% indicate good support.</li>
+        <li><strong>Bayesian posterior probability</strong> — proportion of MCMC samples containing a given branch. Values &gt;0.95 indicate strong support. Can be overconfident compared to bootstrap, especially with short alignments.</li>
+      </ul>
+
+      <h3>Tree Visualization</h3>
+      <ul>
+        <li><strong>FigTree</strong> — the classic phylogenetic tree viewer. Reads Newick/Nexus format. Publication-quality figures. By Andrew Rambaut (BEAST developer).</li>
+        <li><strong>iTOL (Interactive Tree Of Life)</strong> — web-based tool for tree annotation and visualization. Add metadata (heatmaps, bar charts, colored ranges) to tree branches. Excellent for large trees. <a href="https://itol.embl.de">itol.embl.de</a>.</li>
+        <li><strong>ggtree</strong> — R package for phylogenetic tree visualization using ggplot2 grammar. Extremely flexible. Integrates with tidyverse for data manipulation.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="r-bioconductor">
+      <h2>R / Bioconductor</h2>
+      <p>R is the dominant programming language for statistical bioinformatics. Bioconductor is a curated repository of R packages for biological data analysis, with over 2,200 packages covering genomics, proteomics, flow cytometry, imaging, and more.</p>
+
+      <h3>Core Bioconductor Packages</h3>
+      <ul>
+        <li><strong>DESeq2</strong> — differential gene expression analysis for RNA-seq count data. Uses negative binomial distribution, shrinkage estimation of dispersions, and Wald test. The gold standard for bulk RNA-seq DE analysis. Michael Love, Simon Anders, Wolfgang Huber.</li>
+        <li><strong>edgeR</strong> — alternative to DESeq2. Uses empirical Bayes estimation. Slightly different statistical framework; similar results in practice. Good for small sample sizes.</li>
+        <li><strong>limma</strong> — linear models for microarrays and RNA-seq (with voom transformation). Empirical Bayes moderation of standard errors. Fast, flexible, handles complex experimental designs. Gordon Smyth (WEHI).</li>
+        <li><strong>GenomicRanges</strong> — the foundational Bioconductor data structure for genomic intervals. GRanges objects represent chromosome regions (seqnames, ranges, strand). Operations: findOverlaps, reduce, intersect, setdiff. Underpins most Bioconductor genomics packages.</li>
+        <li><strong>Seurat</strong> — single-cell RNA-seq analysis. Normalization, feature selection, PCA, UMAP, clustering, differential expression, integration of multiple datasets. By Rahul Satija (New York Genome Center). The most widely used scRNA-seq package (though technically not on Bioconductor).</li>
+        <li><strong>clusterProfiler</strong> — gene set enrichment analysis. GO (Gene Ontology) enrichment, KEGG pathway enrichment, GSEA (Gene Set Enrichment Analysis). Publication-quality dot plots and enrichment maps. Guangchuang Yu.</li>
+        <li><strong>VariantAnnotation</strong> — read, filter, and annotate VCF files in R. Integration with GenomicRanges and BSgenome for variant-level analysis.</li>
+        <li><strong>ComplexHeatmap</strong> — publication-quality heatmaps with dendrograms, annotations, and split panels. By Zuguang Gu. The best heatmap package in any language.</li>
+      </ul>
+
+      <h3>R for Bioinformatics</h3>
+      <pre># Typical DESeq2 workflow
+library(DESeq2)
+dds &lt;- DESeqDataSetFromMatrix(countData = counts,
+                              colData = metadata,
+                              design = ~ condition)
+dds &lt;- DESeq(dds)
+res &lt;- results(dds, contrast = c("condition", "treated", "control"))
+res &lt;- lfcShrink(dds, coef = 2, type = "apeglm")
+plotMA(res)  # MA-plot
+write.csv(as.data.frame(res), "de_results.csv")</pre>
+    </section>
+
+    <section class="section" id="python">
+      <h2>Python / Biopython</h2>
+      <p>Python is the dominant language for bioinformatics pipelines, data wrangling, machine learning, and tool development. Biopython is the core library for biological computation in Python.</p>
+
+      <h3>Biopython</h3>
+      <ul>
+        <li><strong>Seq objects</strong> — represent biological sequences with methods for complement, reverse complement, translation, and transcription.</li>
+        <li><strong>SeqIO</strong> — read and write sequence files (FASTA, GenBank, FASTQ, Swiss-Prot, and 20+ formats). <code>SeqIO.parse("seqs.fasta", "fasta")</code> returns an iterator of SeqRecord objects.</li>
+        <li><strong>AlignIO</strong> — read and write multiple sequence alignments (Clustal, FASTA, Stockholm, Nexus, PHYLIP).</li>
+        <li><strong>BLAST wrappers</strong> — run BLAST from Python: <code>NcbiblastpCommandline</code> for local BLAST, <code>NCBIWWW.qblast</code> for remote NCBI BLAST.</li>
+        <li><strong>Entrez</strong> — programmatic access to NCBI databases (PubMed, GenBank, SRA, etc.). <code>Entrez.efetch(db="nucleotide", id="NM_001301717")</code>.</li>
+        <li><strong>PDB</strong> — parse PDB/mmCIF structure files. <code>PDBParser</code> and <code>MMCIFParser</code> for reading. Calculate distances, angles, contacts. DSSP integration for secondary structure assignment.</li>
+        <li><strong>Phylo</strong> — read, draw, and manipulate phylogenetic trees (Newick, Nexus, PhyloXML). Basic tree visualization with matplotlib.</li>
+      </ul>
+
+      <h3>Key Python Libraries</h3>
+      <ul>
+        <li><strong>pysam</strong> — Python wrapper for htslib/SAMtools. Read/write BAM/CRAM/VCF files. Pileup, fetch, count operations. Essential for working with aligned sequencing data.</li>
+        <li><strong>pyVCF / cyvcf2</strong> — parse VCF files. cyvcf2 (Cython-based) is much faster. Iterate over variants, filter, extract genotypes.</li>
+        <li><strong>Scanpy</strong> — single-cell analysis in Python. Equivalent of Seurat. AnnData object structure, preprocessing, clustering, DE, trajectory inference, visualization. By Fabian Theis lab (Helmholtz Munich).</li>
+        <li><strong>scikit-learn</strong> — machine learning for classification, clustering, regression, dimensionality reduction. Used in variant effect prediction, protein function prediction, drug response modeling.</li>
+        <li><strong>PyTorch / TensorFlow</strong> — deep learning frameworks. Used for AlphaFold, ESM (evolutionary scale modeling), DeepVariant, and countless biological ML models.</li>
+        <li><strong>pandas</strong> — data manipulation (DataFrames). Essential for any tabular bioinformatics data. Read CSV, merge datasets, filter, aggregate.</li>
+        <li><strong>matplotlib / seaborn</strong> — plotting. Volcano plots, heatmaps, scatter plots, genome browsers. Seaborn adds statistical visualization on top of matplotlib.</li>
+      </ul>
+
+      <h3>Python Example</h3>
+      <pre># Parse FASTA, calculate GC content
+from Bio import SeqIO
+from Bio.SeqUtils import gc_fraction
+
+for record in SeqIO.parse("genome.fasta", "fasta"):
+    gc = gc_fraction(record.seq) * 100
+    print(f"{record.id}: {len(record.seq)} bp, GC={gc:.1f}%")</pre>
+    </section>
+
+    <section class="section" id="databases">
+      <h2>Biological Databases</h2>
+
+      <h3>Sequence Databases</h3>
+      <ul>
+        <li><strong><a href="https://www.ncbi.nlm.nih.gov/genbank/">GenBank (NCBI)</a></strong> — primary nucleotide sequence database. Part of the International Nucleotide Sequence Database Collaboration (INSDC) with ENA (Europe) and DDBJ (Japan). ~250 million sequences. All publicly available DNA/RNA.</li>
+        <li><strong><a href="https://www.uniprot.org">UniProt</a></strong> — the universal protein resource. Swiss-Prot (manually curated, ~570K entries) + TrEMBL (automatically annotated, ~250M entries). Protein function, domains, PTMs, interactions, variants, structure. The first place to look up any protein.</li>
+        <li><strong><a href="https://www.ncbi.nlm.nih.gov/refseq/">RefSeq (NCBI)</a></strong> — curated, non-redundant reference sequences for genomes, transcripts, and proteins. NM_ (mRNA), NP_ (protein), NC_ (chromosome), XM_/XP_ (predicted). Higher quality than GenBank for reference purposes.</li>
+        <li><strong><a href="https://www.ensembl.org">Ensembl</a></strong> — genome browser and annotation database (EMBL-EBI). Gene models, regulatory elements, variation, comparative genomics. BioMart for bulk data access. REST API for programmatic access.</li>
+      </ul>
+
+      <h3>Functional Databases</h3>
+      <ul>
+        <li><strong><a href="http://geneontology.org">Gene Ontology (GO)</a></strong> — structured vocabulary for gene/protein function. Three ontologies: Biological Process, Molecular Function, Cellular Component. Used for enrichment analysis (which functions are over-represented in a gene list?).</li>
+        <li><strong><a href="https://www.genome.jp/kegg/">KEGG</a></strong> — Kyoto Encyclopedia of Genes and Genomes. Metabolic pathways, signaling pathways, disease pathways. Pathway maps link genes to biochemical reactions. Widely used for pathway enrichment analysis.</li>
+        <li><strong><a href="https://reactome.org">Reactome</a></strong> — curated pathway database (human focus). Higher curation quality than KEGG for signaling and disease pathways. Open-source, peer-reviewed.</li>
+        <li><strong><a href="https://www.ebi.ac.uk/interpro/">InterPro</a></strong> — integrates protein family/domain databases (Pfam, PROSITE, PRINTS, SMART, CDD, etc.) into a single resource. Assign domains and predict function from sequence. ~47,000 entries covering ~90% of UniProt.</li>
+      </ul>
+
+      <h3>Structure Databases</h3>
+      <ul>
+        <li><strong><a href="https://www.rcsb.org">PDB</a></strong> — experimentally determined 3D structures. 220,000+ entries. Searchable by sequence, structure similarity, ligand, resolution.</li>
+        <li><strong><a href="https://alphafold.ebi.ac.uk">AlphaFold DB</a></strong> — 200+ million predicted protein structures. Per-residue confidence scores. Freely downloadable.</li>
+        <li><strong><a href="https://www.ebi.ac.uk/pdbe/">PDBe</a></strong> — European PDB mirror with additional tools: PDBe-KB (knowledge base aggregating functional annotations onto structures), FunPDBe (community data deposition).</li>
+      </ul>
+
+      <h3>Clinical / Disease Databases</h3>
+      <ul>
+        <li><strong><a href="https://www.ncbi.nlm.nih.gov/clinvar/">ClinVar</a></strong> — variants and their clinical significance. Essential for clinical genomics interpretation.</li>
+        <li><strong><a href="https://www.omim.org">OMIM</a></strong> — Online Mendelian Inheritance in Man. Catalog of human genes and genetic disorders. Authoritative descriptions of genotype-phenotype relationships.</li>
+        <li><strong><a href="https://gnomad.broadinstitute.org">gnomAD</a></strong> — population allele frequencies from 76K+ genomes. Variant constraint metrics (pLI, LOEUF) measure gene intolerance to loss-of-function.</li>
+        <li><strong><a href="https://www.pharmgkb.org">PharmGKB</a></strong> — pharmacogenomics database. Gene-drug-disease relationships. Drug dosing guidelines based on genotype (e.g., warfarin dosing by CYP2C9/VKORC1).</li>
+      </ul>
+    </section>
+
+    <section class="section" id="pipelines">
+      <h2>Analysis Pipelines</h2>
+
+      <h3>Workflow Managers</h3>
+      <ul>
+        <li><strong>Nextflow</strong> — domain-specific language for data-driven computational pipelines. Supports Docker/Singularity containers, cloud execution (AWS, GCP, Azure). <a href="https://nf-co.re">nf-core</a>: community-curated pipeline collection (RNA-seq, variant calling, metagenomics, single-cell — 90+ pipelines).</li>
+        <li><strong>Snakemake</strong> — Python-based workflow manager. Rules define input-output relationships; Snakemake resolves the DAG (Directed Acyclic Graph) and handles parallelism. Conda integration for reproducible environments. Popular in academic bioinformatics.</li>
+        <li><strong>WDL (Workflow Description Language)</strong> — developed by the Broad Institute. Used by GATK best-practices pipelines. Runs on Cromwell (local, HPC, cloud). Terra platform (Broad) provides a cloud execution environment.</li>
+      </ul>
+
+      <h3>Common Pipelines</h3>
+      <ul>
+        <li><strong>nf-core/rnaseq</strong> — FASTQ &rarr; FastQC &rarr; Trim Galore &rarr; STAR/HISAT2 alignment &rarr; featureCounts/Salmon quantification &rarr; MultiQC report. One command for a complete RNA-seq analysis.</li>
+        <li><strong>nf-core/sarek</strong> — variant calling pipeline. FASTQ &rarr; alignment &rarr; GATK/DeepVariant/Strelka2 &rarr; annotation (VEP). Supports germline and somatic calling.</li>
+        <li><strong>nf-core/scrnaseq</strong> — single-cell RNA-seq. FASTQ &rarr; Cell Ranger/STARsolo/Salmon alevin &rarr; count matrix &rarr; QC.</li>
+        <li><strong>GATK Best Practices</strong> — Broad Institute's reference pipeline for variant calling. Preprocessing (MarkDuplicates, BQSR) &rarr; HaplotypeCaller &rarr; Joint genotyping &rarr; VQSR filtering. Extensively validated.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="resources">
+      <h2>Resources</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://rosalind.info">Rosalind</a></h4>
+          <p>Platform for learning bioinformatics through problem solving. 280+ problems from string algorithms to population genetics. Solve in any language. The Project Euler of biology.</p>
+          <div class="meta">Free | Interactive</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.bioinformatics.org">Bioinformatics.org</a></h4>
+          <p>Open-access resource hub. Tutorials, tools, wiki, job board. Community-maintained links to bioinformatics software and databases.</p>
+          <div class="meta">Community | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.biostars.org">Biostars</a></h4>
+          <p>Q&A forum for bioinformatics questions. Active community of 160K+ users. Practical answers to pipeline, tool, and data format questions.</p>
+          <div class="meta">Community | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://nf-co.re">nf-core</a></h4>
+          <p>Curated collection of 90+ Nextflow bioinformatics pipelines. RNA-seq, variant calling, metagenomics, single-cell. Production-ready, containerized, well-documented.</p>
+          <div class="meta">Community | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://biopython.org">Biopython</a></h4>
+          <p>Python tools for computational biology. Sequence I/O, BLAST, alignment, phylogenetics, PDB parsing, Entrez access. 20+ years of development.</p>
+          <div class="meta">Open-source | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.bioconductor.org">Bioconductor</a></h4>
+          <p>R packages for genomics and bioinformatics. 2,200+ packages. DESeq2, GenomicRanges, Seurat integration. Semi-annual releases with quality checks.</p>
+          <div class="meta">Open-source | Free</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="container">
+      <a href="/">FreeBioStore</a> · <a href="/institute/">Institute</a> · Built with <a href="https://zensical.org">Zensical</a>
+    </div>
+  </footer>
+</body>
+</html>
