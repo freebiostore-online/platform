@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://freeagentstore.online/sitemap.xml
+Sitemap: https://store.online/sitemap.xml

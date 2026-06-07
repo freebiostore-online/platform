@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genomics & Sequencing — Biotech Institute</title>
+  <meta name="description" content="Genomics and DNA sequencing technologies. Illumina, Nanopore, PacBio, genome assembly, alignment, variant calling, and single-cell sequencing.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#262626}
+    body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--line);padding:.75rem 0}
+    header .container{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+    .brand-emoji{font-size:1.5rem}
+    .brand-text{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+    .brand-tag{font-size:.68rem;color:var(--muted)}
+    nav{display:flex;gap:1rem;font-size:.82rem;font-weight:600;margin-left:auto}
+    nav a{color:var(--muted)}nav a:hover{color:var(--ink)}
+    .hero{text-align:center;padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--line)}
+    .hero h1{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem}
+    .hero h1 em{color:var(--accent);font-style:normal}
+    .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:.95rem}
+    .toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1.5rem 0}
+    .toc h3{font-size:.85rem;font-weight:700;margin-bottom:.5rem;color:var(--accent)}
+    .toc ul{list-style:none;padding:0;columns:2}
+    .toc li{margin:.2rem 0}.toc a{color:#a3a3a3;font-size:.82rem}.toc a:hover{color:var(--ink)}
+    .section{margin-bottom:2rem;padding-top:1rem}
+    .section h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid var(--line)}
+    .section h3{font-size:.95rem;font-weight:700;margin:1rem 0 .35rem;color:#e5e5e5}
+    .section p,.section li{color:#a3a3a3;font-size:.88rem}
+    ul{padding-left:1.25rem;margin:.35rem 0}
+    li{margin-bottom:.3rem}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem;margin:.5rem 0}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.85rem;transition:border-color .15s}
+    .card:hover{border-color:var(--accent)}
+    .card h4{font-size:.85rem;font-weight:700;margin-bottom:.2rem}
+    .card h4 a{color:var(--ink)}.card p{font-size:.75rem;color:var(--muted);margin:0;line-height:1.5}
+    .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
+    code{background:#1a1a1a;padding:.15rem .35rem;border-radius:4px;font-size:.82rem;color:#e5e5e5}
+    footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/institute/" class="brand">
+        <span class="brand-emoji">🧬</span>
+        <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Powered by <a href="https://zensical.org" style="color:#525252">Zensical</a></span></span>
+      </a>
+      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology.html">Molecular</a><a href="/institute/crispr.html">CRISPR</a><a href="/institute/protein-structure.html">Proteins</a><a href="/institute/genomics.html">Genomics</a><a href="/institute/bioinformatics.html">Bioinfo</a><a href="/">Simulations</a></nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h1>Genomics & <em>Sequencing</em></h1>
+      <p>Reading the book of life at scale. From Sanger sequencing to nanopore real-time reads, and the computational tools that turn raw data into biological insight.</p>
+    </section>
+
+    <nav class="toc">
+      <h3>Contents</h3>
+      <ul>
+        <li><a href="#history">History</a></li>
+        <li><a href="#illumina">Illumina</a></li>
+        <li><a href="#nanopore">Oxford Nanopore</a></li>
+        <li><a href="#pacbio">PacBio</a></li>
+        <li><a href="#assembly">Genome Assembly</a></li>
+        <li><a href="#alignment">Read Alignment</a></li>
+        <li><a href="#variants">Variant Calling</a></li>
+        <li><a href="#single-cell">Single-Cell Genomics</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
+    </nav>
+
+    <section class="section" id="history">
+      <h2>History of Sequencing</h2>
+
+      <h3>Sanger Sequencing (1977)</h3>
+      <p>Frederick Sanger developed chain-termination sequencing using dideoxynucleotides (ddNTPs). Each ddNTP (ddATP, ddCTP, ddGTP, ddTTP) lacks the 3'-OH needed for elongation, terminating the chain at random positions. Gel electrophoresis separates fragments by size, revealing the sequence. Sanger received his second Nobel Prize for this (1980). Automated capillary electrophoresis Sanger sequencing (Applied Biosystems 3730) can read ~800-1000 bp per run with >99.999% accuracy. Still the gold standard for confirming short sequences.</p>
+
+      <h3>The Human Genome Project (1990-2003)</h3>
+      <ul>
+        <li>International effort to sequence the entire human genome. Cost: ~$2.7 billion. Took 13 years. Used BAC-by-BAC (bacterial artificial chromosome) clone-based Sanger sequencing.</li>
+        <li>Draft published in 2001 (Nature, Science), complete sequence in 2003. Revealed ~20,000-25,000 protein-coding genes (fewer than expected), vast amounts of repetitive DNA, and extensive conserved non-coding regions.</li>
+        <li>Craig Venter's parallel whole-genome shotgun approach (Celera Genomics) demonstrated that shotgun assembly could work for large genomes, leading to current sequencing strategies.</li>
+      </ul>
+
+      <h3>Next-Generation Sequencing Revolution (2005-present)</h3>
+      <p>Massively parallel sequencing technologies dropped the cost of a human genome from $2.7 billion to under $200 (2024). Key platforms: 454 (pyrosequencing, 2005, discontinued), Illumina (sequencing by synthesis, 2006, dominant), Ion Torrent (semiconductor, 2010), PacBio (single-molecule, 2011), Oxford Nanopore (nanopore, 2014).</p>
+
+      <h3>T2T Consortium (2022)</h3>
+      <p>The Telomere-to-Telomere (T2T) Consortium completed the first truly complete human genome sequence — including centromeres, telomeres, and ribosomal DNA arrays that were missing from the original Human Genome Project assembly. Added ~200 million base pairs (8% of the genome) previously unresolved. Used a combination of PacBio HiFi and Oxford Nanopore ultra-long reads.</p>
+    </section>
+
+    <section class="section" id="illumina">
+      <h2>Illumina Sequencing</h2>
+      <p>Illumina dominates the sequencing market (~80% of all sequencing data worldwide). Their technology, sequencing by synthesis (SBS), generates massive amounts of short, accurate reads at low cost.</p>
+
+      <h3>How It Works</h3>
+      <ul>
+        <li><strong>Library preparation</strong> — fragment DNA to ~300-600 bp, ligate adapters to both ends. Adapters contain sequences for flow cell binding, amplification primers, and sample-specific barcodes (indexes) for multiplexing.</li>
+        <li><strong>Cluster generation</strong> — library fragments bind to a glass flow cell coated with complementary oligos. Bridge amplification creates ~1,000-copy clusters from each fragment. Each cluster generates enough signal for detection.</li>
+        <li><strong>Sequencing by synthesis</strong> — fluorescently labeled, reversibly terminated nucleotides are added one at a time. After each incorporation, the flow cell is imaged (all clusters simultaneously). The terminator and fluorophore are cleaved, and the next cycle begins. Typically 150-300 cycles per read.</li>
+        <li><strong>Data output</strong> — FASTQ files containing reads + base quality scores (Phred scale: Q30 = 99.9% accuracy, Q40 = 99.99%). Paired-end sequencing: both ends of each fragment are read, providing pairs of reads ~300-600 bp apart.</li>
+      </ul>
+
+      <h3>Platforms</h3>
+      <ul>
+        <li><strong>NovaSeq X Plus</strong> — flagship. Up to 16 Tb per run, 52 billion reads. Cost: ~$200 per human genome at 30x coverage. 25-flow-cell run capacity. For population-scale sequencing.</li>
+        <li><strong>NextSeq 2000</strong> — mid-range. 360 Gb per run. Flexible for exomes, targeted panels, RNA-seq, and small genomes.</li>
+        <li><strong>MiSeq</strong> — benchtop. Up to 15 Gb per run. Longest Illumina reads (2x300 bp). Popular for amplicon sequencing, metagenomics, and small projects.</li>
+        <li><strong>iSeq 100</strong> — smallest. 1.2 Gb per run. For infectious disease panels, targeted sequencing, and education.</li>
+      </ul>
+
+      <h3>Strengths & Limitations</h3>
+      <ul>
+        <li><strong>Strengths</strong> — lowest cost per base, highest accuracy (~99.9% per base), enormous throughput, mature ecosystem of analysis tools.</li>
+        <li><strong>Limitations</strong> — short reads (150-300 bp) struggle with repetitive regions, structural variants, and de novo assembly of complex genomes. PCR amplification can introduce biases (GC bias, duplicate reads). Library prep takes hours.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="nanopore">
+      <h2>Oxford Nanopore Technology</h2>
+      <p>Oxford Nanopore Technologies (ONT) sequences DNA or RNA by threading individual molecules through protein nanopores and measuring the resulting electrical current changes. No amplification, no fluorescence — direct, single-molecule, real-time sequencing.</p>
+
+      <h3>How It Works</h3>
+      <ul>
+        <li><strong>Nanopore</strong> — a modified CsgG protein pore (from E. coli curli secretion system) is embedded in an electrically resistant polymer membrane. A voltage is applied across the membrane, driving ions through the pore and generating a measurable current (~100-150 pA).</li>
+        <li><strong>Motor protein</strong> — a helicase-type motor protein (attached to the DNA during library prep) ratchets the strand through the pore one nucleotide at a time (~450 bases/second). Without the motor, translocation would be too fast for accurate base-calling.</li>
+        <li><strong>Signal processing</strong> — each 5-mer of nucleotides occupying the pore constriction produces a characteristic current level. A neural network (base-caller) converts the raw current signal into nucleotide sequence. Latest basecallers (Dorado, SUP mode) achieve ~99% single-read accuracy; consensus accuracy exceeds 99.9%.</li>
+        <li><strong>Direct RNA sequencing</strong> — native RNA can be sequenced directly (no reverse transcription). Detects RNA modifications (m6A, pseudouridine) in situ. The only platform that sequences RNA without converting to cDNA.</li>
+      </ul>
+
+      <h3>Platforms</h3>
+      <ul>
+        <li><strong>MinION</strong> — pocket-sized USB device. 512 nanopores. Up to 50 Gb per flow cell. ~$1,000 starter pack. Used in field sequencing (Ebola outbreak in Guinea, International Space Station, Antarctic expeditions).</li>
+        <li><strong>GridION</strong> — benchtop, runs 5 MinION flow cells simultaneously. Up to 250 Gb per run.</li>
+        <li><strong>PromethION</strong> — high-throughput. 48 or 72 flow cells. Up to 12 Tb per run. Competitive with Illumina for large projects at lower capital cost. ~$200-300 per human genome.</li>
+        <li><strong>Flongle</strong> — disposable, low-cost adapter for MinION/GridION. 126 nanopores. ~2 Gb. For small, targeted experiments and rapid diagnostics.</li>
+      </ul>
+
+      <h3>Ultra-Long Reads</h3>
+      <p>Nanopore's headline capability: reads exceeding 1 million bases (current record: >4 Mb). Ultra-long reads span entire structural variants, centromeric repeats, and segmental duplications that are unresolvable with short reads. Critical for the T2T complete human genome assembly. Library prep using high-molecular-weight DNA extraction (phenol-chloroform, agarose plug) is key to achieving ultra-long reads.</p>
+    </section>
+
+    <section class="section" id="pacbio">
+      <h2>PacBio (Pacific Biosciences)</h2>
+      <p>PacBio uses Single-Molecule Real-Time (SMRT) sequencing. A DNA polymerase, fixed at the bottom of a nanophotonic well (zero-mode waveguide, ZMW), synthesizes a complementary strand while fluorescent nucleotide incorporations are observed in real time.</p>
+
+      <h3>How It Works</h3>
+      <ul>
+        <li><strong>Zero-Mode Waveguides (ZMWs)</strong> — nanoscale holes (~70 nm diameter) in a metal film on glass. Light cannot propagate through (below the diffraction limit), creating an observation volume of ~20 zeptoliters. Only the nucleotide being incorporated by the polymerase at the bottom is illuminated, eliminating background from free-floating nucleotides.</li>
+        <li><strong>SMRTbell library</strong> — DNA is ligated into circular templates (SMRTbell: hairpin adapters on both ends). The polymerase reads around the circle multiple times, generating "subreads" that are averaged into a high-accuracy consensus (HiFi reads).</li>
+        <li><strong>HiFi reads</strong> — introduced 2019. Circular consensus sequencing (CCS) of ~15-20 kb inserts, with the polymerase reading the insert 3-10 times. Consensus accuracy: >99.9% (Q30+). Read length: 10-25 kb. The best of both worlds: long and accurate.</li>
+        <li><strong>Continuous Long Reads (CLR)</strong> — older mode. Single pass, up to 50-100 kb reads. Lower per-read accuracy (~85-90%) but very long. Useful when length matters more than accuracy. Being phased out in favor of HiFi.</li>
+      </ul>
+
+      <h3>Platforms</h3>
+      <ul>
+        <li><strong>Revio</strong> — current flagship (2023). 25 million ZMWs per SMRT Cell (vs 8M on Sequel IIe). Up to 90 Gb HiFi per SMRT Cell, 360 Gb per run (4 cells). ~$300 per human genome at 30x coverage. Dramatic cost reduction.</li>
+        <li><strong>Sequel IIe</strong> — predecessor. 8 million ZMWs. Up to 30 Gb HiFi per SMRT Cell. Being replaced by Revio.</li>
+        <li><strong>Onso</strong> — PacBio's short-read sequencer (2023). Sequencing by binding (SBB) — detects nucleotide identity without incorporating (no scarring). Competes with Illumina on accuracy and cost for short-read applications.</li>
+      </ul>
+
+      <h3>Applications</h3>
+      <ul>
+        <li><strong>De novo genome assembly</strong> — HiFi reads produce near-complete assemblies with N50 >10 Mb. Combined with Hi-C data, achieve chromosome-scale scaffolds. The current method of choice for reference-quality genomes.</li>
+        <li><strong>Structural variant detection</strong> — long reads span SVs (deletions, insertions, inversions, translocations) that are invisible to short reads. Particularly important for understanding cancer genomes and rare diseases.</li>
+        <li><strong>Epigenetics</strong> — SMRT sequencing detects DNA methylation (5mC, 6mA) directly during sequencing by measuring polymerase kinetics (IPD: inter-pulse duration). No bisulfite conversion needed.</li>
+        <li><strong>Isoform sequencing (Iso-Seq)</strong> — full-length cDNA sequencing. Captures complete transcript isoforms without assembly. Reveals alternative splicing, novel genes, and fusion transcripts.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="assembly">
+      <h2>Genome Assembly</h2>
+      <p>Genome assembly reconstructs the complete genomic sequence from short or long sequencing reads. It is a computational puzzle: overlap reads, resolve repeats, and produce contiguous sequences (contigs) that ideally span entire chromosomes.</p>
+
+      <h3>Approaches</h3>
+      <ul>
+        <li><strong>De novo assembly</strong> — assemble without a reference genome. Required for new species, highly divergent genomes, and capturing structural variation. More computationally expensive.</li>
+        <li><strong>Reference-guided assembly</strong> — align reads to a reference genome and call variants (differences). Faster and easier, but biased toward the reference and misses novel sequences.</li>
+      </ul>
+
+      <h3>Assembly Algorithms</h3>
+      <ul>
+        <li><strong>Overlap-Layout-Consensus (OLC)</strong> — find all pairwise overlaps between reads, build an overlap graph, find a path through the graph (layout), derive the consensus sequence. Used for long reads. Tools: Canu, Flye, Hifiasm.</li>
+        <li><strong>De Bruijn graph</strong> — decompose reads into k-mers (subsequences of length k), build a graph where k-mers are edges. Find Eulerian paths through the graph. Memory-efficient, handles massive numbers of short reads. Tools: SPAdes, MEGAHIT, Velvet.</li>
+        <li><strong>String graph</strong> — similar to OLC but uses irreducible overlaps. More memory-efficient for long reads. Used by Hifiasm (the current best HiFi assembler).</li>
+      </ul>
+
+      <h3>Assembly Quality Metrics</h3>
+      <ul>
+        <li><strong>N50</strong> — the length such that contigs of this length or longer cover 50% of the assembly. Higher = better. A human genome assembly from HiFi reads typically has contig N50 of 30-50 Mb.</li>
+        <li><strong>BUSCO</strong> — Benchmarking Universal Single-Copy Orthologs. Measures completeness by checking for expected conserved genes. A complete assembly has >95% BUSCO genes as complete single-copy.</li>
+        <li><strong>QV (Quality Value)</strong> — consensus accuracy. QV50 = 1 error per 100,000 bases. QV60 = 1 error per 1 million bases. Merqury tool calculates QV from k-mer analysis.</li>
+        <li><strong>Phasing</strong> — diploid organisms have two copies of each chromosome. Phased assemblies separate maternal and paternal haplotypes. Trio binning (using parental short reads to assign long reads to haplotypes) or Hi-C-based phasing. Hifiasm can produce partially phased assemblies without parental data.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="alignment">
+      <h2>Read Alignment</h2>
+      <p>Read alignment (mapping) places sequencing reads onto a reference genome, finding the position and orientation where each read best matches. It is the first step in most resequencing analyses (variant calling, gene expression quantification, ChIP-seq peak calling).</p>
+
+      <h3>Short-Read Aligners</h3>
+      <ul>
+        <li><strong>BWA-MEM2</strong> — the gold standard for short reads. Uses a Burrows-Wheeler Transform (BWT) index of the reference for fast seed finding, then extends seeds with Smith-Waterman alignment. Handles paired-end reads, split reads, supplementary alignments. Successor to BWA-MEM.</li>
+        <li><strong>Bowtie2</strong> — fast short-read aligner using FM-index. Good for smaller genomes and ChIP-seq. Slightly faster than BWA for single-end reads.</li>
+        <li><strong>STAR</strong> — splice-aware aligner for RNA-seq. Maps reads across exon-exon junctions. Two-pass mode: first pass discovers novel splice sites, second pass uses them. Standard for RNA-seq alignment.</li>
+        <li><strong>HISAT2</strong> — successor to TopHat/TopHat2. Uses a graph-based index incorporating known SNPs and splice sites. Memory-efficient alternative to STAR.</li>
+      </ul>
+
+      <h3>Long-Read Aligners</h3>
+      <ul>
+        <li><strong>Minimap2</strong> — the universal long-read aligner. Handles PacBio HiFi, PacBio CLR, Oxford Nanopore, and even short reads. Uses minimizer-based seeding. Extremely fast. Also used for all-vs-all overlap finding in assembly. By Heng Li (author of BWA, SAMtools).</li>
+        <li><strong>Winnowmap2</strong> — specialized for mapping to repetitive regions (centromeres, segmental duplications). Uses weighted minimizers to improve mapping in regions where Minimap2 struggles.</li>
+      </ul>
+
+      <h3>Output Format: SAM/BAM/CRAM</h3>
+      <ul>
+        <li><strong>SAM</strong> — Sequence Alignment/Map format. Tab-delimited text. Each line: read name, flags, reference position, mapping quality, CIGAR string (alignment operations), sequence, quality. Human-readable but large.</li>
+        <li><strong>BAM</strong> — compressed binary SAM. Standard working format. Indexed (.bai) for random access. Tools: SAMtools, Picard.</li>
+        <li><strong>CRAM</strong> — reference-based compression. 30-60% smaller than BAM. Becoming standard for archival storage (ENA, SRA). Requires the reference genome for decompression.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="variants">
+      <h2>Variant Calling</h2>
+      <p>Variant calling identifies positions where a sample's genome differs from the reference. Variants range from single-nucleotide changes (SNVs) to large structural rearrangements (SVs). Accurate variant calling is essential for clinical genomics, population genetics, and understanding disease.</p>
+
+      <h3>Variant Types</h3>
+      <ul>
+        <li><strong>SNV (Single Nucleotide Variant)</strong> — single base change. ~4-5 million SNVs per human genome relative to the reference. SNPs (Single Nucleotide Polymorphisms) are common SNVs (>1% allele frequency in the population).</li>
+        <li><strong>Indel</strong> — insertion or deletion of 1-50 bp. ~500,000-1,000,000 per human genome. Harder to call accurately than SNVs, especially in homopolymer regions.</li>
+        <li><strong>Structural Variant (SV)</strong> — larger events (>50 bp): deletions, duplications, insertions, inversions, translocations. ~20,000-30,000 SVs per human genome. Responsible for more base-pair differences between individuals than SNVs. Long reads dramatically improve SV detection.</li>
+        <li><strong>Copy Number Variant (CNV)</strong> — duplications or deletions of large segments (1 kb to megabases). Detected by read-depth analysis or array CGH. Clinically significant: many diseases involve CNVs (e.g., 22q11 deletion = DiGeorge syndrome).</li>
+      </ul>
+
+      <h3>Variant Callers</h3>
+      <ul>
+        <li><strong>GATK HaplotypeCaller</strong> — the Broad Institute's standard pipeline. Local de novo assembly of haplotypes in active regions. Produces GVCF files for joint genotyping across many samples. Gold standard for short-read germline variant calling.</li>
+        <li><strong>DeepVariant</strong> — Google's deep-learning variant caller. Converts read pileups into images, classifies with a CNN. Matches or exceeds GATK accuracy, especially for indels. Won the PrecisionFDA Truth Challenge.</li>
+        <li><strong>Mutect2</strong> — GATK's somatic variant caller (tumor vs normal). Detects low-frequency mutations in cancer samples. Handles tumor heterogeneity and contamination.</li>
+        <li><strong>Strelka2</strong> — fast somatic and germline variant caller from Illumina. Good sensitivity for SNVs and indels.</li>
+        <li><strong>Sniffles2 / SVIM / cuteSV</strong> — structural variant callers for long reads. Use split reads, supplementary alignments, and read-depth to detect SVs. Sniffles2 is the current standard for nanopore/PacBio SV calling.</li>
+      </ul>
+
+      <h3>Variant Annotation</h3>
+      <ul>
+        <li><strong>VEP (Variant Effect Predictor)</strong> — Ensembl's tool. Annotates variants with gene impact (missense, nonsense, splice), allele frequency (gnomAD), pathogenicity predictions (SIFT, PolyPhen-2, CADD), and clinical significance (ClinVar).</li>
+        <li><strong>ClinVar</strong> — NCBI database of variants and their clinical significance (pathogenic, likely pathogenic, VUS, likely benign, benign). >2 million variant submissions. Essential for clinical genomics.</li>
+        <li><strong>gnomAD</strong> — Genome Aggregation Database. Allele frequencies from >76,000 genomes and >126,000 exomes. If a variant is common in gnomAD (>1%), it is unlikely to be a rare disease-causing mutation.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="single-cell">
+      <h2>Single-Cell Genomics</h2>
+      <p>Bulk sequencing averages signals across millions of cells, masking cell-to-cell heterogeneity. Single-cell technologies sequence individual cells, revealing cell types, states, developmental trajectories, and rare populations that are invisible in bulk data.</p>
+
+      <h3>scRNA-seq</h3>
+      <ul>
+        <li><strong>10x Genomics Chromium</strong> — dominant platform. Microfluidic droplets encapsulate individual cells with barcoded gel beads. Each cell gets a unique barcode; all transcripts from that cell share the barcode. Typically profiles 1,000-10,000 cells per experiment, detecting 1,000-5,000 genes per cell. 3' or 5' capture.</li>
+        <li><strong>Smart-seq3</strong> — plate-based, full-length transcript sequencing. Higher sensitivity per cell (~8,000 genes) but lower throughput (~hundreds of cells). Better for detecting isoforms and rare transcripts.</li>
+        <li><strong>Analysis pipeline</strong> — demultiplex &rarr; align (Cell Ranger / STARsolo) &rarr; count matrix (genes x cells) &rarr; quality filtering &rarr; normalization &rarr; dimensionality reduction (PCA, UMAP, t-SNE) &rarr; clustering &rarr; marker gene identification &rarr; cell type annotation. Tools: Scanpy (Python), Seurat (R).</li>
+      </ul>
+
+      <h3>Spatial Transcriptomics</h3>
+      <ul>
+        <li><strong>Visium (10x Genomics)</strong> — capture spots (~55 um, ~1-10 cells each) on tissue sections. Not truly single-cell but preserves spatial context. Genome-wide. Being superseded by Visium HD (~2 um spots, near-single-cell resolution).</li>
+        <li><strong>MERFISH / seqFISH+</strong> — imaging-based, fluorescence in situ hybridization with combinatorial barcoding. True single-cell, subcellular resolution. 100-10,000 genes per experiment. Xiaowei Zhuang (MERFISH, Harvard).</li>
+        <li><strong>Slide-seq / Stereo-seq</strong> — bead-based spatial capture. Stereo-seq (BGI): subcellular resolution (220 nm spot size), genome-wide, on large tissue areas.</li>
+      </ul>
+
+      <h3>Single-Cell Multiomics</h3>
+      <ul>
+        <li><strong>CITE-seq</strong> — simultaneous measurement of mRNA and surface proteins (via antibody-conjugated DNA tags) in the same cell. Combines transcriptomic and proteomic data.</li>
+        <li><strong>Multiome (10x)</strong> — simultaneous scATAC-seq (chromatin accessibility) and scRNA-seq from the same cell. Links regulatory elements to gene expression.</li>
+        <li><strong>scATAC-seq</strong> — assay for transposase-accessible chromatin in single cells. Identifies active regulatory elements (promoters, enhancers) per cell.</li>
+      </ul>
+
+      <h3>Human Cell Atlas</h3>
+      <p>An international effort to create a comprehensive reference atlas of all human cell types. Using single-cell and spatial transcriptomics to catalog every cell type in the human body, their molecular profiles, locations, and states. Led by Aviv Regev and Sarah Teichmann. As of 2025, data from >100 million cells across most human organs have been generated. The atlas will transform our understanding of development, health, and disease.</p>
+    </section>
+
+    <section class="section" id="resources">
+      <h2>Resources</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://www.ncbi.nlm.nih.gov/sra">Sequence Read Archive (SRA)</a></h4>
+          <p>NCBI's repository of raw sequencing data. Billions of reads from all sequencing platforms. Free to deposit and access. The world's largest archive of sequencing data.</p>
+          <div class="meta">NCBI | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://galaxyproject.org">Galaxy</a></h4>
+          <p>Web-based platform for computational genomics. No command line needed. Hundreds of tools for alignment, variant calling, RNA-seq, ChIP-seq. Free public servers.</p>
+          <div class="meta">Galaxy Project | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.biostars.org">Biostars</a></h4>
+          <p>Q&A forum for bioinformatics. Ask questions about tools, pipelines, file formats. 160K+ users. The Stack Overflow of genomics.</p>
+          <div class="meta">Community | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://hbctraining.github.io/main/">HBC Training (Harvard)</a></h4>
+          <p>Harvard Chan Bioinformatics Core training materials. RNA-seq, ChIP-seq, scRNA-seq, variant calling tutorials. Well-maintained, beginner-friendly.</p>
+          <div class="meta">Harvard | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.internationalgenome.org">1000 Genomes Project</a></h4>
+          <p>Deep whole-genome sequencing of 2,504 individuals from 26 populations. Public resource for population genetics, variant frequency, and human diversity research.</p>
+          <div class="meta">IGSR | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://gnomad.broadinstitute.org">gnomAD</a></h4>
+          <p>Genome Aggregation Database. Allele frequencies from 76K+ genomes and 126K+ exomes. Essential for clinical variant interpretation and population genetics.</p>
+          <div class="meta">Broad Institute | Free</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="container">
+      <a href="/">FreeBioStore</a> · <a href="/institute/">Institute</a> · Built with <a href="https://zensical.org">Zensical</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRISPR Guide — Biotech Institute</title>
+  <meta name="description" content="Comprehensive CRISPR guide. Cas9, Cas12, Cas13, guide RNA design, PAM sequences, off-target effects, applications, and ethics.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#262626}
+    body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--line);padding:.75rem 0}
+    header .container{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+    .brand-emoji{font-size:1.5rem}
+    .brand-text{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+    .brand-tag{font-size:.68rem;color:var(--muted)}
+    nav{display:flex;gap:1rem;font-size:.82rem;font-weight:600;margin-left:auto}
+    nav a{color:var(--muted)}nav a:hover{color:var(--ink)}
+    .hero{text-align:center;padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--line)}
+    .hero h1{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem}
+    .hero h1 em{color:var(--accent);font-style:normal}
+    .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:.95rem}
+    .toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1.5rem 0}
+    .toc h3{font-size:.85rem;font-weight:700;margin-bottom:.5rem;color:var(--accent)}
+    .toc ul{list-style:none;padding:0;columns:2}
+    .toc li{margin:.2rem 0}.toc a{color:#a3a3a3;font-size:.82rem}.toc a:hover{color:var(--ink)}
+    .section{margin-bottom:2rem;padding-top:1rem}
+    .section h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid var(--line)}
+    .section h3{font-size:.95rem;font-weight:700;margin:1rem 0 .35rem;color:#e5e5e5}
+    .section p,.section li{color:#a3a3a3;font-size:.88rem}
+    ul{padding-left:1.25rem;margin:.35rem 0}
+    li{margin-bottom:.3rem}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem;margin:.5rem 0}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.85rem;transition:border-color .15s}
+    .card:hover{border-color:var(--accent)}
+    .card h4{font-size:.85rem;font-weight:700;margin-bottom:.2rem}
+    .card h4 a{color:var(--ink)}.card p{font-size:.75rem;color:var(--muted);margin:0;line-height:1.5}
+    .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
+    code{background:#1a1a1a;padding:.15rem .35rem;border-radius:4px;font-size:.82rem;color:#e5e5e5}
+    footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/institute/" class="brand">
+        <span class="brand-emoji">🧬</span>
+        <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Powered by <a href="https://zensical.org" style="color:#525252">Zensical</a></span></span>
+      </a>
+      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a></nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h1><em>CRISPR</em> Guide</h1>
+      <p>The most powerful tool in molecular biology. How CRISPR-Cas systems work, how to design guide RNAs, and how gene editing is transforming medicine, agriculture, and biotechnology.</p>
+    </section>
+
+    <nav class="toc">
+      <h3>Contents</h3>
+      <ul>
+        <li><a href="#discovery">Discovery & History</a></li>
+        <li><a href="#cas9">Cas9 Mechanism</a></li>
+        <li><a href="#cas12-cas13">Cas12 & Cas13</a></li>
+        <li><a href="#guide-rna">Guide RNA Design</a></li>
+        <li><a href="#pam">PAM Sequences</a></li>
+        <li><a href="#off-target">Off-Target Effects</a></li>
+        <li><a href="#applications">Applications</a></li>
+        <li><a href="#ethics">Ethics</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
+    </nav>
+
+    <section class="section" id="discovery">
+      <h2>Discovery & History</h2>
+      <p>CRISPR (Clustered Regularly Interspaced Short Palindromic Repeats) was first noticed by Yoshizumi Ishino at Osaka University in 1987 as unusual repeated sequences in E. coli. The biological function remained mysterious for nearly two decades.</p>
+
+      <h3>Timeline</h3>
+      <ul>
+        <li><strong>1987</strong> — Ishino et al. report unusual repeat sequences in E. coli while studying the iap gene. No function assigned.</li>
+        <li><strong>2000</strong> — Francisco Mojica identifies similar repeats across many prokaryotic species and names them CRISPR.</li>
+        <li><strong>2005</strong> — Mojica, Pourcel, and Bolotin independently discover that CRISPR spacer sequences match bacteriophage and plasmid DNA. Hypothesis: adaptive immune system.</li>
+        <li><strong>2007</strong> — Philippe Horvath (Danisco) experimentally proves CRISPR provides acquired immunity against phages in Streptococcus thermophilus. Integration of new spacers = immunization.</li>
+        <li><strong>2010</strong> — Sylvain Moineau shows Cas9 creates double-strand breaks in the target DNA, guided by the CRISPR RNA.</li>
+        <li><strong>2011</strong> — Emmanuelle Charpentier discovers tracrRNA, a second RNA component required for Cas9 function.</li>
+        <li><strong>2012</strong> — Charpentier and Jennifer Doudna publish the landmark paper showing that Cas9 can be programmed with a single guide RNA (sgRNA) to cut any DNA sequence in vitro. The gene-editing revolution begins.</li>
+        <li><strong>2013</strong> — Feng Zhang and George Church independently demonstrate CRISPR-Cas9 gene editing in human cells.</li>
+        <li><strong>2020</strong> — Charpentier and Doudna awarded the Nobel Prize in Chemistry for developing CRISPR-Cas9 as a gene-editing tool.</li>
+        <li><strong>2023</strong> — FDA approves Casgevy (exagamglogene autotemcel), the first CRISPR-based therapy, for sickle cell disease and beta-thalassemia.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="cas9">
+      <h2>Cas9 Mechanism</h2>
+      <p>Cas9 (CRISPR-associated protein 9) from Streptococcus pyogenes (SpCas9) is the most widely used CRISPR effector. It is an RNA-guided DNA endonuclease — a molecular scissors that can be directed to cut any DNA sequence complementary to a ~20-nucleotide guide RNA.</p>
+
+      <h3>How Cas9 Cuts DNA</h3>
+      <ul>
+        <li><strong>Guide RNA loading</strong> — Cas9 binds the single guide RNA (sgRNA), which is a fusion of the CRISPR RNA (crRNA, ~20 nt target-specific) and the trans-activating crRNA (tracrRNA, scaffold). The sgRNA causes a conformational change that activates Cas9 for DNA searching.</li>
+        <li><strong>PAM recognition</strong> — Cas9 scans DNA for the PAM (Protospacer Adjacent Motif). For SpCas9, PAM is 5'-NGG-3' on the non-target strand. PAM recognition occurs before DNA unwinding — if no PAM, Cas9 moves on. This initial scanning is fast (3D diffusion + 1D sliding).</li>
+        <li><strong>R-loop formation</strong> — once a PAM is found, Cas9 locally unwinds the DNA and the guide RNA base-pairs with the target strand (protospacer), forming an R-loop. Pairing initiates at the PAM-proximal end (seed region, ~10-12 nt) and extends to the PAM-distal end.</li>
+        <li><strong>Cleavage</strong> — if there is sufficient complementarity (~20 nt), two nuclease domains cut the DNA: HNH cuts the target strand (complementary to guide), RuvC cuts the non-target strand. Both cuts occur 3 bp upstream of the PAM, creating a blunt-ended double-strand break (DSB).</li>
+        <li><strong>DNA repair</strong> — the cell repairs the DSB by one of two pathways: (1) NHEJ (Non-Homologous End Joining): error-prone, introduces insertions/deletions (indels) that disrupt the gene (knockout). (2) HDR (Homology-Directed Repair): precise editing using a donor template — can insert, correct, or replace sequences (knock-in). HDR is less efficient and only active in S/G2 cell cycle phases.</li>
+      </ul>
+
+      <h3>Engineered Variants</h3>
+      <ul>
+        <li><strong>dCas9 (dead Cas9)</strong> — both nuclease domains inactivated (D10A + H840A mutations). Binds DNA but doesn't cut. Used for CRISPRi (repression: dCas9 blocks transcription), CRISPRa (activation: dCas9 fused to transcriptional activators like VP64, p65, Rta).</li>
+        <li><strong>Cas9 nickase (nCas9)</strong> — one nuclease domain inactivated. Creates a single-strand nick instead of DSB. Paired nickases (two nCas9s with offset guides) improve specificity by requiring two independent target recognitions for a DSB.</li>
+        <li><strong>Base editors</strong> — nCas9 fused to a deaminase. CBE (cytosine base editor, developed by David Liu, 2016) converts C to T (or G to A on the opposite strand). ABE (adenine base editor, 2017) converts A to G (or T to C). No DSB, no donor template needed. Precise single-nucleotide changes.</li>
+        <li><strong>Prime editors</strong> — nCas9 fused to reverse transcriptase, guided by a prime editing guide RNA (pegRNA) that encodes both the target and the desired edit. Can perform all 12 point mutations, small insertions, and small deletions without DSBs. Developed by David Liu's lab (2019). Lower efficiency but highest precision.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="cas12-cas13">
+      <h2>Cas12 & Cas13</h2>
+
+      <h3>Cas12a (Cpf1)</h3>
+      <ul>
+        <li>Discovered by Feng Zhang's lab (2015). From Acidaminococcus sp. (AsCas12a) and Lachnospiraceae (LbCas12a).</li>
+        <li><strong>Key differences from Cas9</strong>: uses a single crRNA (no tracrRNA needed, simpler). Recognizes a T-rich PAM (5'-TTTV-3', where V = A/C/G) — targets AT-rich regions that SpCas9 cannot. Creates staggered cuts (5' overhang, 4-5 nt) instead of blunt ends. Cuts distal to the PAM (18-23 nt away), preserving the PAM region for re-cutting if repair doesn't incorporate the desired edit.</li>
+        <li><strong>Multiplexing</strong> — Cas12a can process a CRISPR array (multiple crRNAs in a single transcript) into individual crRNAs. Enables editing multiple genes simultaneously from a single construct.</li>
+        <li><strong>Collateral cleavage</strong> — upon target binding, Cas12a non-specifically degrades ssDNA. This collateral activity is exploited in DETECTR diagnostics.</li>
+      </ul>
+
+      <h3>Cas13</h3>
+      <ul>
+        <li>RNA-guided RNA endonuclease. Targets RNA, not DNA. Cas13a (formerly C2c2), Cas13b, Cas13d.</li>
+        <li><strong>RNA knockdown</strong> — Cas13d (CasRx, from Ruminococcus flavefaciens) is the most compact and efficient for RNA targeting. No PAM/PFS requirement in some variants. Mediates targeted RNA degradation in mammalian cells — an alternative to RNAi with different specificity profiles.</li>
+        <li><strong>SHERLOCK diagnostics</strong> — Specific High-sensitivity Enzymatic Reporter unLOCKing. Developed by Feng Zhang and colleagues. Cas13a's collateral cleavage activity (upon binding target RNA, it indiscriminately cleaves nearby ssRNA reporters) is used for nucleic acid detection. Combined with RPA (Recombinase Polymerase Amplification) for isothermal amplification. Detects attomolar concentrations. Used for SARS-CoV-2 diagnostics (Sherlock CRISPR SARS-CoV-2 kit received FDA Emergency Use Authorization in 2020).</li>
+        <li><strong>RNA editing</strong> — dCas13 (catalytically dead) fused to ADAR2 deaminase can perform A-to-I editing on RNA transcripts (REPAIR system). Temporary, reversible edits — the RNA is degraded naturally, so edits don't persist. Useful for therapeutic applications where permanent DNA changes are undesirable.</li>
+      </ul>
+
+      <h3>Other CRISPR Systems</h3>
+      <ul>
+        <li><strong>Cas14/Cas12f</strong> — ultracompact (~400-700 aa vs ~1,400 for Cas9). Targets ssDNA. Small size enables easier AAV delivery for gene therapy.</li>
+        <li><strong>Cas3 (Type I)</strong> — processively degrades DNA (helicase-nuclease). Creates large deletions (up to 100 kb). Useful for removing large genomic regions.</li>
+        <li><strong>OMEGA (transposon-associated systems)</strong> — IscB, IsrB, TnpB. Likely ancestors of Cas9 and Cas12. Being engineered as compact editors (IscB ~400 aa). Discovered by Feng Zhang's lab (2021).</li>
+      </ul>
+    </section>
+
+    <section class="section" id="guide-rna">
+      <h2>Guide RNA Design</h2>
+      <p>The guide RNA determines where Cas9 cuts. Designing effective guides is critical for successful editing. A 20-nt spacer sequence must match the target DNA adjacent to a PAM.</p>
+
+      <h3>Design Principles</h3>
+      <ul>
+        <li><strong>Target selection</strong> — look for NGG PAM sites in your gene of interest. For knockout: target early exons, functional domains, or splice sites. For HDR: design the guide as close to the desired edit as possible (efficiency drops rapidly beyond ~10 bp from the cut site).</li>
+        <li><strong>GC content</strong> — optimal guides have 40-70% GC content. Low GC weakens RNA-DNA binding; high GC may promote off-target binding.</li>
+        <li><strong>Seed region</strong> — the 10-12 nt PAM-proximal region is most critical for target recognition. Mismatches here usually prevent cleavage. Mismatches in the PAM-distal region are more tolerated.</li>
+        <li><strong>Avoid polyT</strong> — four or more consecutive T's act as a Pol III terminator signal (if using U6/H1 promoter for sgRNA expression), truncating the guide. Use alternative promoters or synthetic guides to avoid this.</li>
+        <li><strong>Avoid secondary structure</strong> — strong secondary structures in the spacer can interfere with target binding. Check for self-complementarity.</li>
+      </ul>
+
+      <h3>Design Tools</h3>
+      <ul>
+        <li><strong><a href="https://crispor.tefor.net">CRISPOR</a></strong> — designs guides for any genome, any Cas protein. Scores for efficiency (Doench 2016, Moreno-Mateos), predicts off-targets using alignments. Widely used, well-validated.</li>
+        <li><strong><a href="https://www.benchling.com">Benchling</a></strong> — commercial molecular biology platform with integrated CRISPR guide design. Sequence annotation, primer design, guide scoring. Free for academics.</li>
+        <li><strong><a href="https://chopchop.cbu.uib.no">CHOPCHOP</a></strong> — web tool for guide RNA design. Supports Cas9, Cas12a, Cas13. Scores efficiency and specificity. Supports many organisms.</li>
+        <li><strong><a href="https://portals.broadinstitute.org/gppx/crispick/public">CRISPick (Broad Institute)</a></strong> — designs guides using the Doench/Hsu/Root scoring algorithms. Optimized for human and mouse. Supports Cas9 and Cas12a.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="pam">
+      <h2>PAM Sequences</h2>
+      <p>The PAM (Protospacer Adjacent Motif) is a short DNA sequence adjacent to the target that Cas proteins require for binding and cleavage. The PAM is on the target DNA, not in the guide RNA. It distinguishes self (CRISPR array, no PAM) from non-self (foreign DNA, has PAM).</p>
+
+      <h3>Common PAMs</h3>
+      <ul>
+        <li><strong>SpCas9</strong> — 5'-NGG-3' (N = any nucleotide). Found approximately every 8 bp in random DNA. The most commonly used Cas9.</li>
+        <li><strong>SaCas9</strong> — 5'-NNGRRT-3' (from Staphylococcus aureus). Smaller protein (1,053 aa vs 1,368 for SpCas9), fits in a single AAV vector for gene therapy. More restrictive PAM but still practical.</li>
+        <li><strong>SpCas9-NG</strong> — engineered variant with relaxed PAM: 5'-NG-3'. Greatly expands targeting range. Slightly lower activity than wild-type at canonical NGG sites.</li>
+        <li><strong>SpRY</strong> — engineered "PAM-less" Cas9 variant (2020). Recognizes NRN and NYN PAMs (essentially any sequence). Maximum flexibility but potentially more off-targets. Activity varies by PAM.</li>
+        <li><strong>AsCas12a</strong> — 5'-TTTV-3' (V = A/C/G). Targets AT-rich regions inaccessible to SpCas9. Useful for plant genomes (often AT-rich).</li>
+        <li><strong>LbCas12a</strong> — 5'-TTTV-3'. Similar to AsCas12a. Better activity at lower temperatures, useful for plant and poikilotherm applications.</li>
+        <li><strong>CjCas9</strong> — 5'-NNNNRYAC-3' (from Campylobacter jejuni). Very small (984 aa), restrictive PAM. Being explored for AAV delivery.</li>
+      </ul>
+
+      <h3>PAM Engineering</h3>
+      <p>Researchers have engineered Cas proteins with altered PAM preferences using directed evolution and structure-guided mutagenesis. The xCas9 (evolved by phage-assisted continuous evolution, PACE) recognizes NGN, GAA, and GAT PAMs. SpG recognizes minimal NG PAM. These engineered variants expand the editable sequence space from ~50% (with NGG) to nearly 100% of the genome.</p>
+    </section>
+
+    <section class="section" id="off-target">
+      <h2>Off-Target Effects</h2>
+      <p>CRISPR-Cas9 can cut at unintended genomic sites with partial guide RNA complementarity. Off-target cleavage is the primary safety concern for therapeutic applications. A single off-target DSB in a tumor suppressor could potentially cause cancer.</p>
+
+      <h3>Causes</h3>
+      <ul>
+        <li><strong>Mismatch tolerance</strong> — SpCas9 tolerates 1-5 mismatches depending on their position and identity. PAM-distal mismatches (positions 1-8 of the 20-nt guide) are more tolerated than PAM-proximal mismatches (positions 13-20, the seed region).</li>
+        <li><strong>DNA/RNA bulges</strong> — insertions or deletions between guide and target can be tolerated, especially in the PAM-distal region.</li>
+        <li><strong>Excess Cas9</strong> — high Cas9 protein/RNA concentrations increase off-target activity by mass action. Optimal dosing is critical.</li>
+        <li><strong>Guide sequence</strong> — some 20-mers have more off-target sites than others. Guides with high GC content or sequence similarity to other genomic loci are riskier.</li>
+      </ul>
+
+      <h3>Detection Methods</h3>
+      <ul>
+        <li><strong>GUIDE-seq</strong> — integrates short dsODN tags at DSB sites genome-wide, then sequences to identify cut locations. Unbiased, sensitive, widely used. Developed by Keith Joung's lab (2015).</li>
+        <li><strong>DISCOVER-Seq</strong> — maps Cas9 cut sites by ChIP-seq of the DNA repair factor MRE11, which rapidly localizes to DSBs. Measures actual in vivo cleavage sites.</li>
+        <li><strong>CIRCLE-seq / Digenome-seq</strong> — in vitro methods. Circularize genomic DNA, cut with Cas9, sequence the linear fragments. Highly sensitive but may overestimate in vivo off-targets (DNA is more accessible in vitro than in chromatin).</li>
+        <li><strong>CHANGE-seq</strong> — improved version of CIRCLE-seq using tagmentation. Higher throughput and sensitivity.</li>
+        <li><strong>Computational prediction</strong> — tools like Cas-OFFinder, CFD (Cutting Frequency Determination) score, and MIT specificity score predict off-targets from sequence alone. Useful for guide design but cannot substitute for experimental validation.</li>
+      </ul>
+
+      <h3>Reducing Off-Targets</h3>
+      <ul>
+        <li><strong>High-fidelity Cas9 variants</strong> — eSpCas9 (Slaymaker et al., 2016), SpCas9-HF1 (Kleinstiver et al., 2016), HypaCas9, evoCas9. Engineered to require more stringent guide-target pairing. 10-100x fewer off-targets with minimal on-target reduction.</li>
+        <li><strong>Truncated guides</strong> — 17-18 nt guides instead of 20 nt. Counterintuitively reduces off-targets without proportionally reducing on-target activity (fewer tolerated mismatches in a shorter guide).</li>
+        <li><strong>RNP delivery</strong> — delivering Cas9 as a ribonucleoprotein (pre-assembled Cas9 protein + sgRNA) rather than as DNA/mRNA. RNP is active immediately, degrades within 24-48 hours. Shorter exposure = fewer off-targets. Standard for therapeutic applications.</li>
+        <li><strong>Paired nickases</strong> — two Cas9 nickases (D10A) with guides targeting opposite strands ~20-100 bp apart. Both must bind for a DSB, dramatically reducing off-target risk.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="applications">
+      <h2>Applications</h2>
+
+      <h3>Therapeutics</h3>
+      <ul>
+        <li><strong>Sickle cell disease / beta-thalassemia</strong> — Casgevy (Vertex/CRISPR Therapeutics). Edits BCL11A enhancer in patient's own hematopoietic stem cells to reactivate fetal hemoglobin. FDA approved December 2023. First CRISPR therapy approved.</li>
+        <li><strong>Hereditary angioedema</strong> — Intellia's NTLA-2002. In vivo CRISPR editing: LNP delivers Cas9 mRNA + guide to the liver, knocks out KLKB1 gene. Single infusion. Phase 3 trials showing durable 95% reduction in attacks.</li>
+        <li><strong>Transthyretin amyloidosis</strong> — Intellia's NTLA-2001. In vivo liver editing to knock out TTR gene (which produces misfolded protein deposits). Phase 3 trials underway.</li>
+        <li><strong>Cancer immunotherapy</strong> — ex vivo editing of T-cells: knock out PD-1 (immune checkpoint), insert tumor-targeting CARs. CRISPR-edited CAR-T cells in clinical trials for leukemia, lymphoma, solid tumors.</li>
+        <li><strong>HIV</strong> — disrupting CCR5 co-receptor (HIV entry) or excising proviral DNA from infected cells. Excision BioTherapeutics: EBT-101 uses dual-guide CRISPR to cut out integrated HIV DNA. Phase 1/2 trials.</li>
+      </ul>
+
+      <h3>Agriculture</h3>
+      <ul>
+        <li><strong>Disease resistance</strong> — knocking out susceptibility genes (MLO for powdery mildew in wheat, eIF4E for virus resistance in tomato). Non-transgenic if RNP-delivered (no foreign DNA integrated).</li>
+        <li><strong>Yield improvement</strong> — editing plant hormone pathways (e.g., modifying CLAVATA3 in tomato for larger fruit). Editing starch biosynthesis in rice for improved grain quality.</li>
+        <li><strong>Nutritional enhancement</strong> — high-oleic soybeans (FAD2 knockout), reduced-gluten wheat (editing alpha-gliadin genes), vitamin-enriched rice.</li>
+        <li><strong>Regulatory status</strong> — in many jurisdictions, CRISPR-edited crops with small deletions (no foreign DNA) are not regulated as GMOs: USA (USDA exemption), Japan, Argentina, Brazil, UK (Precision Breeding Act 2023). EU still regulates them as GMOs (under review).</li>
+      </ul>
+
+      <h3>Diagnostics</h3>
+      <ul>
+        <li><strong>SHERLOCK</strong> — Cas13a-based RNA detection. Isothermal amplification (RPA) + Cas13 collateral cleavage of fluorescent reporters. Detects specific RNA/DNA sequences at attomolar sensitivity. Point-of-care format on lateral flow strips.</li>
+        <li><strong>DETECTR</strong> — Cas12a-based DNA detection. Similar principle: target binding activates collateral ssDNA cleavage. Mammoth Biosciences commercializing for HPV, SARS-CoV-2, STIs.</li>
+        <li><strong>STOP (SHERLOCK Testing in One Pot)</strong> — simplified single-tube protocol combining extraction, amplification, and detection. 70 minutes, no equipment. Designed for resource-limited settings.</li>
+      </ul>
+
+      <h3>Research Tools</h3>
+      <ul>
+        <li><strong>Gene knockout screens</strong> — genome-wide CRISPR libraries (Brunello for human, Brie for mouse, each ~77,000 guides targeting ~19,000 genes). Identify essential genes, drug targets, synthetic lethal interactions.</li>
+        <li><strong>CRISPRi/CRISPRa</strong> — dCas9 for reversible gene repression or activation. Titratable, reversible, no DNA damage. Complementary to knockout approaches.</li>
+        <li><strong>Lineage tracing</strong> — CRISPR barcoding records cell lineage histories. Introduce evolving barcodes, then read them with scRNA-seq to reconstruct developmental trees.</li>
+        <li><strong>CRISPR imaging</strong> — dCas9-GFP labels specific genomic loci for live-cell imaging. Visualize chromosome dynamics, gene positioning, and nuclear organization.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="ethics">
+      <h2>Ethics</h2>
+
+      <h3>Somatic vs Germline Editing</h3>
+      <ul>
+        <li><strong>Somatic editing</strong> — editing cells in a patient's body (or ex vivo editing of patient cells). Changes affect only that individual, not their offspring. Broadly accepted ethically, treated similarly to other medical interventions. The basis for all approved and clinical-trial CRISPR therapies.</li>
+        <li><strong>Germline editing</strong> — editing embryos, eggs, sperm, or early-stage embryos. Changes are heritable — passed to all future generations. Currently prohibited for clinical use in most countries. Raises fundamental questions about consent (future generations cannot consent), equity (access), and unintended consequences.</li>
+      </ul>
+
+      <h3>The He Jiankui Case</h3>
+      <p>In November 2018, He Jiankui announced the birth of twin girls ("Lulu and Nana") whose CCR5 gene he had edited as embryos, aiming to confer HIV resistance. The scientific community condemned the experiment: it was medically unnecessary (the father was HIV-positive but the mother was not, and standard IVF procedures prevent transmission), the editing was incomplete (mosaic), off-target effects were not adequately assessed, and informed consent was dubious. He Jiankui was sentenced to three years in prison by a Chinese court. The case led to renewed calls for an international moratorium on clinical germline editing.</p>
+
+      <h3>Governance</h3>
+      <ul>
+        <li><strong>International consensus</strong> — the WHO Expert Advisory Committee (2021) published a governance framework for human genome editing. Recommends against clinical germline editing until safety and efficacy criteria are met. Calls for international registry of all gene editing research.</li>
+        <li><strong>National regulations</strong> — most countries prohibit clinical germline editing (UK, China, USA, EU, Japan, Australia). The USA does not have a specific ban but Congress has blocked FDA from reviewing germline editing applications since 2015 (appropriations rider).</li>
+        <li><strong>Equity concerns</strong> — CRISPR therapies are extremely expensive (Casgevy: ~$2.2 million per treatment). Risk of creating a two-tier system where only wealthy nations/individuals benefit. Need for pricing models, manufacturing advances, and technology transfer to make gene editing accessible globally.</li>
+        <li><strong>Enhancement vs therapy</strong> — treating genetic diseases is widely accepted. Enhancing traits (intelligence, athleticism, appearance) raises deeper ethical questions. Where is the line between treatment and enhancement? Should parents be able to select traits for their children?</li>
+      </ul>
+    </section>
+
+    <section class="section" id="resources">
+      <h2>Resources</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://www.addgene.org/crispr/guide/">Addgene CRISPR Guide</a></h4>
+          <p>Comprehensive CRISPR resource. Protocols, plasmid repository, guide design, delivery methods. The community hub for CRISPR reagents.</p>
+          <div class="meta">Addgene | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://crispor.tefor.net">CRISPOR</a></h4>
+          <p>Guide RNA design tool. Efficiency and specificity scoring for any genome, any Cas protein. Highly cited and validated.</p>
+          <div class="meta">TEFOR | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://innovativegenomics.org/crisprpedia/">CRISPRpedia (IGI)</a></h4>
+          <p>Educational resource from the Innovative Genomics Institute (Jennifer Doudna's lab). Clear explanations of CRISPR mechanisms, applications, and ethics.</p>
+          <div class="meta">UC Berkeley IGI | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.broadinstitute.org/what-broad/areas-focus/project-spotlight/crispr">Broad Institute CRISPR</a></h4>
+          <p>Zhang lab resources. Protocols, plasmids, genome-wide libraries (Brunello, Brie), guide design tools (CRISPick). Pioneer lab.</p>
+          <div class="meta">Broad Institute | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://doi.org/10.1126/science.aad5147">Doudna & Charpentier (2014) Science Review</a></h4>
+          <p>"The new frontier of genome engineering with CRISPR-Cas9." Landmark review by the Nobel laureates. Accessible introduction to the field.</p>
+          <div class="meta">Science | Research paper</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.youtube.com/watch?v=UKbrwPL3wXE">iBiology: CRISPR-Cas9 (Doudna)</a></h4>
+          <p>Jennifer Doudna explains CRISPR-Cas9 mechanism and applications. 30-minute lecture. Clear, authoritative, and engaging.</p>
+          <div class="meta">iBiology | Free video</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="container">
+      <a href="/">FreeBioStore</a> · <a href="/institute/">Institute</a> · Built with <a href="https://zensical.org">Zensical</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,12 +1,12 @@
-# FreeAgentStore
+# FreeStore
 
-> FreeAgentStore is a free, open-source platform for browser-based AI tools. Three types: Libraries (pure TypeScript heuristics, npm-publishable), Models (ONNX via Transformers.js, runs on user's GPU), and Agents (use user's own API key via encrypted proxy). 49 agents across 10 categories. Every agent is MIT-licensed, privacy-first, zero tracking. For the full AI agent guide, see [SKILLS.md](https://freeagentstore.online/skills.md).
+> FreeStore is a free, open-source platform for browser-based AI tools. Three types: Libraries (pure TypeScript heuristics, npm-publishable), Models (ONNX via Transformers.js, runs on user's GPU), and Agents (use user's own API key via encrypted proxy). 49 items across 10 categories. Every item is MIT-licensed, privacy-first, zero tracking. For the full AI item guide, see [SKILLS.md](https://store.online/skills.md).
 
 ## AI Agent Integration
 
-- [SKILLS.md](https://freeagentstore.online/skills.md): Complete platform guide for AI agents. Agent types, SDK reference, CLI commands, deploy flow, compliance rules, template scaffolding.
-- [MCP Server](https://mcp.freeagentstore.online/mcp): Remote MCP server. 11 tools: list_agents, agent_info, deploy_status, create_agent, delete_agent, write_file, read_file, list_files, upload_to_r2, platform_guide, sdk_reference. Connect with `npx mcp-remote https://mcp.freeagentstore.online/mcp`.
-- [Registry](https://freeagentstore.online/pkg/): ESM packages for all library agents. Import directly: `import { analyzeSentiment } from 'https://freeagentstore.online/pkg/sentiment/index.js'`.
+- [SKILLS.md](https://store.online/skills.md): Complete platform guide for AI items. Agent types, SDK reference, CLI commands, deploy flow, compliance rules, template scaffolding.
+- [MCP Server](https://mcp.store.online/mcp): Remote MCP server. 11 tools: list_items, item_info, deploy_status, create_item, delete_item, write_file, read_file, list_files, upload_to_r2, platform_guide, sdk_reference. Connect with `npx mcp-remote https://mcp.store.online/mcp`.
+- [Registry](https://store.online/pkg/): ESM packages for all library items. Import directly: `import { analyzeSentiment } from 'https://store.online/pkg/sentiment/index.js'`.
 
 ## Agent Types
 
@@ -17,20 +17,20 @@
 ## Quick Start
 
 ```bash
-# Use an agent via npm
-npm install @freeagentstore/sentiment
-import { analyzeSentiment } from '@freeagentstore/sentiment'
+# Use an item via npm
+npm install @store/sentiment
+import { analyzeSentiment } from '@store/sentiment'
 
 # Build your own
-npx @freeagentstore/cli init my-agent --template heuristic
-cd my-agent && npm run dev
-npx @freeagentstore/cli publish
+npx @store/cli init my-item --template heuristic
+cd my-item && npm run dev
+npx @store/cli publish
 ```
 
 ## Links
 
-- Store: https://freeagentstore.online
-- GitHub: https://github.com/FreeAgentStore (51 repos)
-- Console: https://freeagentstore.online/console/
-- API Keys: https://freeagentstore.online/v1/keys
-- Pro tier: https://proagentstore.online
+- Store: https://store.online
+- GitHub: https://github.com/FreeStore (51 repos)
+- Console: https://store.online/console/
+- API Keys: https://store.online/v1/keys
+- Pro tier: https://proitemstore.online

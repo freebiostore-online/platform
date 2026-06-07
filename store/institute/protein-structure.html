@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protein Structure — Biotech Institute</title>
+  <meta name="description" content="Protein structure from primary to quaternary. Folding, misfolding, AlphaFold, the Protein Data Bank, and drug targets.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#262626}
+    body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--line);padding:.75rem 0}
+    header .container{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+    .brand-emoji{font-size:1.5rem}
+    .brand-text{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+    .brand-tag{font-size:.68rem;color:var(--muted)}
+    nav{display:flex;gap:1rem;font-size:.82rem;font-weight:600;margin-left:auto}
+    nav a{color:var(--muted)}nav a:hover{color:var(--ink)}
+    .hero{text-align:center;padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--line)}
+    .hero h1{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem}
+    .hero h1 em{color:var(--accent);font-style:normal}
+    .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:.95rem}
+    .toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1.5rem 0}
+    .toc h3{font-size:.85rem;font-weight:700;margin-bottom:.5rem;color:var(--accent)}
+    .toc ul{list-style:none;padding:0;columns:2}
+    .toc li{margin:.2rem 0}.toc a{color:#a3a3a3;font-size:.82rem}.toc a:hover{color:var(--ink)}
+    .section{margin-bottom:2rem;padding-top:1rem}
+    .section h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid var(--line)}
+    .section h3{font-size:.95rem;font-weight:700;margin:1rem 0 .35rem;color:#e5e5e5}
+    .section p,.section li{color:#a3a3a3;font-size:.88rem}
+    ul{padding-left:1.25rem;margin:.35rem 0}
+    li{margin-bottom:.3rem}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem;margin:.5rem 0}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.85rem;transition:border-color .15s}
+    .card:hover{border-color:var(--accent)}
+    .card h4{font-size:.85rem;font-weight:700;margin-bottom:.2rem}
+    .card h4 a{color:var(--ink)}.card p{font-size:.75rem;color:var(--muted);margin:0;line-height:1.5}
+    .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
+    code{background:#1a1a1a;padding:.15rem .35rem;border-radius:4px;font-size:.82rem;color:#e5e5e5}
+    footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/institute/" class="brand">
+        <span class="brand-emoji">🧬</span>
+        <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Powered by <a href="https://zensical.org" style="color:#525252">Zensical</a></span></span>
+      </a>
+      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a></nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h1>Protein <em>Structure</em></h1>
+      <p>From amino acid chains to the three-dimensional machines of life. How proteins fold, how we determine and predict their structures, and why structure matters for drug design.</p>
+    </section>
+
+    <nav class="toc">
+      <h3>Contents</h3>
+      <ul>
+        <li><a href="#primary">Primary Structure</a></li>
+        <li><a href="#secondary">Secondary Structure</a></li>
+        <li><a href="#tertiary">Tertiary Structure</a></li>
+        <li><a href="#quaternary">Quaternary Structure</a></li>
+        <li><a href="#folding">Protein Folding</a></li>
+        <li><a href="#alphafold">AlphaFold</a></li>
+        <li><a href="#pdb">Protein Data Bank</a></li>
+        <li><a href="#drugs">Drug Targets</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
+    </nav>
+
+    <section class="section" id="primary">
+      <h2>Primary Structure</h2>
+      <p>The primary structure is the linear sequence of amino acids in a polypeptide chain. It is encoded by the gene and determines all higher levels of structure. The sequence is written from the N-terminus (free amino group) to the C-terminus (free carboxyl group), matching the direction of translation.</p>
+
+      <h3>Amino Acids</h3>
+      <ul>
+        <li><strong>20 standard amino acids</strong> — each has an amino group (-NH2), a carboxyl group (-COOH), a hydrogen atom, and a distinctive side chain (R group) bonded to the central alpha-carbon. The R group determines the amino acid's chemical properties.</li>
+        <li><strong>Peptide bond</strong> — a covalent bond between the carboxyl group of one amino acid and the amino group of the next, releasing water (condensation reaction). The peptide bond is planar (partial double-bond character) and almost always in the trans configuration. Free rotation around the N-C-alpha (phi) and C-alpha-C (psi) bonds allows the chain to fold.</li>
+        <li><strong>Sequence determines structure</strong> — Anfinsen's dogma (Nobel Prize 1972): the amino acid sequence contains all the information needed for a protein to fold into its native 3D structure (at least for small, single-domain proteins). Demonstrated by denaturing and refolding ribonuclease A in vitro.</li>
+      </ul>
+
+      <h3>Sequence Analysis</h3>
+      <ul>
+        <li><strong>Sequence alignment</strong> — comparing sequences to find conserved regions (evolutionary constraints on structure/function). Tools: BLAST, Clustal Omega, MUSCLE.</li>
+        <li><strong>Conservation</strong> — positions critical for structure or function are conserved across species. Mutations at these sites are typically deleterious. The ratio of non-synonymous to synonymous substitutions (dN/dS) measures selective pressure.</li>
+        <li><strong>Domains</strong> — independently folding units within a protein (typically 50-300 residues). Many proteins are multi-domain. Domain databases: Pfam (protein families), InterPro, SMART.</li>
+        <li><strong>Motifs</strong> — short, conserved sequence patterns associated with specific functions. Examples: KDEL (ER retention), NLS (nuclear localization), CAAX (prenylation signal). Database: PROSITE.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="secondary">
+      <h2>Secondary Structure</h2>
+      <p>Secondary structure refers to local, regular folding patterns stabilized by hydrogen bonds between backbone atoms (C=O and N-H groups). Linus Pauling and Robert Corey predicted the two major secondary structures in 1951, before the first protein crystal structure was solved.</p>
+
+      <h3>Alpha Helix</h3>
+      <ul>
+        <li>Right-handed coil with 3.6 residues per turn, 5.4 angstrom pitch. Hydrogen bond between C=O of residue i and N-H of residue i+4. Side chains project outward.</li>
+        <li>Common in globular proteins and membrane proteins (transmembrane helices). Alpha-keratin (hair, nails) is almost entirely alpha-helical.</li>
+        <li>Amphipathic helices have hydrophobic residues on one face and polar residues on the other — important at membrane interfaces and in coiled-coil interactions.</li>
+        <li>Proline is a helix-breaker (its ring constrains phi angle). Glycine destabilizes helices (too flexible, loses conformational entropy on folding).</li>
+      </ul>
+
+      <h3>Beta Sheet</h3>
+      <ul>
+        <li>Extended strands (beta strands) arranged side by side, connected by hydrogen bonds between strands. Parallel (strands run same direction, weaker H-bonds) or antiparallel (opposite directions, straight H-bonds, more stable).</li>
+        <li>R groups alternate above and below the sheet plane. Beta sheets can be flat or twisted (most natural beta sheets have a right-handed twist).</li>
+        <li>Common in structural proteins: silk fibroin is almost entirely beta sheet. Also prominent in immunoglobulin domains, beta barrels (porins), and beta propellers.</li>
+        <li>Connected by turns and loops. Beta turns are tight 4-residue turns with a hydrogen bond between residue i C=O and residue i+3 N-H. Glycine and proline are common in turns.</li>
+      </ul>
+
+      <h3>Other Elements</h3>
+      <ul>
+        <li><strong>310 helix</strong> — tighter helix with 3 residues per turn, H-bond i to i+3. Less common, often at helix ends.</li>
+        <li><strong>Polyproline II helix</strong> — left-handed helix with 3 residues per turn, no intra-chain H-bonds. Found in collagen (triple helix of three polyproline II chains) and proline-rich motifs involved in signaling (SH3 domain binding).</li>
+        <li><strong>Loops and coils</strong> — non-regular regions connecting secondary structure elements. Often on the protein surface, forming binding sites and active sites. More variable in sequence than helices/sheets.</li>
+      </ul>
+
+      <h3>Prediction</h3>
+      <p>Secondary structure can be predicted from sequence with ~80-85% accuracy. Methods: PSIPRED (neural network using PSI-BLAST profiles), JPred, DSSP (dictionary of secondary structure, assigns SS from 3D coordinates). GOR, Chou-Fasman (early methods, lower accuracy). Modern methods use deep learning on multiple sequence alignments.</p>
+    </section>
+
+    <section class="section" id="tertiary">
+      <h2>Tertiary Structure</h2>
+      <p>The tertiary structure is the complete 3D arrangement of all atoms in a single polypeptide chain. It is the biologically active conformation, determined by interactions between side chains and the backbone, with the solvent (usually water).</p>
+
+      <h3>Stabilizing Forces</h3>
+      <ul>
+        <li><strong>Hydrophobic effect</strong> — the dominant force in protein folding. Nonpolar side chains cluster in the protein interior, away from water. This maximizes the entropy of surrounding water molecules (which would form ordered cages around exposed hydrophobic surfaces). The hydrophobic core is tightly packed, with packing density similar to crystalline solids.</li>
+        <li><strong>Hydrogen bonds</strong> — between polar side chains, between side chains and backbone, and between the protein and water. Backbone H-bonds stabilize secondary structure. Side-chain H-bonds in the interior are particularly stabilizing because they're in a low-dielectric environment.</li>
+        <li><strong>Van der Waals forces</strong> — weak but numerous. Arise from transient dipoles in closely packed atoms. Optimal at ~3.5 angstrom. Contribute significantly to the stability of the tightly packed hydrophobic core.</li>
+        <li><strong>Electrostatic interactions</strong> — salt bridges between oppositely charged side chains (Lys/Arg with Asp/Glu). Important on the protein surface. Ion pairs in the interior are rare but very stabilizing.</li>
+        <li><strong>Disulfide bonds</strong> — covalent S-S bonds between cysteine residues. Form in the oxidizing environment of the ER (extracellular and secreted proteins). Rare in cytoplasmic proteins (reducing environment). Stabilize proteins that must function in harsh extracellular environments.</li>
+      </ul>
+
+      <h3>Structural Motifs</h3>
+      <ul>
+        <li><strong>Helix-turn-helix (HTH)</strong> — DNA-binding motif. Recognition helix fits in the major groove. Found in homeodomains and many prokaryotic transcription factors.</li>
+        <li><strong>Zinc finger</strong> — ~30 residues, stabilized by Zn2+ coordinated by Cys/His residues. DNA-binding motif in many transcription factors (Cys2His2 zinc fingers). Also: RING fingers (E3 ubiquitin ligases), zinc ribbons.</li>
+        <li><strong>Coiled coil</strong> — two or more alpha helices wound around each other (supercoil). Heptad repeat (abcdefg) with hydrophobic residues at positions a and d. Found in: leucine zippers (transcription factors), myosin (motor), keratin, tropomyosin.</li>
+        <li><strong>Beta barrel</strong> — beta strands arranged in a closed barrel. Found in membrane proteins (porins, outer membrane proteins), green fluorescent protein (GFP), lipocalins.</li>
+        <li><strong>TIM barrel</strong> — (beta/alpha)8 barrel. Eight parallel beta strands surrounded by eight alpha helices. One of the most common folds (~10% of all enzymes). Named after triosephosphate isomerase. Active site at the C-terminal end of the beta strands.</li>
+        <li><strong>Rossmann fold</strong> — beta-alpha-beta motif that binds nucleotides (NAD, FAD). Found in dehydrogenases and many metabolic enzymes. Characterized by a GXGXXG motif.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="quaternary">
+      <h2>Quaternary Structure</h2>
+      <p>Quaternary structure describes the arrangement of multiple polypeptide chains (subunits) into a multi-subunit complex. Not all proteins have quaternary structure — it applies only to multi-chain assemblies. Subunits are held together by the same non-covalent forces as tertiary structure, plus occasional inter-chain disulfide bonds.</p>
+
+      <h3>Examples</h3>
+      <ul>
+        <li><strong>Hemoglobin</strong> — alpha2-beta2 tetramer. Cooperative oxygen binding (sigmoidal binding curve): when one subunit binds O2, it increases the affinity of the others (T-state to R-state transition). The classic example of allosteric regulation.</li>
+        <li><strong>Antibodies</strong> — two heavy chains + two light chains, held by disulfide bonds. Y-shaped molecule. Variable regions (Fab) bind antigen; constant region (Fc) mediates effector functions. Five classes: IgG, IgM, IgA, IgD, IgE.</li>
+        <li><strong>Proteasome</strong> — 26S complex (~2.5 MDa), degrades ubiquitin-tagged proteins. 20S core (four stacked rings of 7 subunits each, barrel-shaped) + 19S regulatory caps. ATP-dependent unfoldase + protease.</li>
+        <li><strong>Ribosome</strong> — two subunits (30S + 50S in bacteria, 40S + 60S in eukaryotes). RNA-protein complex. The peptidyl transferase center in the large subunit catalyzes peptide bond formation.</li>
+        <li><strong>ATP synthase</strong> — rotary motor enzyme. F0 portion in the membrane (proton channel), F1 portion in the matrix (catalytic subunits). Proton gradient drives rotation of the c-ring, causing conformational changes in F1 that synthesize ATP from ADP + Pi. Peter Mitchell (Nobel 1978), Paul Boyer and John Walker (Nobel 1997).</li>
+        <li><strong>Viral capsids</strong> — symmetric assemblies of coat proteins. Icosahedral symmetry (most common): 60 subunits minimum, often multiples (T=1, T=3, T=4). Self-assembling. TMV: helical rod of 2,130 identical coat protein subunits.</li>
+      </ul>
+
+      <h3>Symmetry</h3>
+      <ul>
+        <li><strong>Homo-oligomers</strong> — identical subunits. Dimers (C2 symmetry), trimers (C3), tetramers (D2 = three perpendicular C2 axes), hexamers. Most common: dimers and tetramers.</li>
+        <li><strong>Hetero-oligomers</strong> — different subunits. Hemoglobin (alpha2-beta2), antibodies (H2L2). Allows functional specialization within a complex.</li>
+        <li><strong>Allostery</strong> — binding at one site affects activity at another site on the same or a different subunit. Monod-Wyman-Changeux (MWC) model: concerted transition between R and T states. Koshland-Nemethy-Filmer (KNF) model: sequential changes. Critical for enzyme regulation and signal transduction.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="folding">
+      <h2>Protein Folding</h2>
+      <p>How a linear polypeptide chain reaches its native 3D structure is one of the grand challenges in biology. Levinthal's paradox (1969): a 100-residue protein has ~3^100 possible conformations. If it sampled one per picosecond, it would take longer than the age of the universe. Yet most proteins fold in milliseconds to seconds. The search is not random — folding follows an energy funnel.</p>
+
+      <h3>The Folding Funnel</h3>
+      <ul>
+        <li>The energy landscape of protein folding is a funnel: many high-energy unfolded states at the top, one (or a few) low-energy native states at the bottom. The protein doesn't search all conformations — it slides down the funnel, progressively forming native-like contacts.</li>
+        <li>Local secondary structures form first (nanoseconds to microseconds), then collapse into a compact "molten globule" intermediate (microseconds), then final native contacts form (milliseconds to seconds).</li>
+        <li>Some proteins fold in two-state kinetics (directly from unfolded to native, no detectable intermediate). Larger proteins often fold through intermediates and may require chaperones.</li>
+      </ul>
+
+      <h3>Chaperones</h3>
+      <ul>
+        <li><strong>Hsp70 / DnaK</strong> — binds exposed hydrophobic patches on nascent or misfolded proteins, preventing aggregation. ATP-driven. Works with co-chaperones (Hsp40/DnaJ as J-domain co-chaperone, nucleotide exchange factors).</li>
+        <li><strong>Hsp60 / GroEL-GroES</strong> — barrel-shaped "Anfinsen cage." Encapsulates a single protein (~60 kDa max) in a hydrophilic cavity, giving it time to fold in isolation. GroEL (bacterial) is a double-ring of 14 subunits; GroES caps one ring. 7 ATP hydrolyzed per folding cycle.</li>
+        <li><strong>Hsp90</strong> — specialized chaperone for signaling proteins (steroid receptors, kinases). Late-stage folding and stability. Target of geldanamycin (anti-cancer drug that inhibits Hsp90, destabilizing oncogenic client proteins).</li>
+        <li><strong>Trigger factor</strong> — ribosome-associated chaperone in bacteria. First chaperone to interact with a nascent polypeptide as it emerges from the ribosome exit tunnel.</li>
+      </ul>
+
+      <h3>Misfolding and Disease</h3>
+      <ul>
+        <li><strong>Alzheimer's disease</strong> — amyloid-beta peptide (A-beta, 40-42 residues) aggregates into amyloid fibrils and plaques in the brain. Cross-beta sheet structure. Whether plaques are the cause or consequence of neurodegeneration is debated (amyloid cascade hypothesis vs alternatives).</li>
+        <li><strong>Parkinson's disease</strong> — alpha-synuclein aggregates into Lewy bodies. Normally intrinsically disordered; misfolding leads to fibril formation.</li>
+        <li><strong>Prion diseases</strong> — PrP^Sc (misfolded prion protein) converts normal PrP^C into the misfolded form (template-directed misfolding). Causes CJD, BSE, kuru. Transmissible protein-only agent — no nucleic acid required. Stanley Prusiner, Nobel Prize 1997.</li>
+        <li><strong>Amyloidosis</strong> — systemic diseases caused by deposition of misfolded protein fibrils in organs. AL amyloidosis (immunoglobulin light chains), transthyretin (TTR) amyloidosis. Tafamidis stabilizes TTR tetramer, preventing dissociation and misfolding.</li>
+        <li><strong>Cystic fibrosis</strong> — most common mutation (deltaF508) causes misfolding of CFTR protein, which is retained in the ER and degraded. Lumacaftor + ivacaftor partially correct folding and channel function.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="alphafold">
+      <h2>AlphaFold</h2>
+      <p>AlphaFold, developed by DeepMind (Google), is an AI system that predicts protein 3D structures from amino acid sequences with near-experimental accuracy. It solved the "protein structure prediction problem" that had been an open challenge for 50 years.</p>
+
+      <h3>AlphaFold2 (2020)</h3>
+      <ul>
+        <li>Won CASP14 (Critical Assessment of protein Structure Prediction) with a median GDT score of 92.4 (out of 100), far ahead of all competitors. For most targets, predictions were within the accuracy of experimental structures.</li>
+        <li>Architecture: Evoformer module processes multiple sequence alignments (MSAs) and pairwise residue features through attention-based neural network layers. Structure module converts features into 3D coordinates.</li>
+        <li>Trained on ~170,000 experimental structures from the PDB plus UniRef sequence databases.</li>
+        <li>Demis Hassabis and John Jumper awarded the Nobel Prize in Chemistry 2024 for AlphaFold2.</li>
+      </ul>
+
+      <h3>AlphaFold Protein Structure Database</h3>
+      <ul>
+        <li>DeepMind and EMBL-EBI released predicted structures for over 200 million proteins — essentially every known protein sequence in UniProt.</li>
+        <li>Freely available at <a href="https://alphafold.ebi.ac.uk">alphafold.ebi.ac.uk</a>. Each prediction includes per-residue confidence scores (pLDDT). High confidence (&gt;90 pLDDT) regions are typically accurate; low confidence (&lt;50) regions are often disordered or poorly predicted.</li>
+        <li>Transformed structural biology: researchers can now start with a predicted structure instead of spending months/years on experimental determination. Drug target identification, protein engineering, and evolutionary analysis all benefit.</li>
+      </ul>
+
+      <h3>AlphaFold3 (2024)</h3>
+      <ul>
+        <li>Extends beyond proteins: predicts structures of protein-ligand, protein-DNA, protein-RNA, and protein-protein complexes.</li>
+        <li>Uses a diffusion-based architecture instead of AlphaFold2's direct coordinate prediction. Can model covalent modifications, ions, and small molecule ligands.</li>
+        <li>AlphaFold Server allows free predictions through a web interface (non-commercial use).</li>
+      </ul>
+
+      <h3>Limitations</h3>
+      <ul>
+        <li>Static structures only — does not predict dynamics, conformational ensembles, or allosteric transitions.</li>
+        <li>Struggles with proteins that have few homologous sequences (orphan proteins), intrinsically disordered regions, and some multi-chain complexes.</li>
+        <li>Does not predict the effects of mutations, post-translational modifications, or ligand binding on structure (though fine-tuned variants are being developed).</li>
+        <li>Not a substitute for experimental structures when high accuracy is critical (e.g., drug binding sites where sub-angstrom precision matters).</li>
+      </ul>
+    </section>
+
+    <section class="section" id="pdb">
+      <h2>The Protein Data Bank (PDB)</h2>
+      <p>The PDB (<a href="https://www.rcsb.org">rcsb.org</a>) is the global repository for experimentally determined 3D structures of biological macromolecules. Established in 1971 at Brookhaven National Laboratory with 7 structures. As of 2025, it contains over 220,000 structures.</p>
+
+      <h3>Experimental Methods</h3>
+      <ul>
+        <li><strong>X-ray crystallography</strong> — the dominant method (~85% of PDB structures). Grow protein crystals, expose to X-rays, interpret the diffraction pattern to calculate electron density. Resolution: typically 1.5-3.0 angstrom. Requires crystals (sometimes impossible for membrane proteins, flexible proteins, large complexes).</li>
+        <li><strong>Cryo-electron microscopy (cryo-EM)</strong> — flash-freeze protein in vitreous ice, image with electron microscope, computationally reconstruct 3D structure from thousands of 2D particle images. No crystals needed. "Resolution revolution" since ~2013 (direct electron detectors). Now routinely achieves 2-4 angstrom. Dominant for large complexes (ribosomes, viruses, membrane protein complexes). Jacques Dubochet, Joachim Frank, Richard Henderson: Nobel Prize 2017.</li>
+        <li><strong>NMR spectroscopy</strong> — determines structure in solution (no crystals, no freezing). Limited to smaller proteins (~40 kDa). Provides information about dynamics, flexibility, and interactions. ~7% of PDB structures.</li>
+        <li><strong>Neutron diffraction</strong> — locates hydrogen atoms (invisible to X-rays). Important for understanding enzyme mechanisms and hydrogen bonding. Requires large crystals and neutron sources (rare).</li>
+      </ul>
+
+      <h3>Using the PDB</h3>
+      <ul>
+        <li><strong>Search</strong> — by protein name, gene, organism, sequence (BLAST), structure similarity, ligand, author, or method. Advanced search supports complex queries.</li>
+        <li><strong>Visualization</strong> — built-in Mol* viewer renders structures in the browser. Also: PyMOL (most popular, open-source + commercial), UCSF ChimeraX (free, excellent for cryo-EM), VMD (molecular dynamics).</li>
+        <li><strong>PDB file format</strong> — legacy format (ATOM/HETATM records, 80-character lines). Being superseded by PDBx/mmCIF (machine-readable, extensible). All new depositions use mmCIF.</li>
+        <li><strong>Key identifiers</strong> — 4-character PDB ID (e.g., 1HHO for hemoglobin). UniProt accession maps proteins to all their PDB structures. SCOP/CATH classify protein folds.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="drugs">
+      <h2>Drug Targets</h2>
+      <p>Protein structure is central to modern drug discovery. Understanding the 3D shape of a target protein — especially its binding sites — enables rational drug design. Approximately 60% of approved drugs target proteins (mostly enzymes, receptors, ion channels, and transporters).</p>
+
+      <h3>Structure-Based Drug Design</h3>
+      <ul>
+        <li><strong>Target identification</strong> — identify a protein whose dysfunction causes disease. Validate that modulating it (inhibition, activation, degradation) has therapeutic benefit. Genomics, proteomics, and CRISPR screens help identify targets.</li>
+        <li><strong>Structure determination</strong> — solve the target's 3D structure, ideally with a ligand bound (holo structure). Identify the binding site, key residues, and interactions. AlphaFold predictions increasingly used as starting models.</li>
+        <li><strong>Virtual screening</strong> — computationally dock millions of compounds into the binding site. Score by predicted binding affinity. Reduces the chemical space from billions to thousands for experimental testing. Tools: AutoDock Vina, Glide (Schrodinger), GOLD.</li>
+        <li><strong>Lead optimization</strong> — iteratively improve hits through medicinal chemistry. Co-crystal structures with improved compounds reveal structure-activity relationships (SAR). Optimize potency, selectivity, solubility, metabolic stability, and toxicity.</li>
+      </ul>
+
+      <h3>Notable Drug-Target Successes</h3>
+      <ul>
+        <li><strong>HIV protease inhibitors</strong> — saquinavir, ritonavir, lopinavir. Designed from the crystal structure of HIV-1 protease (homodimeric aspartyl protease). Transformed HIV from a death sentence to a manageable chronic disease. One of the first triumphs of structure-based drug design (1990s).</li>
+        <li><strong>Imatinib (Gleevec)</strong> — BCR-ABL kinase inhibitor for chronic myeloid leukemia (CML). Crystal structure revealed an inactive kinase conformation that imatinib stabilizes. 5-year survival improved from 30% to >90%. Paradigm-shifting targeted therapy.</li>
+        <li><strong>Nirmatrelvir (Paxlovid)</strong> — SARS-CoV-2 main protease (Mpro) inhibitor. Designed using the crystal structure of Mpro. Pfizer went from target to EUA in ~18 months. Demonstrates the power of structural biology in pandemic response.</li>
+        <li><strong>Osimertinib (Tagrisso)</strong> — third-generation EGFR inhibitor for non-small-cell lung cancer. Designed to target the T790M resistance mutation while sparing wild-type EGFR. Structure-guided to exploit a cysteine residue (Cys797) for covalent binding.</li>
+      </ul>
+
+      <h3>Emerging Approaches</h3>
+      <ul>
+        <li><strong>PROTACs</strong> — Proteolysis-Targeting Chimeras. Bifunctional molecules that bind both the target protein and an E3 ubiquitin ligase, inducing target degradation. Can target "undruggable" proteins that lack enzymatic active sites. ARV-110 (androgen receptor degrader) in clinical trials.</li>
+        <li><strong>Molecular glues</strong> — small molecules that stabilize protein-protein interactions to induce degradation or loss of function. Thalidomide/lenalidomide: bind CRBN (E3 ligase), recruit neosubstrates (Ikaros, Aiolos) for degradation. Serendipitous discovery explained by structural biology.</li>
+        <li><strong>AI-driven drug design</strong> — diffusion models generate novel molecules optimized for target binding. AlphaFold structures used as inputs. Companies: Recursion, Insilico Medicine, Isomorphic Labs (DeepMind spin-off). Early clinical candidates entering trials.</li>
+        <li><strong>Antibody engineering</strong> — computational design of antibodies and nanobodies using structural data. CDR loop modeling, affinity maturation in silico. AlphaFold-Multimer and RoseTTAFold for antibody-antigen complex prediction.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="resources">
+      <h2>Resources</h2>
+      <div class="cards">
+        <div class="card">
+          <h4><a href="https://www.rcsb.org">RCSB Protein Data Bank</a></h4>
+          <p>220,000+ experimentally determined structures. Free search, download, visualization with Mol* viewer. The foundation of structural biology.</p>
+          <div class="meta">RCSB | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://alphafold.ebi.ac.uk">AlphaFold Protein Structure Database</a></h4>
+          <p>200+ million predicted protein structures from DeepMind and EMBL-EBI. Per-residue confidence scores. Transformative resource for all biology.</p>
+          <div class="meta">DeepMind / EMBL-EBI | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://pymol.org">PyMOL</a></h4>
+          <p>The most widely used molecular visualization tool. Publication-quality images, structural analysis, movie-making. Open-source version available.</p>
+          <div class="meta">Schrodinger | Free (open-source)</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://www.cgl.ucsf.edu/chimerax/">UCSF ChimeraX</a></h4>
+          <p>Next-generation molecular visualization. Excellent for cryo-EM maps, AlphaFold structures, and large complexes. Free for academic use.</p>
+          <div class="meta">UCSF | Free (academic)</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://pdb101.rcsb.org">PDB-101</a></h4>
+          <p>Educational resource from the PDB. "Molecule of the Month" articles by David Goodsell. Beautiful illustrations and clear explanations of protein structure and function.</p>
+          <div class="meta">RCSB | Free</div>
+        </div>
+        <div class="card">
+          <h4><a href="https://fold.it">Foldit</a></h4>
+          <p>Citizen science protein folding game. Solve protein structure puzzles using human spatial reasoning. Contributions have led to real scientific discoveries.</p>
+          <div class="meta">UW | Free game</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="container">
+      <a href="/">FreeBioStore</a> · <a href="/institute/">Institute</a> · Built with <a href="https://zensical.org">Zensical</a>
+    </div>
+  </footer>
+</body>
+</html>
