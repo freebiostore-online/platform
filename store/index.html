@@ -173,7 +173,7 @@
 
     <section>
       <div class="tabs">
-          <button class="tab active" onclick="switchTab('all')">All <span class="tab-count">8</span></button>
+          <button class="tab active" onclick="switchTab('all')">All <span class="tab-count">2</span></button>
           <button class="tab" onclick="switchTab('library')">Libraries <span class="tab-count">undefined</span></button>
           <button class="tab" onclick="switchTab('model')">Models <span class="tab-count">0</span></button>
           <button class="tab" onclick="switchTab('agent')">Agents <span class="tab-count">undefined</span></button>
@@ -182,76 +182,17 @@
         <div class="toolbar">
         <input type="text" class="search-input" id="searchInput" placeholder="Search agents..." autocomplete="off" />
         <button class="filter-btn active" onclick="filterCategory('all')">All</button>
-        <button class="filter-btn" onclick="filterCategory('visualization')">Visualization</button>
-        <button class="filter-btn" onclick="filterCategory('genetics')">Genetics</button>
         <button class="filter-btn" onclick="filterCategory('simulation')">Simulation</button>
-        <button class="filter-btn" onclick="filterCategory('pharma')">Pharma</button>
-        <button class="filter-btn" onclick="filterCategory('biology')">Biology</button>
         <button class="filter-btn" onclick="filterCategory('evolution')">Evolution</button>
-        <button class="filter-btn" onclick="filterCategory('neuroscience')">Neuroscience</button>
-        <span class="agent-count" id="agentCount">8 agents</span>
+        <span class="agent-count" id="agentCount">2 agents</span>
       </div>
             <div class="agents-grid" id="agentsGrid">
-        <div class="agent-card" data-category="visualization" data-store-type="behavior" data-name="protein viewer" data-desc="interactive 3d protein structure viewer. load pdb files, rotate, zoom, color by chain/residue/secondary structure.">
-          <a href="/items/protein-viewer/" class="agent-card-body">
-            <div class="agent-icon" style="background:#10b981">🧬</div>
-            <div class="agent-body">
-              <span class="agent-name">Protein Viewer</span>
-              <span class="agent-desc">Interactive 3D protein structure viewer. Load PDB files, rot...</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/protein-viewer/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
-
-        <div class="agent-card" data-category="genetics" data-store-type="behavior" data-name="dna editor" data-desc="build and edit dna sequences. visualize base pairs, transcribe to mrna, translate to amino acids. codon table included.">
-          <a href="/items/dna-editor/" class="agent-card-body">
-            <div class="agent-icon" style="background:#10b981">🔬</div>
-            <div class="agent-body">
-              <span class="agent-name">DNA Editor</span>
-              <span class="agent-desc">Build and edit DNA sequences. Visualize base pairs, transcri...</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/dna-editor/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
-
-        <div class="agent-card" data-category="genetics" data-store-type="behavior" data-name="crispr simulator" data-desc="simulate crispr-cas9 gene editing. design guide rna, see where it binds, cut the dna, insert new sequence.">
-          <a href="/items/crispr-sim/" class="agent-card-body">
-            <div class="agent-icon" style="background:#10b981">✂️</div>
-            <div class="agent-body">
-              <span class="agent-name">CRISPR Simulator</span>
-              <span class="agent-desc">Simulate CRISPR-Cas9 gene editing. Design guide RNA, see whe...</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/crispr-sim/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
-
-        <div class="agent-card" data-category="simulation" data-store-type="behavior" data-name="molecular dynamics" data-desc="watch atoms bounce around in a lennard-jones potential. adjust temperature, density. see phase transitions.">
+        <div class="agent-card" data-category="simulation" data-store-type="behavior" data-name="molecular dynamics" data-desc="atoms interacting via lennard-jones potential. adjust temperature for phase transitions: solid → liquid → gas. click to add energy.">
           <a href="/items/molecular-dynamics/" class="agent-card-body">
-            <div class="agent-icon" style="background:#3b82f6">⚛️</div>
+            <div class="agent-icon" style="background:#10b981">⚛️</div>
             <div class="agent-body">
               <span class="agent-name">Molecular Dynamics</span>
-              <span class="agent-desc">Watch atoms bounce around in a Lennard-Jones potential. Adju...</span>
+              <span class="agent-desc">Atoms interacting via Lennard-Jones potential. Adjust temper...</span>
               <div class="agent-meta">
                 <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
                 <span class="tag"></span>
@@ -264,48 +205,12 @@
           </a>
         </div>
 
-        <div class="agent-card" data-category="pharma" data-store-type="behavior" data-name="drug binding" data-desc="dock a drug molecule into a protein binding pocket. rotate, score the fit. learn about pharmacology.">
-          <a href="/items/drug-binding/" class="agent-card-body">
-            <div class="agent-icon" style="background:#a855f7">💊</div>
-            <div class="agent-body">
-              <span class="agent-name">Drug Binding</span>
-              <span class="agent-desc">Dock a drug molecule into a protein binding pocket. Rotate, ...</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/drug-binding/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
-
-        <div class="agent-card" data-category="biology" data-store-type="behavior" data-name="cell simulator" data-desc="interactive cell biology — organelles, membranes, transport. click parts to learn. simulate mitosis step by step.">
-          <a href="/items/cell-sim/" class="agent-card-body">
-            <div class="agent-icon" style="background:#10b981">🦠</div>
-            <div class="agent-body">
-              <span class="agent-name">Cell Simulator</span>
-              <span class="agent-desc">Interactive cell biology — organelles, membranes, transport....</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/cell-sim/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
-
-        <div class="agent-card" data-category="evolution" data-store-type="behavior" data-name="evolution simulator" data-desc="population genetics in action. mutation, selection, drift, gene flow. watch allele frequencies change over generations.">
+        <div class="agent-card" data-category="evolution" data-store-type="behavior" data-name="evolution simulator" data-desc="natural selection in action. creatures eat, reproduce with mutations, evolve traits. add predators for selection pressure.">
           <a href="/items/evolution-sim/" class="agent-card-body">
             <div class="agent-icon" style="background:#22c55e">🌿</div>
             <div class="agent-body">
               <span class="agent-name">Evolution Simulator</span>
-              <span class="agent-desc">Population genetics in action. Mutation, selection, drift, g...</span>
+              <span class="agent-desc">Natural selection in action. Creatures eat, reproduce with m...</span>
               <div class="agent-meta">
                 <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
                 <span class="tag"></span>
@@ -313,24 +218,6 @@
             </div>
           </a>
           <a href="/items/evolution-sim/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
-
-        <div class="agent-card" data-category="neuroscience" data-store-type="behavior" data-name="neural signaling" data-desc="hodgkin-huxley neuron model. see action potentials fire, adjust ion channel conductances, build simple neural circuits.">
-          <a href="/items/neural-signal/" class="agent-card-body">
-            <div class="agent-icon" style="background:#f97316">🧠</div>
-            <div class="agent-body">
-              <span class="agent-name">Neural Signaling</span>
-              <span class="agent-desc">Hodgkin-Huxley neuron model. See action potentials fire, adj...</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/neural-signal/" class="agent-cta">
             <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
             Open
           </a>
