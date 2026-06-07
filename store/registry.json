@@ -1,1 +1,52 @@
-{"robots": [{"id": "molecular-dynamics", "name": "Molecular Dynamics", "description": "Atoms interacting via Lennard-Jones potential. Adjust temperature for phase transitions: solid \u2192 liquid \u2192 gas. Click to add energy.", "storeType": "behavior", "category": "simulation", "icon": "\u269b\ufe0f", "iconBg": "#10b981"}, {"id": "evolution-sim", "name": "Evolution Simulator", "description": "Natural selection in action. Creatures eat, reproduce with mutations, evolve traits. Add predators for selection pressure.", "storeType": "behavior", "category": "evolution", "icon": "\ud83c\udf3f", "iconBg": "#22c55e"}, {"id": "protein-predictor", "name": "Protein Predictor", "description": "Paste an amino acid sequence, get secondary structure prediction. ESM-2 model (Meta) running in browser via WebGPU.", "storeType": "model", "category": "proteins", "icon": "\ud83e\uddec", "iconBg": "#10b981"}, {"id": "molecule-predict", "name": "Molecule Analyzer", "description": "Enter SMILES notation, see 2D structure + molecular weight + LogP + drug-likeness (Lipinski Rule of 5). 10 preset molecules.", "storeType": "behavior", "category": "chemistry", "icon": "\ud83d\udc8a", "iconBg": "#a855f7"}]}
+{
+  "robots": [
+    {
+      "id": "molecular-dynamics",
+      "name": "Molecular Dynamics",
+      "description": "Atoms interacting via Lennard-Jones potential. Adjust temperature for phase transitions: solid \u2192 liquid \u2192 gas. Click to add energy.",
+      "storeType": "behavior",
+      "category": "simulation",
+      "icon": "\u269b\ufe0f",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "evolution-sim",
+      "name": "Evolution Simulator",
+      "description": "Natural selection in action. Creatures eat, reproduce with mutations, evolve traits. Add predators for selection pressure.",
+      "storeType": "behavior",
+      "category": "evolution",
+      "icon": "\ud83c\udf3f",
+      "iconBg": "#22c55e",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "protein-predictor",
+      "name": "Protein Predictor",
+      "description": "Paste an amino acid sequence, get secondary structure prediction. ESM-2 model (Meta) running in browser via WebGPU.",
+      "storeType": "model",
+      "category": "proteins",
+      "icon": "\ud83e\uddec",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "molecule-predict",
+      "name": "Molecule Analyzer",
+      "description": "Enter SMILES notation, see 2D structure + molecular weight + LogP + drug-likeness (Lipinski Rule of 5). 10 preset molecules.",
+      "storeType": "behavior",
+      "category": "chemistry",
+      "icon": "\ud83d\udc8a",
+      "iconBg": "#a855f7",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    }
+  ]
+}
