@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenges — FreeBioStore</title>
+  <meta name="description" content="Timed biotech challenges. Achieve phase transitions, evolve populations, predict protein structures, and check drug-likeness.">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#262626}
+    body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--line);padding:.75rem 0}
+    header .container{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+    .brand-emoji{font-size:1.5rem}
+    .brand-text{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+    .brand-tag{font-size:.68rem;color:var(--muted)}
+    nav{display:flex;gap:1rem;font-size:.82rem;font-weight:600;margin-left:auto}
+    nav a{color:var(--muted)}nav a:hover{color:var(--ink)}nav a.active{color:var(--ink)}
+    .hero{text-align:center;padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--line)}
+    .hero h1{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;margin-bottom:.5rem}
+    .hero h1 em{color:var(--accent);font-style:normal}
+    .hero p{color:var(--muted);max-width:600px;margin:0 auto;font-size:.95rem}
+    .section{margin-bottom:2rem;padding-top:1rem}
+    .section h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:1px solid var(--line)}
+    .section p{color:#a3a3a3;font-size:.88rem}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem;margin:.5rem 0}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:.85rem;transition:border-color .15s}
+    .card:hover{border-color:var(--accent)}
+    .card h4{font-size:.85rem;font-weight:700;margin-bottom:.2rem;color:var(--ink)}
+    .card p{font-size:.75rem;color:var(--muted);margin:0;line-height:1.5}
+    .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
+    .difficulty{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.65rem;font-weight:700;margin-bottom:.35rem}
+    .difficulty-easy{background:rgba(16,185,129,0.15);color:#10b981}
+    .difficulty-medium{background:rgba(249,115,22,0.15);color:#f97316}
+    .difficulty-hard{background:rgba(239,68,68,0.15);color:#ef4444}
+    .start-btn{display:inline-block;margin-top:.5rem;padding:.3rem .7rem;border-radius:6px;font-size:.72rem;font-weight:700;background:var(--accent);color:#fff;text-decoration:none;transition:opacity .15s}
+    .start-btn:hover{opacity:.85;text-decoration:none}
+    .records{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1.25rem;margin:1.5rem 0}
+    .records h3{font-size:.85rem;font-weight:700;margin-bottom:.5rem;color:var(--accent)}
+    .records p{font-size:.82rem;color:#525252;font-style:italic}
+    footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/" class="brand">
+        <span class="brand-emoji">&#129516;</span>
+        <span><span class="brand-text">FreeBioStore</span><br><span class="brand-tag">Biotech simulations</span></span>
+      </a>
+      <nav><a href="/">Simulations</a><a href="/challenges/" class="active">Challenges</a><a href="/creators/">Creators</a><a href="/institute/">Institute</a></nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h1>Biotech <em>Challenges</em></h1>
+      <p>Test your molecular biology and biotech skills. Achieve phase transitions, evolve resilient populations, predict protein structures, and evaluate drug candidates.</p>
+    </section>
+
+    <section class="section">
+      <h2>Active Challenges</h2>
+      <div class="cards">
+        <div class="card">
+          <span class="difficulty difficulty-easy">Easy</span>
+          <h4>Achieve a Gas Phase at 400K</h4>
+          <p>Adjust temperature and pressure in the molecular dynamics simulation to transition your system into the gas phase at exactly 400K.</p>
+          <div class="meta">Thermodynamics | ~2 min</div>
+          <a href="/items/molecular-dynamics/" class="start-btn">Start Challenge &#8594;</a>
+        </div>
+        <div class="card">
+          <span class="difficulty difficulty-hard">Hard</span>
+          <h4>Evolve a Population That Survives 3 Predators</h4>
+          <p>Run the evolution simulator and breed a population with traits robust enough to survive against three different predator species simultaneously.</p>
+          <div class="meta">Evolutionary Biology | ~8 min</div>
+          <a href="/items/evolution-sim/" class="start-btn">Start Challenge &#8594;</a>
+        </div>
+        <div class="card">
+          <span class="difficulty difficulty-hard">Hard</span>
+          <h4>Predict the Structure of Insulin</h4>
+          <p>Use the protein structure predictor to model insulin's 3D fold. Match the predicted secondary structure elements against the known crystal structure.</p>
+          <div class="meta">Structural Biology | ~5 min</div>
+          <a href="/items/protein-predictor/" class="start-btn">Start Challenge &#8594;</a>
+        </div>
+        <div class="card">
+          <span class="difficulty difficulty-medium">Medium</span>
+          <h4>Check if Caffeine Passes Lipinski's Rule of 5</h4>
+          <p>Load caffeine into the molecule predictor and evaluate its drug-likeness. Verify molecular weight, LogP, hydrogen bond donors, and acceptors against Lipinski's criteria.</p>
+          <div class="meta">Medicinal Chemistry | ~3 min</div>
+          <a href="/items/molecule-predict/" class="start-btn">Start Challenge &#8594;</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="records">
+      <h3>Personal Records</h3>
+      <p>Coming soon &mdash; your best times and scores will be tracked here using local storage. Complete challenges to start building your record.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <a href="/">FreeBioStore</a> &middot; <a href="/challenges/">Challenges</a> &middot; <a href="/institute/">Institute</a>
+    </div>
+  </footer>
+</body>
+</html>
