@@ -1,1 +1,10 @@
-{"robots":[]}
+{"robots":[
+  {"id":"protein-viewer","name":"Protein Viewer","description":"Interactive 3D protein structure viewer. Load PDB files, rotate, zoom, color by chain/residue/secondary structure.","storeType":"behavior","category":"visualization","icon":"🧬","iconBg":"#10b981"},
+  {"id":"dna-editor","name":"DNA Editor","description":"Build and edit DNA sequences. Visualize base pairs, transcribe to mRNA, translate to amino acids. Codon table included.","storeType":"behavior","category":"genetics","icon":"🔬","iconBg":"#10b981"},
+  {"id":"crispr-sim","name":"CRISPR Simulator","description":"Simulate CRISPR-Cas9 gene editing. Design guide RNA, see where it binds, cut the DNA, insert new sequence.","storeType":"behavior","category":"genetics","icon":"✂️","iconBg":"#10b981"},
+  {"id":"molecular-dynamics","name":"Molecular Dynamics","description":"Watch atoms bounce around in a Lennard-Jones potential. Adjust temperature, density. See phase transitions.","storeType":"behavior","category":"simulation","icon":"⚛️","iconBg":"#3b82f6"},
+  {"id":"drug-binding","name":"Drug Binding","description":"Dock a drug molecule into a protein binding pocket. Rotate, score the fit. Learn about pharmacology.","storeType":"behavior","category":"pharma","icon":"💊","iconBg":"#a855f7"},
+  {"id":"cell-sim","name":"Cell Simulator","description":"Interactive cell biology — organelles, membranes, transport. Click parts to learn. Simulate mitosis step by step.","storeType":"behavior","category":"biology","icon":"🦠","iconBg":"#10b981"},
+  {"id":"evolution-sim","name":"Evolution Simulator","description":"Population genetics in action. Mutation, selection, drift, gene flow. Watch allele frequencies change over generations.","storeType":"behavior","category":"evolution","icon":"🌿","iconBg":"#22c55e"},
+  {"id":"neural-signal","name":"Neural Signaling","description":"Hodgkin-Huxley neuron model. See action potentials fire, adjust ion channel conductances, build simple neural circuits.","storeType":"behavior","category":"neuroscience","icon":"🧠","iconBg":"#f97316"}
+]}
