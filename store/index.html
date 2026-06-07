@@ -3,406 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FreeBioStore — Molecular & Biotech Simulations</title>
-  <meta name="description" content="Interactive simulations running in your browser. Free forever.">
+  <title>FreeBioStore — Molecular &amp; Biotech Simulations</title>
+  <meta name="description" content="Interactive biotech simulations. Molecular dynamics, evolution, protein analysis. Free, open source.">
   <meta property="og:title" content="FreeBioStore — Molecular & Biotech Simulations">
-  <meta property="og:description" content="Interactive simulations running in your browser. Free forever.">
+  <meta property="og:description" content="Interactive biotech simulations running in your browser. Free forever.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://freebiostore.online">
   <meta name="twitter:card" content="summary">
-  <meta property="og:image" content="https://freebiostore.online/icon-512.png">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#10b981">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"FreeBioStore","url":"https://freebiostore.online","description":"Molecular AI tools that run free in your browser biotech simulations"}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    :root{
-      --font-body:'Manrope',system-ui,sans-serif;
-      --font-display:'Fraunces',Georgia,serif;
-      --paper:#0a0a0a;--panel:#171717;--panel-alt:#1f1f1f;
-      --ink:#fafafa;--ink-strong:#ffffff;
-      --muted:#a3a3a3;--muted-soft:#737373;
-      --accent:#10b981;--accent-hover:#10b981;--accent-soft:rgba(124,58,237,0.15);
-      --pro:#3b82f6;
-      --line:#262626;--line-strong:#404040;
-      --shadow:0 1px 3px rgba(0,0,0,0.3);
-      --shadow-lg:0 10px 25px -8px rgba(0,0,0,0.5);
-      --radius:0.75rem;
-    }
-    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;color:#fafafa;font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+    a{color:#10b981;text-decoration:none}a:hover{text-decoration:underline}
     .container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 
-    /* Header */
-    header{border-bottom:1px solid var(--line)}
-    header .container{display:flex;align-items:center;gap:1.25rem;padding-top:0.75rem;padding-bottom:0.75rem}
-    .brand{display:flex;align-items:center;gap:0.6rem;text-decoration:none;color:var(--ink)}
-    .brand-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#a855f7);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
-    .brand-name{font-family:var(--font-display);font-size:1.15rem;font-weight:700;color:var(--ink)}
-    .brand-tag{font-size:0.72rem;color:var(--muted);font-weight:500}
-    nav{display:flex;gap:1.25rem;font-size:0.88rem;font-weight:600;margin-left:auto}
-    nav a{color:var(--muted);text-decoration:none;transition:color 0.15s}
-    nav a:hover{color:var(--ink)}
-    nav a.pro{color:var(--pro)}
+    header{border-bottom:1px solid #262626}
+    header .container{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:#fafafa;font-family:'Fraunces',Georgia,serif;font-size:1.15rem;font-weight:700}
+    .brand span.icon{font-size:1.3rem}
+    nav{display:flex;gap:1.25rem;font-size:.85rem;font-weight:600;margin-left:auto}
+    nav a{color:#a3a3a3;text-decoration:none}nav a:hover{color:#fafafa}
 
-    /* Hero */
     .hero{text-align:center;padding:3rem 0 2rem}
-    .hero h1{font-family:var(--font-display);font-size:2.25rem;font-weight:700;margin-bottom:0.5rem}
-    .hero h1 span{color:#a78bfa}
-    .hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto;line-height:1.6}
-    .badges{display:flex;gap:0.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap}
-    .badge{padding:0.25rem 0.75rem;border-radius:999px;font-size:0.78rem;background:var(--panel);border:1px solid var(--line);color:var(--muted)}
-    /* Tab bar */
-    .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 1rem; }
-    .tab {
-      padding: 0.6rem 1.25rem; font-size: 0.9rem; font-weight: 600;
-      color: var(--muted); background: none; border: none; cursor: pointer;
-      border-bottom: 2px solid transparent; transition: all 0.15s;
-      font-family: var(--font-body);
-    }
-    .tab:hover { color: var(--ink); }
-    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .tab-count { font-size: 0.72rem; color: var(--muted-soft); margin-left: 0.25rem; }
-.search-input{flex:1;min-width:200px;max-width:320px;padding:0.5rem 0.85rem 0.5rem 2.2rem;border-radius:100px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:0.85rem;font-family:var(--font-body);outline:none;transition:border-color 0.15s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23737373' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:0.75rem center}
-    .search-input:focus{border-color:var(--accent)}
-    .search-input::placeholder{color:var(--muted-soft)}
+    .hero h1{font-family:'Fraunces',Georgia,serif;font-size:2.25rem;font-weight:700;margin-bottom:.5rem}
+    .hero h1 span{color:#34d399}
+    .hero p{color:#a3a3a3;font-size:1.05rem;max-width:520px;margin:0 auto;line-height:1.6}
+    .hero .count{margin-top:.75rem;display:inline-block;padding:.25rem .85rem;border-radius:999px;font-size:.8rem;background:#171717;border:1px solid #262626;color:#a3a3a3}
 
-    /* Filter bar */
-    .toolbar{padding:1rem 0;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center}
-    .filter-btn{padding:0.4rem 0.85rem;border-radius:100px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:var(--font-body)}
-    .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
-    .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-    .agent-count{margin-left:auto;font-size:0.82rem;color:var(--muted-soft)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:.75rem;padding-bottom:3rem}
+    .card{background:#171717;border:1px solid #262626;border-radius:14px;padding:1rem 1.1rem;display:flex;align-items:center;gap:.85rem;transition:border-color .15s,transform .15s,box-shadow .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+    .card:hover{border-color:#404040;transform:translateY(-1px);box-shadow:0 10px 25px -8px rgba(0,0,0,.5)}
+    .card-link{display:flex;align-items:center;gap:.85rem;flex:1;min-width:0;text-decoration:none;color:inherit}
+    .card-icon{width:44px;height:44px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .card-body{flex:1;min-width:0}
+    .card-name{font-size:.95rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .card-desc{font-size:.78rem;color:#a3a3a3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;margin-top:.15rem}
+    .card-cta{display:inline-flex;align-items:center;gap:.3rem;background:#10b981;color:#fff;padding:.4rem .85rem;border-radius:10px;font-size:.8rem;font-weight:600;flex-shrink:0;text-decoration:none;transition:background .15s}
+    .card-cta:hover{background:#059669;text-decoration:none}
 
-    /* Agent grid */
-    .agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:0.75rem;padding-bottom:3rem}
-
-    /* Agent card */
-    .agent-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem;display:flex;align-items:center;gap:0.85rem;transition:border-color 0.15s,transform 0.15s,box-shadow 0.15s;box-shadow:var(--shadow)}
-    .agent-card-body{display:flex;align-items:center;gap:0.85rem;flex:1;min-width:0;text-decoration:none;color:inherit}
-    .agent-card:hover{border-color:var(--line-strong);transform:translateY(-1px);box-shadow:var(--shadow-lg)}
-    .agent-icon{width:44px;height:44px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
-    .agent-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:0.15rem}
-    .agent-name{font-size:0.95rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .agent-desc{font-size:0.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .agent-meta{display:flex;gap:0.35rem;margin-top:0.2rem}
-    .tag{font-size:0.68rem;padding:0.1rem 0.4rem;border-radius:0.25rem;background:var(--accent-soft);color:#a78bfa;font-weight:500}
-    .tag.heuristic{background:rgba(217,119,6,0.15);color:#fbbf24}
-    .agent-cta{display:inline-flex;align-items:center;gap:0.3rem;background:var(--accent);color:#fff;padding:0.4rem 0.85rem;border-radius:10px;font-size:0.8rem;font-weight:600;flex-shrink:0;text-decoration:none;transition:background 0.15s}
-    .agent-cta:hover{background:var(--accent-hover);text-decoration:none}
-    .agent-cta svg{width:12px;height:12px;fill:currentColor}
-
-    /* Footer */
-    footer{border-top:1px solid var(--line);padding:2rem 0}
-    footer .container{display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;align-items:start}
-    .footer-brand{display:flex;flex-direction:column;gap:0.25rem}
-    .footer-brand .name{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--ink)}
-    .footer-brand .name span{color:#a78bfa}
-    .footer-brand p{font-size:0.8rem;color:var(--muted);max-width:280px;line-height:1.5}
-    .footer-links{display:flex;flex-wrap:wrap;gap:1.5rem;font-size:0.82rem}
-    .footer-links a{color:var(--muted);text-decoration:none}
-    .footer-links a:hover{color:var(--ink)}
-    .footer-links .pro{color:var(--pro)}
-    .footer-stores{display:flex;flex-direction:column;gap:0.3rem;font-size:0.78rem}
-    .footer-stores a{color:var(--muted-soft)}
-    .footer-stores a:hover{color:var(--muted)}
+    footer{border-top:1px solid #262626;padding:1.5rem 0;text-align:center;color:#737373;font-size:.78rem}
   </style>
 </head>
 <body>
   <header>
     <div class="container">
-      <a href="/" class="brand">
-        <span class="brand-mark">🧬</span>
-        <span style="display:flex;flex-direction:column">
-          <span class="brand-name">BioStore</span>
-          <span class="brand-tag">Molecular Simulations</span>
-        </span>
-      </a>
-      <nav><a href="/">All</a><a href="/items/protein-viewer/">Protein Viewer</a><a href="/items/dna-editor/">DNA Editor</a><a href="/items/crispr-sim/">CRISPR</a><a href="/institute/">Institute</a><a href="/creators/">Creators</a><a href="/challenges/">Challenges</a><a href="/collections/">Paths</a></nav>
-      <div id="auth-ui" style="margin-left:0.5rem;display:flex;align-items:center">
-        <a href="/v1/auth/github" id="auth-login" style="display:none;padding:0.35rem 0.85rem;border-radius:8px;border:1px solid var(--line);color:var(--muted);font-size:0.82rem;font-weight:600;text-decoration:none;transition:border-color 0.15s,color 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--muted)'">Sign in</a>
-        <div id="auth-user" style="display:none;align-items:center;gap:0.5rem">
-          <img id="auth-avatar" src="" alt="" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--line)" />
-          <button id="auth-signout" style="padding:0.25rem 0.6rem;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:0.72rem;cursor:pointer;font-family:inherit">Sign out</button>
-        </div>
-      </div>
-      </div>
+      <a href="/" class="brand"><span class="icon">&#x1f9ec;</span> FreeBioStore</a>
+      <nav>
+        <a href="/">All</a>
+        <a href="/institute/">Institute</a>
+        <a href="/creators/">Creators</a>
+        <a href="/challenges/">Challenges</a>
+        <a href="/collections/">Paths</a>
+      </nav>
+    </div>
   </header>
 
   <main class="container">
     <section class="hero">
       <h1>Free<span>Bio</span>Store</h1>
-      <p>Molecular dynamics, evolution, protein analysis — biotech simulations in your browser.</p>
-      <div class="badges">
-        <span class="badge">29 Libraries</span>
-        <span class="badge">13 AI Models</span>
-        <span class="badge">7 Agents</span>
-        <span class="badge">100% Private</span>
-        <span class="badge">Open Source</span>
-      </div>
-      <div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap">
-        <a href="/get-started/" style="padding:0.5rem 1.25rem;border-radius:10px;background:#10b981;color:white;font-weight:600;font-size:0.9rem;text-decoration:none">Get Started</a>
-        <a href="https://github.com/FreeBioStore</a>
-      </div>
+      <p>Molecular dynamics, evolution, protein analysis -- biotech simulations in your browser. Free forever.</p>
+      <span class="count">6 simulations</span>
     </section>
 
-    <section style="max-width:900px;margin:0 auto;padding:0 1.5rem 2rem">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem">
-        <div style="background:#171717;border:1px solid #262626;border-radius:12px;padding:1.25rem">
-          <div style="font-size:1.5rem;margin-bottom:0.5rem">&#x1f4da;</div>
-          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:0.35rem">Libraries</h3>
-          <p style="color:#a3a3a3;font-size:0.82rem;line-height:1.5;margin:0">Pure TypeScript. Sentiment, emotion, language, date, address, name parsing. Import via npm or ESM URL. Zero download, instant.</p>
-        </div>
-        <div style="background:#171717;border:1px solid #262626;border-radius:12px;padding:1.25rem">
-          <div style="font-size:1.5rem;margin-bottom:0.5rem">&#x1f9e0;</div>
-          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:0.35rem">Models</h3>
-          <p style="color:#a3a3a3;font-size:0.82rem;line-height:1.5;margin:0">AI that downloads once to your GPU. Food recognition, plant ID, smart search, OCR, receipt scanning. Powered by Transformers.js.</p>
-        </div>
-        <div style="background:#171717;border:1px solid #262626;border-radius:12px;padding:1.25rem">
-          <div style="font-size:1.5rem;margin-bottom:0.5rem">&#x1f916;</div>
-          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:0.35rem">Agents</h3>
-          <p style="color:#a3a3a3;font-size:0.82rem;line-height:1.5;margin:0">Full AI assistants. Add your API key once — chat with documents, summarize, write, explain code. You pay your provider directly.</p>
-        </div>
+    <div class="grid">
+      <div class="card">
+        <a href="/items/cell-counter/" class="card-link">
+          <div class="card-icon" style="background:#10b981">&#x1f916;</div>
+          <div class="card-body">
+            <div class="card-name">Cell Counter</div>
+            <div class="card-desc">Detect and classify blood cells in microscope view. RBC, WBC, platelets. Pie chart distribution. Manual vs AI count.</div>
+          </div>
+        </a>
+        <a href="/items/cell-counter/" class="card-cta">Open &#x2192;</a>
       </div>
-    </section>
 
-    <section>
-      <div class="tabs">
-          <button class="tab active" onclick="switchTab('all')">All <span class="tab-count">2</span></button>
-
-        </div>
-
-        <div class="toolbar">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search agents..." autocomplete="off" />
-        <button class="filter-btn active" onclick="filterCategory('all')">All</button>
-        <button class="filter-btn" onclick="filterCategory('simulation')">Simulation</button>
-        <button class="filter-btn" onclick="filterCategory('evolution')">Evolution</button>
-        <span class="agent-count" id="agentCount">2 agents</span>
+      <div class="card">
+        <a href="/items/gene-expression/" class="card-link">
+          <div class="card-icon" style="background:#10b981">&#x1f52c;</div>
+          <div class="card-body">
+            <div class="card-name">Gene Expression</div>
+            <div class="card-desc">Animate DNA&#x2192;mRNA&#x2192;Protein. Click bases to mutate -- see silent, missense, and nonsense mutations. Codon table included.</div>
+          </div>
+        </a>
+        <a href="/items/gene-expression/" class="card-cta">Open &#x2192;</a>
       </div>
-            <div class="agents-grid" id="agentsGrid">
-        <div class="agent-card" data-category="simulation" data-store-type="behavior" data-name="molecular dynamics" data-desc="atoms interacting via lennard-jones potential. adjust temperature for phase transitions: solid → liquid → gas. click to add energy.">
-          <a href="/items/molecular-dynamics/" class="agent-card-body">
-            <div class="agent-icon" style="background:#10b981">⚛️</div>
-            <div class="agent-body">
-              <span class="agent-name">Molecular Dynamics</span>
-              <span class="agent-desc">Atoms interacting via Lennard-Jones potential. Adjust temper...</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/molecular-dynamics/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
 
-        <div class="agent-card" data-category="evolution" data-store-type="behavior" data-name="evolution simulator" data-desc="natural selection in action. creatures eat, reproduce with mutations, evolve traits. add predators for selection pressure.">
-          <a href="/items/evolution-sim/" class="agent-card-body">
-            <div class="agent-icon" style="background:#22c55e">🌿</div>
-            <div class="agent-body">
-              <span class="agent-name">Evolution Simulator</span>
-              <span class="agent-desc">Natural selection in action. Creatures eat, reproduce with m...</span>
-              <div class="agent-meta">
-                <span class="tag" style="background:rgba(124,58,237,0.15);color:#a78bfa">behavior</span>
-                <span class="tag"></span>
-              </div>
-            </div>
-          </a>
-          <a href="/items/evolution-sim/" class="agent-cta">
-            <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
-            Open
-          </a>
-        </div>
+      <div class="card">
+        <a href="/items/molecular-dynamics/" class="card-link">
+          <div class="card-icon" style="background:#10b981">&#x269b;&#xfe0f;</div>
+          <div class="card-body">
+            <div class="card-name">Molecular Dynamics</div>
+            <div class="card-desc">Atoms interacting via Lennard-Jones potential. Adjust temperature for phase transitions: solid &#x2192; liquid &#x2192; gas. Click to add energy.</div>
+          </div>
+        </a>
+        <a href="/items/molecular-dynamics/" class="card-cta">Open &#x2192;</a>
       </div>
-    </section>
+
+      <div class="card">
+        <a href="/items/evolution-sim/" class="card-link">
+          <div class="card-icon" style="background:#22c55e">&#x1f33f;</div>
+          <div class="card-body">
+            <div class="card-name">Evolution Simulator</div>
+            <div class="card-desc">Natural selection in action. Creatures eat, reproduce with mutations, evolve traits. Add predators for selection pressure.</div>
+          </div>
+        </a>
+        <a href="/items/evolution-sim/" class="card-cta">Open &#x2192;</a>
+      </div>
+
+      <div class="card">
+        <a href="/items/protein-predictor/" class="card-link">
+          <div class="card-icon" style="background:#10b981">&#x1f9ec;</div>
+          <div class="card-body">
+            <div class="card-name">Protein Predictor</div>
+            <div class="card-desc">Paste an amino acid sequence, get secondary structure prediction. ESM-2 model (Meta) running in browser via WebGPU.</div>
+          </div>
+        </a>
+        <a href="/items/protein-predictor/" class="card-cta">Open &#x2192;</a>
+      </div>
+
+      <div class="card">
+        <a href="/items/molecule-predict/" class="card-link">
+          <div class="card-icon" style="background:#a855f7">&#x1f48a;</div>
+          <div class="card-body">
+            <div class="card-name">Molecule Analyzer</div>
+            <div class="card-desc">Enter SMILES notation, see 2D structure + molecular weight + LogP + drug-likeness (Lipinski Rule of 5). 10 preset molecules.</div>
+          </div>
+        </a>
+        <a href="/items/molecule-predict/" class="card-cta">Open &#x2192;</a>
+      </div>
+    </div>
   </main>
 
-  <!-- API_KEYS_SECTION -->
-
-  <section class="container" style="margin-top:2rem">
-    <div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:1.5rem;text-align:center">
-      <h2 style="font-family:var(--font-display);font-size:1.25rem;margin-bottom:0.5rem">Bring Your Own API Key</h2>
-      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem;max-width:500px;margin-left:auto;margin-right:auto">
-        Some agents use AI providers (OpenAI, Claude, Gemini). Add your API key once —
-        the platform securely stores it and injects it for you. You pay your provider directly.
-      </p>
-      <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem">
-        <span style="display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.75rem;border-radius:8px;border:1px solid var(--line);font-size:0.82rem;color:var(--muted)">OpenAI</span>
-        <span style="display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.75rem;border-radius:8px;border:1px solid var(--line);font-size:0.82rem;color:var(--muted)">Anthropic</span>
-        <span style="display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.75rem;border-radius:8px;border:1px solid var(--line);font-size:0.82rem;color:var(--muted)">Google AI</span>
-        <span style="display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.75rem;border-radius:8px;border:1px solid var(--line);font-size:0.82rem;color:var(--muted)">Groq</span>
-        <span style="display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.75rem;border-radius:8px;border:1px solid var(--line);font-size:0.82rem;color:var(--muted)">OpenRouter</span>
-      </div>
-      <a href="/v1/keys" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1.25rem;border-radius:10px;background:var(--accent);color:white;font-weight:600;font-size:0.88rem;text-decoration:none">Manage API Keys</a>
-      <p style="color:var(--muted-soft);font-size:0.72rem;margin-top:0.5rem">Encrypted with AES-256-GCM. Keys never leave the platform server.</p>
-    </div>
-  </section>
-
-  <!-- Where everything lives -->
-  <section class="container" style="padding-top:2rem;padding-bottom:2rem">
-    <p style="text-align:center;color:var(--muted);font-size:0.9rem;margin-bottom:2rem">
-      Looking for apps? Visit <a href="https://freeappstore.online">FreeAppStore</a> — free-forever web apps.
-    </p>
-
-    <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin-bottom:0.4rem">Where everything lives</h2>
-    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.25rem">A map of every URL across the agent stores. Bookmark this page.</p>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;font-size:0.82rem">
-      <div>
-        <strong style="color:var(--ink);display:block;margin-bottom:0.4rem">For users</strong>
-        <a href="https://freebiostore.online" style="display:block;color:var(--muted)">freebiostore.online — AI tools</a>
-        <a href="https://freeappstore.online" style="display:block;color:var(--muted)">freeappstore.online — free apps</a>
-        <a href="https://freegamestore.online" style="display:block;color:var(--muted)">freegamestore.online — free games</a>
-        <a href="https://freewebstore.online" style="display:block;color:var(--muted)">freewebstore.online — free sites</a>
-      </div>
-      <div>
-        <strong style="color:var(--ink);display:block;margin-bottom:0.4rem">For developers</strong>
-        <a href="/console/" style="display:block;color:var(--muted)">console — creator dashboard</a>
-        <a href="/skills.md" style="display:block;color:var(--muted)">/skills.md — platform guide</a>
-        <a href="https://github.com/FreeBioStore/platform" style="display:block;color:var(--muted)">github.com/FreeBioStore — source</a>
-      </div>
-      <div>
-        <strong style="color:var(--ink);display:block;margin-bottom:0.4rem">MCP / CLI</strong>
-        <code style="display:block;color:var(--muted);font-size:0.78rem">npx mcp-remote https://mcp.freebiostore.online/mcp</code>
-        <code style="display:block;color:var(--muted);font-size:0.78rem;margin-top:0.3rem">npm i -g @freebiostore/cli</code>
-        <code style="display:block;color:var(--muted);font-size:0.78rem;margin-top:0.1rem">fags init my-agent</code>
-      </div>
-      <div>
-        <strong style="color:var(--ink);display:block;margin-bottom:0.4rem">Pro tier</strong>
-        <a href="https://github.com/ProBioStore" style="display:block;color:var(--muted)">github.com/ProBioStore — source</a>
-      </div>
-    </div>
-  </section>
-
   <footer>
-    <div class="container">
-      <div class="footer-brand">
-        <div class="name">Free<span>Agent</span>Store</div>
-        <p>49 AI tools — libraries, models, and agents. Free forever, open source, runs on your device.</p>
-      </div>
-      <div class="footer-links">
-        <a href="/">Agents</a>
-        <a href="/about/">About</a>
-        <a href="/get-started/">Get Started</a>
-        <a href="/console/">Console</a>
-        <a href="/skills.md">Docs</a>
-        <a href="https://github.com/FreeBioStore</a>
-      </div>
-      <div class="footer-stores">
-        <strong style="color:var(--muted);font-size:0.72rem">FreeStore Family</strong>
-        <a href="https://freeappstore.online">FreeAppStore</a>
-        <a href="https://freegamestore.online">FreeGameStore</a>
-        <a href="https://freewebstore.online">FreeWebStore</a>
-        <a href="https://freebiostore.online"><strong style="color:var(--muted)">FreeBioStore</strong></a>
-      </div>
-    </div>
+    <div class="container">FreeBioStore -- free biotech simulations, open source.</div>
   </footer>
-
-  <script>
-    var _tab = 'all';
-    var _category = 'all';
-    var _search = '';
-
-    function switchTab(tab) {
-      _tab = tab;
-      document.querySelectorAll('.tab').forEach(function(t) {
-        var label = t.textContent.trim().split(' ')[0].toLowerCase();
-        t.classList.toggle('active', label === tab || (tab === 'all' && label === 'all'));
-      });
-      applyFilters();
-    }
-
-    function filterCategory(cat) {
-      _category = cat;
-      document.querySelectorAll('.toolbar .filter-btn').forEach(function(b) {
-        b.classList.toggle('active', b.textContent.toLowerCase() === cat || (cat === 'all' && b.textContent === 'All'));
-      });
-      applyFilters();
-    }
-
-    function applyFilters() {
-      var cards = document.querySelectorAll('.agent-card');
-      var visible = 0;
-      cards.forEach(function(c) {
-        var tabMatch = _tab === 'all' || c.dataset.storeType === _tab;
-        var catMatch = _category === 'all' || c.dataset.category === _category;
-        var searchMatch = !_search || (c.dataset.name && c.dataset.name.includes(_search)) || (c.dataset.desc && c.dataset.desc.includes(_search));
-        var show = tabMatch && catMatch && searchMatch;
-        c.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-      document.getElementById('agentCount').textContent = visible + ' agent' + (visible !== 1 ? 's' : '');
-    }
-
-    document.getElementById('searchInput').addEventListener('input', function(e) {
-      _search = e.target.value.toLowerCase().trim();
-      applyFilters();
-    });
-  </script>
-
-  <script>
-    (function() {
-      // Handle login callback: /?login=success#session=<token>
-      if (location.search.includes('login=success') && location.hash.startsWith('#session=')) {
-        var token = location.hash.slice('#session='.length);
-        if (token) {
-          localStorage.setItem('fags_session', JSON.stringify({ token: token }));
-          // Clean URL
-          history.replaceState(null, '', '/');
-          location.reload();
-          return;
-        }
-      }
-
-      var session = null;
-      try {
-        var stored = localStorage.getItem('fags_session');
-        if (stored) session = JSON.parse(stored);
-      } catch (_) {}
-
-      var loginEl = document.getElementById('auth-login');
-      var userEl = document.getElementById('auth-user');
-      var avatarEl = document.getElementById('auth-avatar');
-      var signoutEl = document.getElementById('auth-signout');
-
-      if (session && session.token) {
-        // Decode payload to get avatar + login
-        try {
-          var parts = session.token.split('.');
-          var payload = JSON.parse(atob(parts[0]));
-          if (payload.exp && payload.exp < Date.now() / 1000) {
-            // Expired — clear and show login
-            localStorage.removeItem('fags_session');
-            session = null;
-          } else {
-            avatarEl.src = payload.avatar || '';
-            avatarEl.alt = payload.login || '';
-            userEl.style.display = 'flex';
-          }
-        } catch (_) {
-          localStorage.removeItem('fags_session');
-          session = null;
-        }
-      }
-
-      if (!session) {
-        loginEl.style.display = 'inline-block';
-      }
-
-      signoutEl.addEventListener('click', function() {
-        fetch('/v1/auth/logout', { method: 'POST' }).finally(function() {
-          localStorage.removeItem('fags_session');
-          location.reload();
-        });
-      });
-    })();
-  </script>
 </body>
 </html>
