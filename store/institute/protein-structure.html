@@ -42,6 +42,11 @@
     .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
     code{background:#1a1a1a;padding:.15rem .35rem;border-radius:4px;font-size:.82rem;color:#e5e5e5}
     footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+    .kids-explain{display:none;background:#1a1a2e;border:1px solid #2d2d5e;border-radius:10px;padding:.75rem 1rem;margin:.75rem 0;font-size:.85rem;line-height:1.6}
+    .kids-explain .emoji{font-size:1.2rem;margin-right:.35rem}
+    .kids-explain b{color:#fbbf24}
+    body.kids-mode .kids-explain{display:block}
+    body.kids-mode .section h2::after{content:" \1F9D2";font-size:.8em}
   </style>
 </head>
 <body>
@@ -51,7 +56,7 @@
         <span class="brand-emoji">🧬</span>
         <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Educational Resources</span></span>
       </a>
-      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a></nav>
+      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a><button onclick="document.body.classList.toggle('kids-mode');this.textContent=document.body.classList.contains('kids-mode')?'\uD83C\uDF93 Expert':'\uD83E\uDDD2 Kids'" style="padding:.25rem .6rem;border-radius:6px;border:1px solid #333;background:#171717;color:#fafafa;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit">\uD83E\uDDD2 Kids</button></nav>
     </div>
   </header>
 
@@ -94,6 +99,7 @@
         <li><strong>Domains</strong> — independently folding units within a protein (typically 50-300 residues). Many proteins are multi-domain. Domain databases: Pfam (protein families), InterPro, SMART.</li>
         <li><strong>Motifs</strong> — short, conserved sequence patterns associated with specific functions. Examples: KDEL (ER retention), NLS (nuclear localization), CAAX (prenylation signal). Database: PROSITE.</li>
       </ul>
+      <div class="kids-explain"><span class="emoji">&#128207;</span> Think of a protein like a really long LEGO chain. The <b>primary structure</b> is just the order of the LEGO bricks. But here's the cool part — once you connect them all in the right order, the chain automatically folds up into an amazing 3D shape, like origami! The shape is what gives the protein its superpowers.</div>
     </section>
 
     <section class="section" id="secondary">
@@ -262,6 +268,7 @@
         <li>Does not predict the effects of mutations, post-translational modifications, or ligand binding on structure (though fine-tuned variants are being developed).</li>
         <li>Not a substitute for experimental structures when high accuracy is critical (e.g., drug binding sites where sub-angstrom precision matters).</li>
       </ul>
+      <div class="kids-explain"><span class="emoji">&#129302;</span> <b>AlphaFold</b> is like an AI that solves puzzles. Scientists spent 50 years trying to figure out how proteins fold into their 3D shapes. Then Google's AI cracked it! Now it has predicted the shape of almost every protein known to science — over 200 million of them. The scientists who built it won the Nobel Prize!</div>
     </section>
 
     <section class="section" id="pdb">

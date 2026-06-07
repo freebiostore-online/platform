@@ -42,6 +42,11 @@
     .card .meta{font-size:.65rem;color:#525252;margin-top:.25rem}
     code{background:#1a1a1a;padding:.15rem .35rem;border-radius:4px;font-size:.82rem;color:#e5e5e5}
     footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+    .kids-explain{display:none;background:#1a1a2e;border:1px solid #2d2d5e;border-radius:10px;padding:.75rem 1rem;margin:.75rem 0;font-size:.85rem;line-height:1.6}
+    .kids-explain .emoji{font-size:1.2rem;margin-right:.35rem}
+    .kids-explain b{color:#fbbf24}
+    body.kids-mode .kids-explain{display:block}
+    body.kids-mode .section h2::after{content:" \1F9D2";font-size:.8em}
   </style>
 </head>
 <body>
@@ -51,7 +56,7 @@
         <span class="brand-emoji">🧬</span>
         <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Educational Resources</span></span>
       </a>
-      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a></nav>
+      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a><button onclick="document.body.classList.toggle('kids-mode');this.textContent=document.body.classList.contains('kids-mode')?'\uD83C\uDF93 Expert':'\uD83E\uDDD2 Kids'" style="padding:.25rem .6rem;border-radius:6px;border:1px solid #333;background:#171717;color:#fafafa;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit">\uD83E\uDDD2 Kids</button></nav>
     </div>
   </header>
 
@@ -93,6 +98,7 @@
         <li><strong>2020</strong> — Charpentier and Doudna awarded the Nobel Prize in Chemistry for developing CRISPR-Cas9 as a gene-editing tool.</li>
         <li><strong>2023</strong> — FDA approves Casgevy (exagamglogene autotemcel), the first CRISPR-based therapy, for sickle cell disease and beta-thalassemia.</li>
       </ul>
+      <div class="kids-explain"><span class="emoji">&#9986;&#65039;</span> <b>CRISPR</b> is like a word processor for DNA. You can find a specific word (gene), delete it, or replace it with a new one. Scientists use it to fix genetic diseases! Bacteria invented it millions of years ago to fight viruses, and now we've learned to use it ourselves.</div>
     </section>
 
     <section class="section" id="cas9">
@@ -289,6 +295,7 @@
         <li><strong>Lineage tracing</strong> — CRISPR barcoding records cell lineage histories. Introduce evolving barcodes, then read them with scRNA-seq to reconstruct developmental trees.</li>
         <li><strong>CRISPR imaging</strong> — dCas9-GFP labels specific genomic loci for live-cell imaging. Visualize chromosome dynamics, gene positioning, and nuclear organization.</li>
       </ul>
+      <div class="kids-explain"><span class="emoji">&#127793;</span> CRISPR is being used for SO many things! Doctors are using it to cure blood diseases like sickle cell. Farmers are using it to make crops that resist diseases. Scientists even built <b>CRISPR detectors</b> that can spot a virus in your body — like a COVID test but using molecular scissors as the sensor!</div>
     </section>
 
     <section class="section" id="ethics">

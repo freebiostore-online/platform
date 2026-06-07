@@ -46,6 +46,11 @@
     th{background:var(--panel);color:var(--ink);font-weight:600}
     td{color:#a3a3a3}
     footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;font-size:.75rem;color:#525252}
+    .kids-explain{display:none;background:#1a1a2e;border:1px solid #2d2d5e;border-radius:10px;padding:.75rem 1rem;margin:.75rem 0;font-size:.85rem;line-height:1.6}
+    .kids-explain .emoji{font-size:1.2rem;margin-right:.35rem}
+    .kids-explain b{color:#fbbf24}
+    body.kids-mode .kids-explain{display:block}
+    body.kids-mode .section h2::after{content:" \1F9D2";font-size:.8em}
   </style>
 </head>
 <body>
@@ -55,7 +60,7 @@
         <span class="brand-emoji">🧬</span>
         <span><span class="brand-text">Biotech Institute</span><br><span class="brand-tag">Educational Resources</span></span>
       </a>
-      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a></nav>
+      <nav><a href="/institute/">Overview</a><a href="/institute/molecular-biology">Molecular</a><a href="/institute/crispr">CRISPR</a><a href="/institute/protein-structure">Proteins</a><a href="/institute/genomics">Genomics</a><a href="/institute/bioinformatics">Bioinfo</a><a href="/">Simulations</a><button onclick="document.body.classList.toggle('kids-mode');this.textContent=document.body.classList.contains('kids-mode')?'\uD83C\uDF93 Expert':'\uD83E\uDDD2 Kids'" style="padding:.25rem .6rem;border-radius:6px;border:1px solid #333;background:#171717;color:#fafafa;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit">\uD83E\uDDD2 Kids</button></nav>
     </div>
   </header>
 
@@ -115,6 +120,7 @@
         <li><strong>Eukaryotes</strong> — multiple linear chromosomes (human: 3.2 billion bp across 23 pairs, ~20,000 protein-coding genes). DNA wrapped around histone proteins into nucleosomes, forming chromatin. Condensed into visible chromosomes during cell division.</li>
         <li><strong>Non-coding DNA</strong> — in humans, only ~1.5% of the genome encodes proteins. The rest includes regulatory elements (promoters, enhancers, silencers), introns, transposable elements (45% of human genome), and sequences of unknown function.</li>
       </ul>
+      <div class="kids-explain"><span class="emoji">&#129516;</span> <b>DNA</b> is like a recipe book for building YOU. It has 3 billion letters that spell out instructions for everything — your eye color, how tall you are, even how your brain works! The letters are A, T, G, and C, and they always pair up: A with T, G with C. It's shaped like a twisted ladder called a double helix.</div>
     </section>
 
     <section class="section" id="rna">
@@ -284,6 +290,7 @@
         <li><strong>Immune</strong> — antibodies (immunoglobulins), T-cell receptors, complement proteins, MHC molecules.</li>
         <li><strong>Motor</strong> — myosin (muscle contraction), kinesin (cargo transport along microtubules), dynein (flagellar motion, intracellular transport).</li>
       </ul>
+      <div class="kids-explain"><span class="emoji">&#9881;&#65039;</span> <b>Proteins</b> are tiny machines inside your body. DNA is the blueprint, but proteins do the actual work — they digest food, fight germs, carry oxygen, and build muscles. Your body has over 80,000 different kinds of protein machines, each folded into a special shape that lets it do its job!</div>
     </section>
 
     <section class="section" id="resources">
