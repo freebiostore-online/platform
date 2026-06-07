@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Molecule Property Predictor — FreeBioStore</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;color:#fafafa;font-family:'Manrope',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:0 1rem}
+    h1{font-size:1.3rem;font-weight:700;margin:1.25rem 0 .25rem} h1 span{color:#10b981}
+    .sub{color:#737373;font-size:.85rem;margin-bottom:1rem;text-align:center;max-width:600px}
+    .panel{background:#171717;border:1px solid #262626;border-radius:12px;padding:1.25rem;width:100%;max-width:800px;margin-bottom:.75rem}
+    .panel h2{font-size:.9rem;font-weight:600;margin-bottom:.75rem;color:#a3a3a3}
+    input[type=text]{width:100%;background:#0a0a0a;border:1px solid #333;border-radius:8px;color:#fafafa;font-family:'Courier New',monospace;font-size:.85rem;padding:.6rem;line-height:1.4}
+    input[type=text]:focus{outline:none;border-color:#10b981}
+    .presets{display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap}
+    button{padding:.4rem .9rem;border-radius:8px;border:1px solid #333;background:#171717;color:#fafafa;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+    button:hover{border-color:#10b981;color:#10b981}
+    button.primary{background:#10b981;border-color:#10b981;color:#fff}
+    button.primary:hover{background:#059669}
+    .actions{display:flex;gap:.5rem;margin-top:.75rem;align-items:center}
+    .status{font-size:.78rem;color:#737373;margin-left:.5rem}
+    .status.error{color:#ef4444}
+    .results{display:none}
+    .results.visible{display:block}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem}
+    @media(max-width:650px){.two-col{grid-template-columns:1fr}}
+    .mol-canvas-wrap{background:#0a0a0a;border:1px solid #262626;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:260px;position:relative}
+    canvas{border-radius:8px}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin-bottom:.75rem}
+    .stat-card{background:#0a0a0a;border:1px solid #262626;border-radius:8px;padding:.6rem .75rem}
+    .stat-label{font-size:.7rem;color:#525252;margin-bottom:.15rem}
+    .stat-value{font-size:1.1rem;font-weight:700;color:#10b981}
+    .stat-unit{font-size:.72rem;color:#525252;font-weight:400}
+    .lipinski{margin-bottom:.75rem}
+    .lipinski-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+    .verdict{font-size:1rem;font-weight:700;padding:.3rem .75rem;border-radius:6px;display:inline-block}
+    .verdict.pass{background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)}
+    .verdict.fail{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+    .rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.4rem}
+    .rule{background:#0a0a0a;border:1px solid #262626;border-radius:6px;padding:.5rem .6rem;font-size:.78rem}
+    .rule-name{color:#525252;font-size:.7rem}
+    .rule-val{font-weight:600}
+    .rule-val.ok{color:#10b981}
+    .rule-val.bad{color:#ef4444}
+    .rule-check{float:right;font-size:.9rem}
+    .properties-table{width:100%;border-collapse:collapse;font-size:.78rem}
+    .properties-table th{text-align:left;color:#525252;font-weight:500;padding:.4rem .5rem;border-bottom:1px solid #262626}
+    .properties-table td{padding:.35rem .5rem;border-bottom:1px solid #1a1a1a;color:#a3a3a3}
+    .properties-table td:first-child{color:#fafafa;font-weight:600}
+    .formula-display{font-family:'Courier New',monospace;font-size:1rem;color:#fafafa;margin-bottom:.5rem}
+    .formula-display sub{font-size:.7rem}
+    .footer{font-size:.75rem;color:#525252;margin:.5rem 0 1.5rem;display:flex;gap:1.25rem}
+    .footer a{color:#525252;text-decoration:none}
+    .footer a:hover{color:#10b981}
+  </style>
+</head>
+<body>
+  <h1>Molecule Property <span>Predictor</span></h1>
+  <p class="sub">Enter a SMILES string to visualize molecular structure, compute physicochemical properties, and evaluate drug-likeness via Lipinski's Rule of Five. Everything runs locally in your browser.</p>
+
+  <!-- Input panel -->
+  <div class="panel">
+    <h2>SMILES Input</h2>
+    <div class="presets">
+      <button onclick="loadMol('aspirin')">Aspirin</button>
+      <button onclick="loadMol('caffeine')">Caffeine</button>
+      <button onclick="loadMol('glucose')">Glucose</button>
+      <button onclick="loadMol('ethanol')">Ethanol</button>
+      <button onclick="loadMol('ibuprofen')">Ibuprofen</button>
+      <button onclick="loadMol('penicillin')">Penicillin G</button>
+      <button onclick="loadMol('dopamine')">Dopamine</button>
+      <button onclick="loadMol('cholesterol')">Cholesterol</button>
+      <button onclick="loadMol('paracetamol')">Paracetamol</button>
+      <button onclick="loadMol('nicotine')">Nicotine</button>
+    </div>
+    <input type="text" id="smiles-input" placeholder="Enter SMILES notation (e.g. CC(=O)Oc1ccccc1C(=O)O)" spellcheck="false">
+    <div class="actions">
+      <button class="primary" onclick="analyze()">Analyze Molecule</button>
+      <span class="status" id="status"></span>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="panel results" id="results">
+    <div class="two-col">
+      <!-- 2D Structure -->
+      <div>
+        <h2>2D Structure</h2>
+        <div class="mol-canvas-wrap">
+          <canvas id="mol-canvas" width="350" height="260"></canvas>
+        </div>
+      </div>
+      <!-- Molecular formula + quick stats -->
+      <div>
+        <h2>Molecular Identity</h2>
+        <div class="formula-display" id="formula"></div>
+        <div id="mol-name" style="font-size:.82rem;color:#a3a3a3;margin-bottom:.75rem"></div>
+        <div class="stats-grid" id="quick-stats"></div>
+      </div>
+    </div>
+
+    <!-- Lipinski's Rule of 5 -->
+    <div class="lipinski">
+      <div class="lipinski-header">
+        <h2 style="margin-bottom:0">Lipinski's Rule of Five</h2>
+        <div class="verdict" id="lipinski-verdict"></div>
+      </div>
+      <div class="rules-grid" id="lipinski-rules"></div>
+    </div>
+
+    <!-- Full properties table -->
+    <h2>Computed Properties</h2>
+    <table class="properties-table" id="props-table">
+      <thead><tr><th>Property</th><th>Value</th><th>Method</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <a href="https://freebiostore.pages.dev">FreeBioStore</a>
+    <span>All calculations performed locally</span>
+  </div>
+
+  <script>
+    // === Preset molecules ===
+    const MOLECULES = {
+      aspirin:     { smiles: 'CC(=O)Oc1ccccc1C(=O)O',         name: 'Aspirin (Acetylsalicylic acid)' },
+      caffeine:    { smiles: 'Cn1c(=O)c2c(ncn2C)n(C)c1=O',    name: 'Caffeine' },
+      glucose:     { smiles: 'OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O', name: 'D-Glucose' },
+      ethanol:     { smiles: 'CCO',                             name: 'Ethanol' },
+      ibuprofen:   { smiles: 'CC(C)Cc1ccc(cc1)C(C)C(=O)O',    name: 'Ibuprofen' },
+      penicillin:  { smiles: 'CC1(C)SC2C(NC(=O)Cc3ccccc3)C(=O)N2C1C(=O)O', name: 'Penicillin G' },
+      dopamine:    { smiles: 'NCCc1ccc(O)c(O)c1',              name: 'Dopamine' },
+      cholesterol: { smiles: 'CC(C)CCCC(C)C1CCC2C1(CCC3C2CC=C4CC(O)CCC34C)C', name: 'Cholesterol' },
+      paracetamol: { smiles: 'CC(=O)Nc1ccc(O)cc1',             name: 'Paracetamol (Acetaminophen)' },
+      nicotine:    { smiles: 'CN1CCCC1c1cccnc1',               name: 'Nicotine' },
+    };
+
+    // === Atomic weights ===
+    const ATOMIC_WEIGHT = { C: 12.011, H: 1.008, O: 15.999, N: 14.007, S: 32.065, P: 30.974, F: 18.998, Cl: 35.453, Br: 79.904, I: 126.904 };
+    const ATOM_COLORS = { C: '#a3a3a3', H: '#fafafa', O: '#ef4444', N: '#3b82f6', S: '#eab308', P: '#f97316', F: '#22c55e', Cl: '#22c55e', Br: '#a855f7', I: '#a855f7' };
+    const ATOM_RADII = { C: 16, H: 10, O: 14, N: 14, S: 16, P: 16, F: 12, Cl: 16, Br: 18, I: 20 };
+
+    // === SMILES parser (simplified but handles common organic molecules) ===
+    function parseSmiles(smiles) {
+      const atoms = [];
+      const bonds = [];
+      const stack = []; // for branches
+      const ringOpens = {}; // for ring closures
+      let current = -1;
+      let i = 0;
+      let bondOrder = 1;
+      let inBracket = false;
+      let bracketAtom = '';
+      const aromaticAtoms = new Set();
+
+      // Preprocess: identify aromatic atoms by lowercase letters
+      while (i < smiles.length) {
+        const ch = smiles[i];
+
+        if (ch === '[') {
+          inBracket = true;
+          bracketAtom = '';
+          i++;
+          continue;
+        }
+        if (ch === ']') {
+          inBracket = false;
+          // Parse bracket atom: may have @, H, charges, etc. Just extract the element
+          let elem = '';
+          let hCount = 0;
+          let j = 0;
+          // Skip @@ or @
+          while (j < bracketAtom.length) {
+            const bc = bracketAtom[j];
+            if (bc === '@') { j++; if (j < bracketAtom.length && bracketAtom[j] === '@') j++; continue; }
+            if (bc >= 'A' && bc <= 'Z') {
+              elem = bc;
+              if (j + 1 < bracketAtom.length && bracketAtom[j + 1] >= 'a' && bracketAtom[j + 1] <= 'z') {
+                elem += bracketAtom[j + 1]; j++;
+              }
+              j++; continue;
+            }
+            if (bc >= 'a' && bc <= 'z' && !elem) {
+              elem = bc.toUpperCase();
+              aromaticAtoms.add(atoms.length);
+              j++; continue;
+            }
+            if (bc === 'H') {
+              j++;
+              if (j < bracketAtom.length && bracketAtom[j] >= '0' && bracketAtom[j] <= '9') {
+                hCount = parseInt(bracketAtom[j]); j++;
+              } else { hCount = 1; }
+              continue;
+            }
+            j++;
+          }
+          if (!elem) elem = 'C';
+          const prev = current;
+          current = atoms.length;
+          atoms.push({ element: elem, aromatic: aromaticAtoms.has(current), hCount, charge: 0, x: 0, y: 0 });
+          if (prev >= 0) {
+            const bo = bondOrder === 1 && aromaticAtoms.has(prev) && aromaticAtoms.has(current) ? 1.5 : bondOrder;
+            bonds.push({ from: prev, to: current, order: bo });
+            bondOrder = 1;
+          }
+          i++;
+          continue;
+        }
+        if (inBracket) { bracketAtom += ch; i++; continue; }
+
+        if (ch === '(') { stack.push(current); i++; continue; }
+        if (ch === ')') { current = stack.pop(); i++; continue; }
+        if (ch === '=') { bondOrder = 2; i++; continue; }
+        if (ch === '#') { bondOrder = 3; i++; continue; }
+        if (ch === '-') { bondOrder = 1; i++; continue; }
+        if (ch === '/' || ch === '\\') { i++; continue; } // cis/trans - skip
+        if (ch === '.') { current = -1; i++; continue; } // disconnected
+
+        // Ring closure digit
+        if (ch >= '0' && ch <= '9') {
+          const ringId = ch;
+          if (ringOpens[ringId] !== undefined) {
+            const ringStart = ringOpens[ringId];
+            const bo = aromaticAtoms.has(ringStart) && aromaticAtoms.has(current) ? 1.5 : bondOrder;
+            bonds.push({ from: current, to: ringStart, order: bo });
+            delete ringOpens[ringId];
+            bondOrder = 1;
+          } else {
+            ringOpens[ringId] = current;
+          }
+          i++;
+          continue;
+        }
+
+        // Atom letters
+        if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
+          let elem = '';
+          const isAromatic = (ch >= 'a' && ch <= 'z');
+          if (isAromatic) {
+            elem = ch.toUpperCase();
+          } else {
+            elem = ch;
+            // Two-letter elements: Cl, Br
+            if (i + 1 < smiles.length) {
+              const next = smiles[i + 1];
+              if ((elem === 'C' && next === 'l') || (elem === 'B' && next === 'r')) {
+                elem += next;
+                i++;
+              }
+            }
+          }
+
+          const prev = current;
+          current = atoms.length;
+          if (isAromatic) aromaticAtoms.add(current);
+          atoms.push({ element: elem, aromatic: isAromatic, hCount: -1, charge: 0, x: 0, y: 0 });
+
+          if (prev >= 0) {
+            const bo = bondOrder === 1 && aromaticAtoms.has(prev) && aromaticAtoms.has(current) ? 1.5 : bondOrder;
+            bonds.push({ from: prev, to: current, order: bo });
+            bondOrder = 1;
+          }
+          i++;
+          continue;
+        }
+
+        i++; // skip unknown characters
+      }
+
+      // Add implicit hydrogens
+      const bondCounts = new Array(atoms.length).fill(0);
+      for (const b of bonds) {
+        bondCounts[b.from] += b.order === 1.5 ? 1 : b.order;
+        bondCounts[b.to] += b.order === 1.5 ? 1 : b.order;
+      }
+
+      const valences = { C: 4, N: 3, O: 2, S: 2, P: 3, F: 1, Cl: 1, Br: 1, I: 1, H: 1 };
+      for (let a = 0; a < atoms.length; a++) {
+        if (atoms[a].hCount >= 0) continue; // explicit H count from bracket
+        const val = valences[atoms[a].element] || 4;
+        let usedVal = bondCounts[a];
+        if (atoms[a].aromatic) usedVal += 1; // aromatic contributes 1 to valence
+        atoms[a].hCount = Math.max(0, Math.round(val - usedVal));
+      }
+
+      return { atoms, bonds };
+    }
+
+    // === 2D layout using force-directed approach ===
+    function layoutMolecule(mol) {
+      const { atoms, bonds } = mol;
+      if (atoms.length === 0) return;
+
+      // Build adjacency
+      const adj = atoms.map(() => []);
+      for (const b of bonds) {
+        adj[b.from].push(b.to);
+        adj[b.to].push(b.from);
+      }
+
+      // Initial placement: use DFS with angle-based positioning
+      const placed = new Set();
+      const BOND_LEN = 40;
+
+      function dfsPlace(idx, x, y, angle, parentAngle) {
+        if (placed.has(idx)) return;
+        placed.add(idx);
+        atoms[idx].x = x;
+        atoms[idx].y = y;
+
+        const neighbors = adj[idx].filter(n => !placed.has(n));
+        if (neighbors.length === 0) return;
+
+        const angleStep = (2 * Math.PI) / Math.max(neighbors.length, 3);
+        let startAngle = parentAngle !== undefined ? parentAngle + Math.PI + angleStep : 0;
+
+        // For chains, alternate angles (zig-zag)
+        if (neighbors.length === 1 && parentAngle !== undefined) {
+          startAngle = parentAngle + (Math.PI / 3); // 60 degree zig-zag
+        }
+
+        for (let i = 0; i < neighbors.length; i++) {
+          const a = startAngle + i * angleStep;
+          const nx = x + Math.cos(a) * BOND_LEN;
+          const ny = y + Math.sin(a) * BOND_LEN;
+          dfsPlace(neighbors[i], nx, ny, a, angle);
+        }
+      }
+
+      // Start from atom with most connections
+      let startIdx = 0;
+      let maxDeg = 0;
+      for (let i = 0; i < atoms.length; i++) {
+        if (adj[i].length > maxDeg) { maxDeg = adj[i].length; startIdx = i; }
+      }
+      dfsPlace(startIdx, 0, 0, 0, undefined);
+
+      // Handle disconnected components
+      for (let i = 0; i < atoms.length; i++) {
+        if (!placed.has(i)) dfsPlace(i, (i % 5) * BOND_LEN, Math.floor(i / 5) * BOND_LEN, 0, undefined);
+      }
+
+      // Force-directed relaxation
+      for (let iter = 0; iter < 150; iter++) {
+        const forces = atoms.map(() => ({ fx: 0, fy: 0 }));
+
+        // Repulsion between all pairs
+        for (let i = 0; i < atoms.length; i++) {
+          for (let j = i + 1; j < atoms.length; j++) {
+            let dx = atoms[j].x - atoms[i].x;
+            let dy = atoms[j].y - atoms[i].y;
+            let d = Math.sqrt(dx * dx + dy * dy) || 0.1;
+            const repulse = 800 / (d * d);
+            const fx = (dx / d) * repulse;
+            const fy = (dy / d) * repulse;
+            forces[i].fx -= fx; forces[i].fy -= fy;
+            forces[j].fx += fx; forces[j].fy += fy;
+          }
+        }
+
+        // Attraction along bonds (spring to ideal length)
+        for (const b of bonds) {
+          let dx = atoms[b.to].x - atoms[b.from].x;
+          let dy = atoms[b.to].y - atoms[b.from].y;
+          let d = Math.sqrt(dx * dx + dy * dy) || 0.1;
+          const attract = (d - BOND_LEN) * 0.1;
+          const fx = (dx / d) * attract;
+          const fy = (dy / d) * attract;
+          forces[b.from].fx += fx; forces[b.from].fy += fy;
+          forces[b.to].fx -= fx; forces[b.to].fy -= fy;
+        }
+
+        // Angular forces for ring planarity — push toward 120-degree angles
+        for (let i = 0; i < atoms.length; i++) {
+          if (adj[i].length >= 2) {
+            for (let j = 0; j < adj[i].length; j++) {
+              for (let k = j + 1; k < adj[i].length; k++) {
+                const a = adj[i][j], b2 = adj[i][k];
+                const dx1 = atoms[a].x - atoms[i].x, dy1 = atoms[a].y - atoms[i].y;
+                const dx2 = atoms[b2].x - atoms[i].x, dy2 = atoms[b2].y - atoms[i].y;
+                const angle = Math.atan2(dy1, dx1) - Math.atan2(dy2, dx2);
+                // Gently push
+                const idealAngle = (2 * Math.PI) / adj[i].length;
+                const angleDiff = angle - idealAngle;
+                if (Math.abs(angleDiff) > 0.1) {
+                  const torque = angleDiff * 0.02;
+                  forces[a].fx += -dy1 * torque * 0.01;
+                  forces[a].fy += dx1 * torque * 0.01;
+                }
+              }
+            }
+          }
+        }
+
+        // Apply forces with damping
+        const damping = Math.max(0.01, 0.5 - iter * 0.003);
+        for (let i = 0; i < atoms.length; i++) {
+          atoms[i].x += Math.max(-5, Math.min(5, forces[i].fx * damping));
+          atoms[i].y += Math.max(-5, Math.min(5, forces[i].fy * damping));
+        }
+      }
+
+      // Center and scale to fit canvas
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (const a of atoms) {
+        minX = Math.min(minX, a.x); maxX = Math.max(maxX, a.x);
+        minY = Math.min(minY, a.y); maxY = Math.max(maxY, a.y);
+      }
+      const cw = 350, ch = 260, pad = 40;
+      const sx = (cw - 2 * pad) / (maxX - minX || 1);
+      const sy = (ch - 2 * pad) / (maxY - minY || 1);
+      const scale = Math.min(sx, sy, 3);
+      const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+      for (const a of atoms) {
+        a.x = cw / 2 + (a.x - cx) * scale;
+        a.y = ch / 2 + (a.y - cy) * scale;
+      }
+    }
+
+    // === Draw molecule on canvas ===
+    function drawMolecule(mol) {
+      const canvas = document.getElementById('mol-canvas');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = 350 * dpr;
+      canvas.height = 260 * dpr;
+      canvas.style.width = '350px';
+      canvas.style.height = '260px';
+      ctx.scale(dpr, dpr);
+
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, 350, 260);
+
+      const { atoms, bonds } = mol;
+      if (atoms.length === 0) return;
+
+      // Draw bonds
+      for (const b of bonds) {
+        const a1 = atoms[b.from], a2 = atoms[b.to];
+        const dx = a2.x - a1.x, dy = a2.y - a1.y;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+        const nx = -dy / len, ny = dx / len; // normal
+
+        ctx.strokeStyle = '#525252';
+        ctx.lineWidth = 1.5;
+
+        if (b.order === 1 || b.order === 1.5) {
+          ctx.beginPath();
+          ctx.moveTo(a1.x, a1.y);
+          ctx.lineTo(a2.x, a2.y);
+          ctx.stroke();
+          if (b.order === 1.5) {
+            // Dashed inner line for aromatic
+            ctx.save();
+            ctx.setLineDash([3, 3]);
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a1.x + nx * 4, a1.y + ny * 4);
+            ctx.lineTo(a2.x + nx * 4, a2.y + ny * 4);
+            ctx.stroke();
+            ctx.restore();
+          }
+        } else if (b.order === 2) {
+          const off = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(a1.x + nx * off, a1.y + ny * off);
+          ctx.lineTo(a2.x + nx * off, a2.y + ny * off);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(a1.x - nx * off, a1.y - ny * off);
+          ctx.lineTo(a2.x - nx * off, a2.y - ny * off);
+          ctx.stroke();
+        } else if (b.order === 3) {
+          const off = 3.5;
+          ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(a1.x + nx * off, a1.y + ny * off); ctx.lineTo(a2.x + nx * off, a2.y + ny * off); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(a1.x - nx * off, a1.y - ny * off); ctx.lineTo(a2.x - nx * off, a2.y - ny * off); ctx.stroke();
+        }
+      }
+
+      // Draw atoms (skip C in organic skeleton unless terminal)
+      const adj = atoms.map(() => 0);
+      for (const b of bonds) { adj[b.from]++; adj[b.to]++; }
+
+      for (let i = 0; i < atoms.length; i++) {
+        const a = atoms[i];
+        const showLabel = a.element !== 'C' || adj[i] <= 1;
+        const r = ATOM_RADII[a.element] || 14;
+
+        if (showLabel) {
+          // Background circle to cover bonds
+          ctx.fillStyle = '#0a0a0a';
+          ctx.beginPath();
+          ctx.arc(a.x, a.y, r * 0.7, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Atom label
+          ctx.fillStyle = ATOM_COLORS[a.element] || '#fafafa';
+          ctx.font = 'bold 12px Manrope';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(a.element, a.x, a.y);
+
+          // Show H count
+          if (a.hCount > 0 && a.element !== 'C') {
+            const hText = a.hCount > 1 ? `H${a.hCount}` : 'H';
+            ctx.font = '9px Manrope';
+            ctx.fillStyle = '#737373';
+            ctx.fillText(hText, a.x + 12, a.y + 1);
+          }
+        } else {
+          // Small dot for carbon skeleton
+          ctx.fillStyle = '#404040';
+          ctx.beginPath();
+          ctx.arc(a.x, a.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    // === Property calculations from SMILES ===
+    function computeProperties(smiles, mol) {
+      const { atoms, bonds } = mol;
+
+      // Count atoms including implicit hydrogens
+      const atomCounts = {};
+      let totalH = 0;
+      for (const a of atoms) {
+        atomCounts[a.element] = (atomCounts[a.element] || 0) + 1;
+        totalH += a.hCount || 0;
+      }
+      atomCounts['H'] = (atomCounts['H'] || 0) + totalH;
+
+      // Molecular weight
+      let mw = 0;
+      for (const [elem, count] of Object.entries(atomCounts)) {
+        mw += (ATOMIC_WEIGHT[elem] || 12) * count;
+      }
+
+      // Molecular formula (Hill system: C first, H second, then alphabetical)
+      let formula = '';
+      const formulaParts = [];
+      if (atomCounts['C']) formulaParts.push({ elem: 'C', count: atomCounts['C'] });
+      if (atomCounts['H']) formulaParts.push({ elem: 'H', count: atomCounts['H'] });
+      const rest = Object.entries(atomCounts).filter(([e]) => e !== 'C' && e !== 'H').sort((a, b) => a[0].localeCompare(b[0]));
+      for (const [elem, count] of rest) formulaParts.push({ elem, count });
+      formula = formulaParts.map(p => p.elem + (p.count > 1 ? p.count : '')).join('');
+      const formulaHtml = formulaParts.map(p => p.elem + (p.count > 1 ? `<sub>${p.count}</sub>` : '')).join('');
+
+      // Heavy atom count (non-H)
+      const heavyAtomCount = atoms.length;
+
+      // Total atom count
+      const totalAtoms = atoms.length + totalH;
+
+      // Count bond types
+      let singleBonds = 0, doubleBonds = 0, tripleBonds = 0, aromaticBonds = 0;
+      for (const b of bonds) {
+        if (b.order === 1) singleBonds++;
+        else if (b.order === 2) doubleBonds++;
+        else if (b.order === 3) tripleBonds++;
+        else if (b.order === 1.5) aromaticBonds++;
+      }
+
+      // Ring count (approximate: bonds - atoms + 1 for connected components)
+      const ringCount = bonds.length - atoms.length + 1;
+
+      // Degree of unsaturation (DBE)
+      const nC = atomCounts['C'] || 0;
+      const nH = atomCounts['H'] || 0;
+      const nN = atomCounts['N'] || 0;
+      const nO = atomCounts['O'] || 0; // not used in DBE formula but useful
+      const nHalogens = (atomCounts['F'] || 0) + (atomCounts['Cl'] || 0) + (atomCounts['Br'] || 0) + (atomCounts['I'] || 0);
+      const dbe = (2 * nC + 2 + nN - nH - nHalogens) / 2;
+
+      // H-bond donors: count OH, NH patterns
+      // Simplified: count N and O atoms that have implicit or explicit H
+      let hbdDonors = 0;
+      for (const a of atoms) {
+        if ((a.element === 'O' || a.element === 'N') && a.hCount > 0) {
+          hbdDonors += a.hCount;
+        }
+      }
+
+      // H-bond acceptors: count O and N atoms
+      let hbaAcceptors = 0;
+      for (const a of atoms) {
+        if (a.element === 'O' || a.element === 'N') hbaAcceptors++;
+      }
+
+      // Rotatable bonds: single bonds between two non-terminal heavy atoms, not in rings
+      // Simplified: count single bonds between heavy atoms with degree > 1
+      const adj = atoms.map(() => []);
+      for (const b of bonds) { adj[b.from].push(b.to); adj[b.to].push(b.from); }
+      let rotatableBonds = 0;
+      for (const b of bonds) {
+        if (b.order === 1 && adj[b.from].length > 1 && adj[b.to].length > 1) {
+          // Exclude amide bonds (C-N where C has double bond to O)
+          // Exclude ring bonds (approximate check)
+          const inRing = isInRing(b.from, b.to, adj, atoms.length);
+          if (!inRing) rotatableBonds++;
+        }
+      }
+
+      // LogP estimate (Wildman-Crippen simplified)
+      // Each atom type contributes a fixed increment
+      const logpContrib = {
+        C: 0.1441,   // aliphatic carbon
+        N: -0.7567,  // nitrogen
+        O: -0.2893,  // oxygen
+        S: 0.6237,   // sulfur
+        F: 0.4118,   // fluorine
+        Cl: 0.6895,  // chlorine
+        Br: 0.8813,  // bromine
+        I: 1.050,    // iodine
+        H: 0.1230,   // hydrogen
+        P: 0.2520,   // phosphorus
+      };
+      let logP = 0;
+      for (const a of atoms) {
+        let contrib = logpContrib[a.element] || 0;
+        // Aromatic carbons are slightly more hydrophobic
+        if (a.element === 'C' && a.aromatic) contrib = 0.1700;
+        // Carbons bonded to O/N are less hydrophobic
+        const hasHeteroNeighbor = adj[atoms.indexOf(a)]?.some(n => atoms[n].element === 'O' || atoms[n].element === 'N');
+        if (a.element === 'C' && hasHeteroNeighbor) contrib -= 0.05;
+        logP += contrib;
+      }
+      // Add contribution of implicit hydrogens
+      logP += totalH * (logpContrib['H'] || 0);
+
+      // Topological Polar Surface Area (TPSA) estimate
+      // Simplified: each O contributes ~20, each N ~26, OH ~20, NH ~26, C=O ~17
+      let tpsa = 0;
+      for (const a of atoms) {
+        if (a.element === 'O') {
+          if (a.hCount > 0) tpsa += 20.23; // OH
+          else {
+            // Check if double-bonded
+            const oIdx = atoms.indexOf(a);
+            const hasDbl = bonds.some(b => (b.from === oIdx || b.to === oIdx) && b.order === 2);
+            tpsa += hasDbl ? 17.07 : 9.23; // C=O vs ether O
+          }
+        }
+        if (a.element === 'N') {
+          if (a.hCount >= 2) tpsa += 26.02; // NH2
+          else if (a.hCount === 1) tpsa += 23.85; // NH
+          else {
+            const nIdx = atoms.indexOf(a);
+            const hasDbl = bonds.some(b => (b.from === nIdx || b.to === nIdx) && b.order === 2);
+            tpsa += hasDbl ? 12.89 : 3.24; // aromatic/sp2 N vs sp3 N
+          }
+        }
+        if (a.element === 'S') {
+          tpsa += a.hCount > 0 ? 38.80 : 25.30;
+        }
+      }
+
+      // Lipinski's Rule of 5
+      const lipinski = {
+        mw: { value: mw, limit: 500, pass: mw <= 500, label: 'MW <= 500 Da' },
+        logP: { value: logP, limit: 5, pass: logP <= 5, label: 'LogP <= 5' },
+        hbd: { value: hbdDonors, limit: 5, pass: hbdDonors <= 5, label: 'H-bond donors <= 5' },
+        hba: { value: hbaAcceptors, limit: 10, pass: hbaAcceptors <= 10, label: 'H-bond acceptors <= 10' },
+      };
+      const lipinskiViolations = Object.values(lipinski).filter(r => !r.pass).length;
+      const lipinskiPass = lipinskiViolations <= 1;
+
+      return {
+        mw, formula, formulaHtml, atomCounts, heavyAtomCount, totalAtoms,
+        singleBonds, doubleBonds, tripleBonds, aromaticBonds,
+        ringCount: Math.max(0, ringCount), dbe,
+        hbdDonors, hbaAcceptors, rotatableBonds,
+        logP, tpsa, lipinski, lipinskiPass, lipinskiViolations
+      };
+    }
+
+    // Simple ring detection: BFS to find if there's a path from 'to' back to 'from' without using the direct edge
+    function isInRing(from, to, adj, n) {
+      const visited = new Set([from]);
+      const queue = [to];
+      visited.add(to);
+      // Try to reach 'from' from 'to' without going through the direct from-to bond
+      const q = [];
+      for (const neighbor of adj[to]) {
+        if (neighbor !== from) q.push(neighbor);
+      }
+      const seen = new Set([to]);
+      while (q.length > 0) {
+        const node = q.shift();
+        if (node === from) return true;
+        if (seen.has(node)) continue;
+        seen.add(node);
+        for (const neighbor of adj[node]) {
+          if (!seen.has(neighbor)) q.push(neighbor);
+        }
+      }
+      return false;
+    }
+
+    // === Display results ===
+    function displayResults(mol, props, molName) {
+      document.getElementById('results').classList.add('visible');
+
+      // Draw structure
+      drawMolecule(mol);
+
+      // Formula
+      document.getElementById('formula').innerHTML = props.formulaHtml;
+      document.getElementById('mol-name').textContent = molName || '';
+
+      // Quick stats
+      document.getElementById('quick-stats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Molecular Weight</div><div class="stat-value">${props.mw.toFixed(2) } <span class="stat-unit">Da</span></div></div>
+        <div class="stat-card"><div class="stat-label">LogP (est.)</div><div class="stat-value">${props.logP.toFixed(2)}</div></div>
+        <div class="stat-card"><div class="stat-label">H-Bond Donors</div><div class="stat-value">${props.hbdDonors}</div></div>
+        <div class="stat-card"><div class="stat-label">H-Bond Acceptors</div><div class="stat-value">${props.hbaAcceptors}</div></div>
+        <div class="stat-card"><div class="stat-label">Rotatable Bonds</div><div class="stat-value">${props.rotatableBonds}</div></div>
+        <div class="stat-card"><div class="stat-label">TPSA</div><div class="stat-value">${props.tpsa.toFixed(1)} <span class="stat-unit">A<sup>2</sup></span></div></div>
+      `;
+
+      // Lipinski
+      const lv = document.getElementById('lipinski-verdict');
+      lv.className = 'verdict ' + (props.lipinskiPass ? 'pass' : 'fail');
+      lv.textContent = props.lipinskiPass
+        ? (props.lipinskiViolations === 0 ? 'PASS — Drug-like' : 'PASS — 1 violation allowed')
+        : `FAIL — ${props.lipinskiViolations} violations`;
+
+      const lr = document.getElementById('lipinski-rules');
+      lr.innerHTML = Object.entries(props.lipinski).map(([key, rule]) => `
+        <div class="rule">
+          <span class="rule-check">${rule.pass ? '&#10003;' : '&#10007;'}</span>
+          <div class="rule-name">${rule.label}</div>
+          <div class="rule-val ${rule.pass ? 'ok' : 'bad'}">${typeof rule.value === 'number' ? rule.value.toFixed(key === 'logP' ? 2 : 0) : rule.value}</div>
+        </div>
+      `).join('');
+
+      // Full properties table
+      const tbody = document.querySelector('#props-table tbody');
+      tbody.innerHTML = [
+        ['Molecular Weight', props.mw.toFixed(3) + ' Da', 'Sum of atomic weights'],
+        ['Molecular Formula', props.formula, 'Hill system'],
+        ['Heavy Atoms', props.heavyAtomCount, 'Count (non-H)'],
+        ['Total Atoms', props.totalAtoms, 'Including implicit H'],
+        ['LogP', props.logP.toFixed(3), 'Wildman-Crippen (simplified)'],
+        ['TPSA', props.tpsa.toFixed(1) + ' A\u00B2', 'Topological polar surface area'],
+        ['H-Bond Donors', props.hbdDonors, 'OH + NH groups'],
+        ['H-Bond Acceptors', props.hbaAcceptors, 'O + N atoms'],
+        ['Rotatable Bonds', props.rotatableBonds, 'Non-ring single bonds'],
+        ['Ring Count', props.ringCount, 'Smallest set (approximate)'],
+        ['Degree of Unsaturation', props.dbe.toFixed(1), '(2C+2+N-H-X)/2'],
+        ['Single Bonds', props.singleBonds, 'Bond order = 1'],
+        ['Double Bonds', props.doubleBonds, 'Bond order = 2'],
+        ['Triple Bonds', props.tripleBonds, 'Bond order = 3'],
+        ['Aromatic Bonds', props.aromaticBonds, 'Bond order = 1.5'],
+      ].map(([prop, val, method]) =>
+        `<tr><td>${prop}</td><td>${val}</td><td style="color:#525252">${method}</td></tr>`
+      ).join('');
+
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // === Global functions ===
+    window.loadMol = function(name) {
+      const mol = MOLECULES[name];
+      if (mol) {
+        document.getElementById('smiles-input').value = mol.smiles;
+      }
+    };
+
+    window.analyze = function() {
+      const smiles = document.getElementById('smiles-input').value.trim();
+      if (!smiles) { setStatus('Enter a SMILES string first', true); return; }
+
+      setStatus('');
+      try {
+        const mol = parseSmiles(smiles);
+        if (mol.atoms.length === 0) { setStatus('Could not parse SMILES — check syntax', true); return; }
+
+        layoutMolecule(mol);
+        const props = computeProperties(smiles, mol);
+
+        // Find molecule name if it matches a preset
+        let molName = '';
+        for (const [key, preset] of Object.entries(MOLECULES)) {
+          if (preset.smiles === smiles) { molName = preset.name; break; }
+        }
+
+        displayResults(mol, props, molName);
+        setStatus(`Analyzed: ${mol.atoms.length} heavy atoms, ${props.formula}`);
+      } catch (err) {
+        setStatus('Parse error: ' + err.message, true);
+        console.error(err);
+      }
+    };
+
+    function setStatus(msg, isError) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.classList.toggle('error', !!isError);
+    }
+
+    // Load default
+    window.loadMol('aspirin');
+  </script>
+</body>
+</html>
