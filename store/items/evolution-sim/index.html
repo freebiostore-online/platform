@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evolution Simulator — FreeBioStore</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;color:#fafafa;font-family:'Manrope',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+    h1{font-size:1.3rem;font-weight:700;margin:1.25rem 0 .25rem} h1 span{color:#22c55e}
+    .sub{color:#737373;font-size:.85rem;margin-bottom:.5rem;text-align:center;max-width:540px}
+    .canvases{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+    canvas{border:1px solid #262626;border-radius:12px}
+    .controls{display:flex;gap:.5rem;margin:.75rem 0;flex-wrap:wrap;justify-content:center;align-items:center}
+    label{font-size:.78rem;color:#a3a3a3;display:flex;align-items:center;gap:.3rem}
+    input[type=range]{width:70px;accent-color:#22c55e}
+    .val{color:#22c55e;font-weight:600;min-width:2rem;font-size:.75rem}
+    button{padding:.4rem .9rem;border-radius:8px;border:1px solid #333;background:#171717;color:#fafafa;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit}
+    button:hover{border-color:#22c55e;color:#22c55e}
+    .stats{font-size:.75rem;color:#525252;margin:.35rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+    .stats span{color:#a3a3a3}
+    a{color:#525252;text-decoration:none}
+  </style>
+</head>
+<body>
+  <h1>Evolution <span>Simulator</span></h1>
+  <p class="sub">Watch natural selection in action. Creatures with better traits survive, reproduce, and pass genes to offspring. Adjust mutation rate, selection pressure, and environment.</p>
+
+  <div class="canvases">
+    <canvas id="world" width="500" height="400"></canvas>
+    <canvas id="graph" width="280" height="400"></canvas>
+  </div>
+
+  <div class="controls">
+    <label>Mutation <input type="range" id="mutation" min="1" max="50" value="10"><span class="val" id="mut-v">10</span>%</label>
+    <label>Selection <input type="range" id="selection" min="1" max="10" value="5"><span class="val" id="sel-v">5</span></label>
+    <label>Food <input type="range" id="food" min="5" max="50" value="20"><span class="val" id="food-v">20</span></label>
+    <button id="btn-predator">Add Predator</button>
+    <button id="btn-reset">Reset</button>
+  </div>
+  <div class="stats">
+    <div>Generation: <span id="gen">0</span></div>
+    <div>Population: <span id="pop">0</span></div>
+    <div>Avg Speed: <span id="avg-speed">0</span></div>
+    <div>Avg Size: <span id="avg-size">0</span></div>
+    <div><a href="https://freebiostore.pages.dev">FreeBioStore</a></div>
+  </div>
+
+  <script>
+    const worldCanvas = document.getElementById('world');
+    const graphCanvas = document.getElementById('graph');
+    const wCtx = worldCanvas.getContext('2d');
+    const gCtx = graphCanvas.getContext('2d');
+    const WW = worldCanvas.width, WH = worldCanvas.height;
+    const GW = graphCanvas.width, GH = graphCanvas.height;
+
+    let creatures = [], foods = [], predators = [], generation = 0;
+    let speedHistory = [], sizeHistory = [], popHistory = [];
+
+    const sl = id => document.getElementById(id);
+    for (const [id, vid] of [['mutation','mut-v'],['selection','sel-v'],['food','food-v']]) {
+      sl(id).addEventListener('input', () => sl(vid).textContent = sl(id).value);
+    }
+    sl('btn-predator').addEventListener('click', () => {
+      predators.push({ x: Math.random()*WW, y: Math.random()*WH, angle: Math.random()*Math.PI*2, speed: 2 });
+    });
+    sl('btn-reset').addEventListener('click', init);
+
+    function createCreature(x, y, genes) {
+      return {
+        x: x || Math.random() * WW,
+        y: y || Math.random() * WH,
+        genes: genes || {
+          speed: 1 + Math.random() * 3,
+          size: 3 + Math.random() * 8,
+          sense: 30 + Math.random() * 70,
+          hue: Math.random() * 360,
+        },
+        energy: 100,
+        age: 0,
+        angle: Math.random() * Math.PI * 2,
+      };
+    }
+
+    function init() {
+      creatures = [];
+      for (let i = 0; i < 30; i++) creatures.push(createCreature());
+      foods = [];
+      predators = [];
+      generation = 0;
+      speedHistory = []; sizeHistory = []; popHistory = [];
+      spawnFood();
+    }
+
+    function spawnFood() {
+      const target = +sl('food').value;
+      while (foods.length < target) {
+        foods.push({ x: Math.random() * WW, y: Math.random() * WH, energy: 30 + Math.random() * 20 });
+      }
+    }
+
+    function update() {
+      const mutationRate = +sl('mutation').value / 100;
+      const selectionPressure = +sl('selection').value;
+
+      // Creatures
+      for (let i = creatures.length - 1; i >= 0; i--) {
+        const c = creatures[i];
+        c.age++;
+        c.energy -= 0.1 + c.genes.speed * 0.05 + c.genes.size * 0.02; // bigger/faster = more energy
+
+        // Find nearest food
+        let nearestFood = null, nearestDist = c.genes.sense;
+        for (const f of foods) {
+          const d = Math.hypot(f.x - c.x, f.y - c.y);
+          if (d < nearestDist) { nearestDist = d; nearestFood = f; }
+        }
+
+        // Move toward food or wander
+        if (nearestFood) {
+          c.angle = Math.atan2(nearestFood.y - c.y, nearestFood.x - c.x);
+        } else {
+          c.angle += (Math.random() - 0.5) * 0.5;
+        }
+
+        c.x += Math.cos(c.angle) * c.genes.speed;
+        c.y += Math.sin(c.angle) * c.genes.speed;
+        c.x = (c.x + WW) % WW;
+        c.y = (c.y + WH) % WH;
+
+        // Eat food
+        for (let j = foods.length - 1; j >= 0; j--) {
+          if (Math.hypot(foods[j].x - c.x, foods[j].y - c.y) < c.genes.size + 3) {
+            c.energy += foods[j].energy;
+            foods.splice(j, 1);
+          }
+        }
+
+        // Flee predators
+        for (const p of predators) {
+          const pd = Math.hypot(p.x - c.x, p.y - c.y);
+          if (pd < c.genes.sense) {
+            c.angle = Math.atan2(c.y - p.y, c.x - p.x);
+          }
+          if (pd < c.genes.size + 5) {
+            c.energy = 0; // eaten
+          }
+        }
+
+        // Reproduce if enough energy
+        if (c.energy > 150 && creatures.length < 100) {
+          c.energy -= 80;
+          const childGenes = { ...c.genes };
+          // Mutation
+          if (Math.random() < mutationRate) childGenes.speed += (Math.random() - 0.5) * 1;
+          if (Math.random() < mutationRate) childGenes.size += (Math.random() - 0.5) * 2;
+          if (Math.random() < mutationRate) childGenes.sense += (Math.random() - 0.5) * 20;
+          if (Math.random() < mutationRate) childGenes.hue += (Math.random() - 0.5) * 30;
+          childGenes.speed = Math.max(0.5, childGenes.speed);
+          childGenes.size = Math.max(2, childGenes.size);
+          childGenes.sense = Math.max(10, childGenes.sense);
+          creatures.push(createCreature(c.x + (Math.random()-0.5)*20, c.y + (Math.random()-0.5)*20, childGenes));
+        }
+
+        // Die
+        if (c.energy <= 0 || c.age > 2000) {
+          creatures.splice(i, 1);
+        }
+      }
+
+      // Predators chase nearest creature
+      for (const p of predators) {
+        let nearest = null, nd = 150;
+        for (const c of creatures) {
+          const d = Math.hypot(c.x - p.x, c.y - p.y);
+          if (d < nd) { nd = d; nearest = c; }
+        }
+        if (nearest) {
+          p.angle = Math.atan2(nearest.y - p.y, nearest.x - p.x);
+        } else {
+          p.angle += (Math.random() - 0.5) * 0.3;
+        }
+        p.x = (p.x + Math.cos(p.angle) * p.speed + WW) % WW;
+        p.y = (p.y + Math.sin(p.angle) * p.speed + WH) % WH;
+      }
+
+      // Spawn food
+      if (Math.random() < 0.3) spawnFood();
+
+      // Track stats every 60 frames
+      generation++;
+      if (generation % 60 === 0 && creatures.length > 0) {
+        const avgSpd = creatures.reduce((s, c) => s + c.genes.speed, 0) / creatures.length;
+        const avgSz = creatures.reduce((s, c) => s + c.genes.size, 0) / creatures.length;
+        speedHistory.push(avgSpd);
+        sizeHistory.push(avgSz);
+        popHistory.push(creatures.length);
+        if (speedHistory.length > 200) { speedHistory.shift(); sizeHistory.shift(); popHistory.shift(); }
+      }
+
+      sl('gen').textContent = Math.floor(generation / 60);
+      sl('pop').textContent = creatures.length;
+      if (creatures.length > 0) {
+        sl('avg-speed').textContent = (creatures.reduce((s,c)=>s+c.genes.speed,0)/creatures.length).toFixed(1);
+        sl('avg-size').textContent = (creatures.reduce((s,c)=>s+c.genes.size,0)/creatures.length).toFixed(1);
+      }
+
+      // Extinction recovery
+      if (creatures.length === 0 && generation % 120 === 0) {
+        for (let i = 0; i < 10; i++) creatures.push(createCreature());
+      }
+    }
+
+    function drawWorld() {
+      wCtx.fillStyle = '#0a0a0a'; wCtx.fillRect(0, 0, WW, WH);
+
+      // Food
+      for (const f of foods) {
+        wCtx.fillStyle = '#22c55e';
+        wCtx.beginPath(); wCtx.arc(f.x, f.y, 3, 0, Math.PI * 2); wCtx.fill();
+      }
+
+      // Creatures
+      for (const c of creatures) {
+        const hue = c.genes.hue;
+        wCtx.fillStyle = `hsl(${hue}, 70%, 55%)`;
+        wCtx.beginPath(); wCtx.arc(c.x, c.y, c.genes.size, 0, Math.PI * 2); wCtx.fill();
+
+        // Direction
+        wCtx.fillStyle = `hsl(${hue}, 70%, 75%)`;
+        const ex = c.x + Math.cos(c.angle) * c.genes.size;
+        const ey = c.y + Math.sin(c.angle) * c.genes.size;
+        wCtx.beginPath(); wCtx.arc(ex, ey, 1.5, 0, Math.PI * 2); wCtx.fill();
+
+        // Sense radius (faint)
+        if (c.genes.sense < 80) {
+          wCtx.strokeStyle = `hsla(${hue}, 70%, 55%, 0.05)`;
+          wCtx.beginPath(); wCtx.arc(c.x, c.y, c.genes.sense, 0, Math.PI * 2); wCtx.stroke();
+        }
+      }
+
+      // Predators
+      for (const p of predators) {
+        wCtx.fillStyle = '#ef4444';
+        wCtx.save(); wCtx.translate(p.x, p.y); wCtx.rotate(p.angle);
+        wCtx.beginPath(); wCtx.moveTo(10, 0); wCtx.lineTo(-6, -5); wCtx.lineTo(-4, 0); wCtx.lineTo(-6, 5); wCtx.closePath();
+        wCtx.fill(); wCtx.restore();
+        // Danger radius
+        wCtx.strokeStyle = 'rgba(239,68,68,0.05)';
+        wCtx.beginPath(); wCtx.arc(p.x, p.y, 150, 0, Math.PI * 2); wCtx.stroke();
+      }
+    }
+
+    function drawGraph() {
+      gCtx.fillStyle = '#0a0a0a'; gCtx.fillRect(0, 0, GW, GH);
+      gCtx.strokeStyle = '#1a1a1a'; gCtx.lineWidth = 1;
+      gCtx.strokeRect(30, 10, GW-40, GH-30);
+
+      if (speedHistory.length < 2) return;
+
+      function drawLine(data, color, label, yOffset, yScale) {
+        const maxVal = Math.max(...data, 1);
+        gCtx.strokeStyle = color; gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        for (let i = 0; i < data.length; i++) {
+          const x = 30 + (i / (data.length-1)) * (GW-40);
+          const y = yOffset + (1 - data[i] / maxVal) * yScale;
+          if (i === 0) gCtx.moveTo(x, y); else gCtx.lineTo(x, y);
+        }
+        gCtx.stroke();
+        gCtx.fillStyle = color; gCtx.font = '10px Manrope';
+        gCtx.fillText(`${label}: ${data[data.length-1].toFixed(1)}`, 35, yOffset + 12);
+      }
+
+      drawLine(speedHistory, '#f97316', 'Avg Speed', 10, 110);
+      drawLine(sizeHistory, '#3b82f6', 'Avg Size', 140, 110);
+      drawLine(popHistory, '#22c55e', 'Population', 270, 110);
+    }
+
+    function loop() { requestAnimationFrame(loop); update(); drawWorld(); drawGraph(); }
+    init();
+    loop();
+  </script>
+</body>
+</html>
