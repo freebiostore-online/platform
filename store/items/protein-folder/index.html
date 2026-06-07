@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protein Folder - FreeBioStore</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: #e0e0e0; font-family: 'Courier New', monospace; overflow: hidden; }
+  #app { display: grid; grid-template-columns: 1fr 300px; grid-template-rows: 44px 1fr; height: 100vh; }
+  header { grid-column: 1 / -1; background: #111; border-bottom: 1px solid #222; display: flex; align-items: center; padding: 0 16px; gap: 10px; }
+  header h1 { font-size: 15px; color: #10b981; }
+  header button { background: #1a1a1a; border: 1px solid #333; color: #ccc; padding: 4px 12px; cursor: pointer; font-family: inherit; font-size: 12px; border-radius: 3px; }
+  header button:hover { border-color: #10b981; }
+  header button.active { background: #10b981; color: #fff; border-color: #10b981; }
+  header select { background: #1a1a1a; border: 1px solid #333; color: #ccc; padding: 4px 8px; font-family: inherit; font-size: 12px; border-radius: 3px; }
+  canvas { display: block; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+  #sidebar { background: #111; border-left: 1px solid #222; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .panel { border-bottom: 1px solid #1a1a1a; padding-bottom: 10px; }
+  .panel h3 { font-size: 11px; color: #10b981; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .stat-row { display: flex; justify-content: space-between; font-size: 11px; padding: 2px 0; }
+  .stat-row .label { color: #666; }
+  .stat-row .value { color: #10b981; font-weight: bold; }
+  .sequence-display { font-size: 14px; letter-spacing: 2px; word-break: break-all; line-height: 1.8; margin: 6px 0; }
+  .seq-H { color: #f97316; font-weight: bold; }
+  .seq-P { color: #3b82f6; }
+  .legend { display: flex; gap: 12px; font-size: 10px; margin-top: 4px; }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .seq-input { width: 100%; background: #0a0a0a; color: #ccc; border: 1px solid #333; font-family: inherit; font-size: 12px; padding: 4px; border-radius: 3px; }
+  .seq-input:focus { border-color: #10b981; outline: none; }
+  .btn-green { background: #10b981; color: #fff; border: none; padding: 6px 12px; cursor: pointer; font-family: inherit; font-size: 11px; border-radius: 3px; width: 100%; margin-top: 4px; }
+  .btn-green:hover { background: #059669; }
+  .progress-bar { height: 4px; background: #1a1a1a; border-radius: 2px; margin-top: 6px; }
+  .progress-fill { height: 100%; background: #10b981; border-radius: 2px; transition: width 0.1s; }
+  .info-text { font-size: 10px; color: #444; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Protein Folder</h1>
+    <select id="presets">
+      <option value="">-- Preset Sequences --</option>
+      <option value="8">Length 8: HPHPPHHP</option>
+      <option value="12">Length 12: HPHPPHHPHPPH</option>
+      <option value="16">Length 16: HPHPPHHPHPPHPPHH</option>
+      <option value="20">Length 20: HPHPPHHPHPPHPHHPHPHP</option>
+    </select>
+    <button id="btn-reset">Reset Fold</button>
+    <button id="btn-auto">Auto-Fold</button>
+    <button id="btn-straighten">Straighten</button>
+  </header>
+  <canvas id="grid"></canvas>
+  <div id="sidebar">
+    <div class="panel">
+      <h3>Sequence</h3>
+      <div class="sequence-display" id="seq-display"></div>
+      <input type="text" class="seq-input" id="seq-input" placeholder="Enter HP sequence (e.g., HHPPHPH)" maxlength="30">
+      <button class="btn-green" id="btn-load">Load Sequence</button>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>H (hydrophobic)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>P (polar)</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Energy</h3>
+      <div class="stat-row"><span class="label">Current Energy</span><span class="value" id="energy-val">0</span></div>
+      <div class="stat-row"><span class="label">H-H Contacts</span><span class="value" id="contacts-val">0</span></div>
+      <div class="stat-row"><span class="label">Best Found</span><span class="value" id="best-val">0</span></div>
+      <div class="stat-row"><span class="label">Known Optimal</span><span class="value" id="optimal-val">?</span></div>
+    </div>
+    <div class="panel" id="fold-panel" style="display:none;">
+      <h3>Auto-Fold Progress</h3>
+      <div class="stat-row"><span class="label">Temperature</span><span class="value" id="temp-val">-</span></div>
+      <div class="stat-row"><span class="label">Iteration</span><span class="value" id="iter-val">-</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+    </div>
+    <div class="panel">
+      <h3>How It Works</h3>
+      <div class="info-text">
+        The HP (hydrophobic-polar) model simplifies protein folding to a 2D lattice problem.<br><br>
+        <b>H</b> residues prefer to be near other H residues. Each non-sequential H-H contact contributes -1 energy.<br><br>
+        <b>Goal:</b> Fold the chain to minimize energy (maximize H-H contacts).<br><br>
+        <b>Auto-fold</b> uses simulated annealing: random moves at high temperature (accept bad moves), then cooling (only accept improvements).<br><br>
+        Click and drag residues to fold manually!
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('grid');
+const ctx = canvas.getContext('2d');
+
+// --- State ---
+let sequence = 'HPHPPHHP';
+let positions = []; // [{x,y}] grid coordinates for each residue
+let bestPositions = [];
+let bestEnergy = 0;
+let dragging = -1;
+let dragOffsetX = 0, dragOffsetY = 0;
+let gridSize = 30;
+let panX = 0, panY = 0;
+let autoFolding = false;
+let autoFoldFrame = null;
+
+const KNOWN_OPTIMAL = {
+  8: -3,
+  12: -5,
+  16: -8,
+  20: -10,
+};
+
+const PRESETS = {
+  '8': 'HPHPPHHP',
+  '12': 'HPHPPHHPHPPH',
+  '16': 'HPHPPHHPHPPHPPHH',
+  '20': 'HPHPPHHPHPPHPHHPHPHP',
+};
+
+// --- Grid helpers ---
+function toScreen(gx, gy) {
+  const cx = canvas.width / 2 + panX;
+  const cy = canvas.height / 2 + panY;
+  return { x: cx + gx * gridSize, y: cy + gy * gridSize };
+}
+
+function toGrid(sx, sy) {
+  const cx = canvas.width / 2 + panX;
+  const cy = canvas.height / 2 + panY;
+  return { x: Math.round((sx - cx) / gridSize), y: Math.round((sy - cy) / gridSize) };
+}
+
+// --- Initialization ---
+function initSequence(seq) {
+  sequence = seq.toUpperCase().replace(/[^HP]/g, '');
+  if (sequence.length === 0) sequence = 'HPHP';
+  positions = [];
+  for (let i = 0; i < sequence.length; i++) {
+    positions.push({ x: i, y: 0 });
+  }
+  bestPositions = positions.map(p => ({ ...p }));
+  bestEnergy = computeEnergy();
+  panX = 0;
+  panY = 0;
+  updateUI();
+}
+
+function straighten() {
+  for (let i = 0; i < sequence.length; i++) {
+    positions[i] = { x: i, y: 0 };
+  }
+  updateUI();
+}
+
+// --- Energy computation ---
+function computeEnergy() {
+  let contacts = 0;
+  for (let i = 0; i < sequence.length; i++) {
+    if (sequence[i] !== 'H') continue;
+    for (let j = i + 2; j < sequence.length; j++) {
+      if (sequence[j] !== 'H') continue;
+      const dx = Math.abs(positions[i].x - positions[j].x);
+      const dy = Math.abs(positions[i].y - positions[j].y);
+      if (dx + dy === 1) contacts++;
+    }
+  }
+  return -contacts;
+}
+
+function countContacts() {
+  return -computeEnergy();
+}
+
+// --- Validation ---
+function isValidChain(pos) {
+  // Check chain connectivity (each consecutive pair must be adjacent)
+  for (let i = 1; i < pos.length; i++) {
+    const dx = Math.abs(pos[i].x - pos[i - 1].x);
+    const dy = Math.abs(pos[i].y - pos[i - 1].y);
+    if (dx + dy !== 1) return false;
+  }
+  // Check no overlaps
+  for (let i = 0; i < pos.length; i++) {
+    for (let j = i + 1; j < pos.length; j++) {
+      if (pos[i].x === pos[j].x && pos[i].y === pos[j].y) return false;
+    }
+  }
+  return true;
+}
+
+// --- Simulated Annealing ---
+function simulatedAnnealing() {
+  const totalIter = 5000;
+  let T = 2.0;
+  const coolRate = 0.9995;
+  let currentPos = positions.map(p => ({ ...p }));
+  let currentE = computeEnergy();
+  let bestE = currentE;
+  let bestPos = currentPos.map(p => ({ ...p }));
+  let iter = 0;
+
+  document.getElementById('fold-panel').style.display = '';
+  autoFolding = true;
+
+  function step() {
+    const batchSize = 20;
+    for (let b = 0; b < batchSize && iter < totalIter; b++, iter++) {
+      // Pick a random pivot point
+      const pivot = 1 + Math.floor(Math.random() * (sequence.length - 2));
+      const newPos = currentPos.map(p => ({ ...p }));
+
+      // Corner move: try to move pivot residue to form a corner
+      const dirs = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
+
+      // Try a crankshaft or end move
+      if (pivot === 0 || pivot === sequence.length - 1) {
+        // End move
+        const neighbor = pivot === 0 ? 1 : pivot - 1;
+        const candidates = dirs.map(d => ({ x: newPos[neighbor].x + d.x, y: newPos[neighbor].y + d.y }));
+        const valid = candidates.filter(c => {
+          return !newPos.some((p, i) => i !== pivot && p.x === c.x && p.y === c.y);
+        });
+        if (valid.length > 0) {
+          const choice = valid[Math.floor(Math.random() * valid.length)];
+          newPos[pivot] = choice;
+        }
+      } else {
+        // Corner move
+        const prev = newPos[pivot - 1];
+        const next = newPos[pivot + 1];
+        if (prev.x !== next.x && prev.y !== next.y) {
+          // Can do corner flip
+          const c1 = { x: prev.x, y: next.y };
+          const c2 = { x: next.x, y: prev.y };
+          const candidates = [c1, c2].filter(c => {
+            return !newPos.some((p, i) => i !== pivot && p.x === c.x && p.y === c.y);
+          });
+          if (candidates.length > 0) {
+            const choice = candidates[Math.floor(Math.random() * candidates.length)];
+            newPos[pivot] = choice;
+          }
+        }
+      }
+
+      if (isValidChain(newPos)) {
+        const oldPos = positions;
+        positions = newPos;
+        const newE = computeEnergy();
+        positions = oldPos;
+
+        const delta = newE - currentE;
+        if (delta <= 0 || Math.random() < Math.exp(-delta / T)) {
+          currentPos = newPos;
+          currentE = newE;
+          if (currentE < bestE) {
+            bestE = currentE;
+            bestPos = currentPos.map(p => ({ ...p }));
+          }
+        }
+      }
+
+      T *= coolRate;
+    }
+
+    positions = currentPos.map(p => ({ ...p }));
+    if (bestE < bestEnergy) {
+      bestEnergy = bestE;
+      bestPositions = bestPos.map(p => ({ ...p }));
+    }
+
+    document.getElementById('temp-val').textContent = T.toFixed(4);
+    document.getElementById('iter-val').textContent = `${iter}/${totalIter}`;
+    document.getElementById('progress').style.width = `${(iter / totalIter) * 100}%`;
+    updateUI();
+
+    if (iter < totalIter) {
+      autoFoldFrame = requestAnimationFrame(step);
+    } else {
+      // Apply best
+      positions = bestPos.map(p => ({ ...p }));
+      autoFolding = false;
+      updateUI();
+    }
+  }
+
+  step();
+}
+
+// --- Drawing ---
+function resize() {
+  const parent = canvas.parentElement;
+  canvas.width = parent.clientWidth;
+  canvas.height = window.innerHeight - 44;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const cx = canvas.width / 2 + panX;
+  const cy = canvas.height / 2 + panY;
+
+  // Grid dots
+  ctx.fillStyle = '#1a1a1a';
+  const startX = (cx % gridSize);
+  const startY = (cy % gridSize);
+  for (let x = startX; x < canvas.width; x += gridSize) {
+    for (let y = startY; y < canvas.height; y += gridSize) {
+      ctx.beginPath();
+      ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // H-H contacts (green dashed lines)
+  for (let i = 0; i < sequence.length; i++) {
+    if (sequence[i] !== 'H') continue;
+    for (let j = i + 2; j < sequence.length; j++) {
+      if (sequence[j] !== 'H') continue;
+      const dx = Math.abs(positions[i].x - positions[j].x);
+      const dy = Math.abs(positions[i].y - positions[j].y);
+      if (dx + dy === 1) {
+        const p1 = toScreen(positions[i].x, positions[i].y);
+        const p2 = toScreen(positions[j].x, positions[j].y);
+        ctx.save();
+        ctx.strokeStyle = '#10b98180';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+
+  // Chain backbone
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i < positions.length; i++) {
+    const p = toScreen(positions[i].x, positions[i].y);
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }
+  ctx.stroke();
+
+  // Residues
+  for (let i = 0; i < positions.length; i++) {
+    const p = toScreen(positions[i].x, positions[i].y);
+    const isH = sequence[i] === 'H';
+    const r = gridSize * 0.35;
+
+    // Glow for H
+    if (isH) {
+      ctx.save();
+      ctx.shadowColor = '#f97316';
+      ctx.shadowBlur = 10;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = isH ? '#f97316' : '#3b82f6';
+    ctx.fill();
+    ctx.strokeStyle = isH ? '#fbbf24' : '#60a5fa';
+    ctx.lineWidth = dragging === i ? 3 : 1.5;
+    ctx.stroke();
+
+    if (isH) ctx.restore();
+
+    // Index label
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold ${Math.max(9, gridSize * 0.3)}px Courier New`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(i.toString(), p.x, p.y);
+
+    // Type label
+    ctx.fillStyle = '#000';
+    ctx.font = `${Math.max(7, gridSize * 0.22)}px Courier New`;
+    ctx.fillText(sequence[i], p.x, p.y + r + gridSize * 0.25);
+  }
+
+  // Drag preview
+  if (dragging >= 0) {
+    ctx.fillStyle = '#10b98140';
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    // Highlight valid neighbor positions
+    const dirs = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
+    const neighbors = [];
+    if (dragging > 0) neighbors.push(positions[dragging - 1]);
+    if (dragging < positions.length - 1) neighbors.push(positions[dragging + 1]);
+
+    // Show grid positions adjacent to chain neighbors
+    for (const n of neighbors) {
+      for (const d of dirs) {
+        const gx = n.x + d.x;
+        const gy = n.y + d.y;
+        const occupied = positions.some((p, i) => i !== dragging && p.x === gx && p.y === gy);
+        if (!occupied) {
+          const sp = toScreen(gx, gy);
+          ctx.beginPath();
+          ctx.arc(sp.x, sp.y, gridSize * 0.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.setLineDash([]);
+  }
+}
+
+// --- Interaction ---
+let mouseX = 0, mouseY = 0;
+
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+
+  // Check if clicking on a residue
+  for (let i = 0; i < positions.length; i++) {
+    const p = toScreen(positions[i].x, positions[i].y);
+    const dx = mouseX - p.x, dy = mouseY - p.y;
+    if (dx * dx + dy * dy < (gridSize * 0.4) ** 2) {
+      dragging = i;
+      canvas.classList.add('dragging');
+      return;
+    }
+  }
+});
+
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+
+  if (dragging >= 0) {
+    const g = toGrid(mouseX, mouseY);
+
+    // Check if valid position
+    const newPos = positions.map((p, i) => i === dragging ? { x: g.x, y: g.y } : { ...p });
+    if (isValidChain(newPos)) {
+      positions[dragging] = { x: g.x, y: g.y };
+      const e = computeEnergy();
+      if (e < bestEnergy) {
+        bestEnergy = e;
+        bestPositions = positions.map(p => ({ ...p }));
+      }
+      updateUI();
+    }
+  }
+});
+
+canvas.addEventListener('mouseup', () => {
+  dragging = -1;
+  canvas.classList.remove('dragging');
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  gridSize = Math.max(15, Math.min(80, gridSize + (e.deltaY > 0 ? -2 : 2)));
+}, { passive: false });
+
+// --- UI ---
+function updateUI() {
+  const energy = computeEnergy();
+  const contacts = countContacts();
+
+  document.getElementById('energy-val').textContent = energy;
+  document.getElementById('contacts-val').textContent = contacts;
+  document.getElementById('best-val').textContent = bestEnergy;
+
+  const opt = KNOWN_OPTIMAL[sequence.length];
+  document.getElementById('optimal-val').textContent = opt !== undefined ? opt : '?';
+
+  // Sequence display
+  const display = document.getElementById('seq-display');
+  display.innerHTML = sequence.split('').map((c, i) => {
+    return `<span class="seq-${c}">${c}</span>`;
+  }).join('');
+}
+
+// --- Events ---
+document.getElementById('presets').addEventListener('change', e => {
+  if (PRESETS[e.target.value]) {
+    initSequence(PRESETS[e.target.value]);
+    document.getElementById('seq-input').value = PRESETS[e.target.value];
+  }
+});
+
+document.getElementById('btn-load').addEventListener('click', () => {
+  const val = document.getElementById('seq-input').value;
+  if (val.length >= 4) initSequence(val);
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (autoFolding && autoFoldFrame) {
+    cancelAnimationFrame(autoFoldFrame);
+    autoFolding = false;
+  }
+  straighten();
+  bestEnergy = 0;
+  bestPositions = positions.map(p => ({ ...p }));
+  updateUI();
+});
+
+document.getElementById('btn-straighten').addEventListener('click', straighten);
+
+document.getElementById('btn-auto').addEventListener('click', () => {
+  if (autoFolding) return;
+  simulatedAnnealing();
+});
+
+window.addEventListener('resize', resize);
+
+// --- Init ---
+resize();
+initSequence('HPHPPHHP');
+document.getElementById('seq-input').value = 'HPHPPHHP';
+
+function loop() {
+  draw();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

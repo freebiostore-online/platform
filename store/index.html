@@ -3,143 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FreeBioStore — Molecular &amp; Biotech Simulations</title>
-  <meta name="description" content="Interactive biotech simulations. Molecular dynamics, evolution, protein analysis. Free, open source.">
-  <meta property="og:title" content="FreeBioStore — Molecular & Biotech Simulations">
-  <meta property="og:description" content="Interactive biotech simulations running in your browser. Free forever.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://freebiostore.online">
-  <meta name="twitter:card" content="summary">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#10b981">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>FreeBioStore — Biotech Simulations</title>
+  <meta name="description" content="Interactive biotech simulations running in your browser. Free, open source.">
+  <meta property="og:title" content="FreeBioStore — Biotech Simulations">
+  <meta property="og:description" content="Interactive biotech simulations. Free forever.">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{background:#0a0a0a;color:#fafafa;font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
-    a{color:#10b981;text-decoration:none}a:hover{text-decoration:underline}
-    .container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-
-    header{border-bottom:1px solid #262626}
-    header .container{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem}
-    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:#fafafa;font-family:'Fraunces',Georgia,serif;font-size:1.15rem;font-weight:700}
-    .brand span.icon{font-size:1.3rem}
-    nav{display:flex;gap:1.25rem;font-size:.85rem;font-weight:600;margin-left:auto}
-    nav a{color:#a3a3a3;text-decoration:none}nav a:hover{color:#fafafa}
-
-    .hero{text-align:center;padding:3rem 0 2rem}
-    .hero h1{font-family:'Fraunces',Georgia,serif;font-size:2.25rem;font-weight:700;margin-bottom:.5rem}
-    .hero h1 span{color:#34d399}
-    .hero p{color:#a3a3a3;font-size:1.05rem;max-width:520px;margin:0 auto;line-height:1.6}
-    .hero .count{margin-top:.75rem;display:inline-block;padding:.25rem .85rem;border-radius:999px;font-size:.8rem;background:#171717;border:1px solid #262626;color:#a3a3a3}
-
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:.75rem;padding-bottom:3rem}
-    .card{background:#171717;border:1px solid #262626;border-radius:14px;padding:1rem 1.1rem;display:flex;align-items:center;gap:.85rem;transition:border-color .15s,transform .15s,box-shadow .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
-    .card:hover{border-color:#404040;transform:translateY(-1px);box-shadow:0 10px 25px -8px rgba(0,0,0,.5)}
-    .card-link{display:flex;align-items:center;gap:.85rem;flex:1;min-width:0;text-decoration:none;color:inherit}
-    .card-icon{width:44px;height:44px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
-    .card-body{flex:1;min-width:0}
-    .card-name{font-size:.95rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .card-desc{font-size:.78rem;color:#a3a3a3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;margin-top:.15rem}
-    .card-cta{display:inline-flex;align-items:center;gap:.3rem;background:#10b981;color:#fff;padding:.4rem .85rem;border-radius:10px;font-size:.8rem;font-weight:600;flex-shrink:0;text-decoration:none;transition:background .15s}
-    .card-cta:hover{background:#059669;text-decoration:none}
-
-    footer{border-top:1px solid #262626;padding:1.5rem 0;text-align:center;color:#737373;font-size:.78rem}
+    :root{--accent:#10b981;--paper:#0a0a0a;--ink:#fafafa;--muted:#737373;--panel:#141414;--line:#1a1a1a}
+    body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--line);padding:.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--ink)}
+    .brand-emoji{font-size:1.4rem}.brand-name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700}
+    nav{display:flex;gap:.85rem;font-size:.82rem;font-weight:600;margin-left:auto}
+    nav a{color:var(--muted)}nav a:hover{color:var(--ink);text-decoration:none}
+    .hero{text-align:center;padding:2.5rem 1.5rem 1.5rem}
+    .hero h1{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;margin-bottom:.4rem}
+    .hero h1 span{color:var(--accent)}
+    .hero p{color:var(--muted);font-size:.95rem;max-width:550px;margin:0 auto .75rem}
+    .badge{display:inline-block;padding:.2rem .65rem;border-radius:99px;font-size:.75rem;font-weight:600;background:var(--panel);border:1px solid var(--line);color:var(--muted);margin:.15rem}
+    .grid{max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:.65rem}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem;display:flex;gap:.7rem;align-items:flex-start;transition:border-color .15s,transform .15s;text-decoration:none;color:inherit}
+    .card:hover{border-color:var(--accent);transform:translateY(-1px);text-decoration:none}
+    .card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+    .card-body{flex:1;min-width:0}.card-name{font-size:.9rem;font-weight:700;margin-bottom:.15rem}
+    .card-desc{font-size:.72rem;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-cta{font-size:.72rem;font-weight:600;color:var(--accent);white-space:nowrap;align-self:center}
+    footer{border-top:1px solid var(--line);padding:1.5rem;text-align:center;font-size:.72rem;color:#404040}
   </style>
 </head>
 <body>
   <header>
-    <div class="container">
-      <a href="/" class="brand"><span class="icon">&#x1f9ec;</span> FreeBioStore</a>
-      <nav>
-        <a href="/">All</a>
-        <a href="/institute/">Institute</a>
-        <a href="/creators/">Creators</a>
-        <a href="/challenges/">Challenges</a>
-        <a href="/collections/">Paths</a>
-      </nav>
-    </div>
+    <a href="/" class="brand"><span class="brand-emoji">🧬</span><span class="brand-name">FreeBioStore</span></a>
+    <nav><a href="/">All</a><a href="/institute/">Institute</a><a href="/creators/">Creators</a><a href="/challenges/">Challenges</a><a href="/collections/">Paths</a></nav>
   </header>
-
-  <main class="container">
-    <section class="hero">
-      <h1>Free<span>Bio</span>Store</h1>
-      <p>Molecular dynamics, evolution, protein analysis -- biotech simulations in your browser. Free forever.</p>
-      <span class="count">6 simulations</span>
-    </section>
-
-    <div class="grid">
-      <div class="card">
-        <a href="/items/cell-counter/" class="card-link">
-          <div class="card-icon" style="background:#10b981">&#x1f916;</div>
-          <div class="card-body">
-            <div class="card-name">Cell Counter</div>
-            <div class="card-desc">Detect and classify blood cells in microscope view. RBC, WBC, platelets. Pie chart distribution. Manual vs AI count.</div>
-          </div>
-        </a>
-        <a href="/items/cell-counter/" class="card-cta">Open &#x2192;</a>
+  <section class="hero">
+    <h1>Free<span>Bio</span>Store</h1>
+    <p>Interactive biotech simulations running in your browser. Free forever, open source.</p>
+    <span class="badge">7 Simulations</span><span class="badge">Open Source</span>
+  </section>
+  <div class="grid">
+    <a href="/items/protein-folder/" class="card">
+      <div class="card-icon" style="background:#10b981">🧬</div>
+      <div class="card-body">
+        <div class="card-name">Protein Folder</div>
+        <div class="card-desc">2D lattice HP model folding. Drag residues to minimize energy. Simulated annealing auto-fold. Known optimal energies.</div>
       </div>
+      <span class="card-cta">Open →</span>
+    </a>
 
-      <div class="card">
-        <a href="/items/gene-expression/" class="card-link">
-          <div class="card-icon" style="background:#10b981">&#x1f52c;</div>
-          <div class="card-body">
-            <div class="card-name">Gene Expression</div>
-            <div class="card-desc">Animate DNA&#x2192;mRNA&#x2192;Protein. Click bases to mutate -- see silent, missense, and nonsense mutations. Codon table included.</div>
-          </div>
-        </a>
-        <a href="/items/gene-expression/" class="card-cta">Open &#x2192;</a>
+    <a href="/items/cell-counter/" class="card">
+      <div class="card-icon" style="background:#10b981">🤖</div>
+      <div class="card-body">
+        <div class="card-name">Cell Counter</div>
+        <div class="card-desc">Detect and classify blood cells in microscope view. RBC, WBC, platelets. Pie chart distribution. Manual vs AI count.</div>
       </div>
+      <span class="card-cta">Open →</span>
+    </a>
 
-      <div class="card">
-        <a href="/items/molecular-dynamics/" class="card-link">
-          <div class="card-icon" style="background:#10b981">&#x269b;&#xfe0f;</div>
-          <div class="card-body">
-            <div class="card-name">Molecular Dynamics</div>
-            <div class="card-desc">Atoms interacting via Lennard-Jones potential. Adjust temperature for phase transitions: solid &#x2192; liquid &#x2192; gas. Click to add energy.</div>
-          </div>
-        </a>
-        <a href="/items/molecular-dynamics/" class="card-cta">Open &#x2192;</a>
+    <a href="/items/gene-expression/" class="card">
+      <div class="card-icon" style="background:#10b981">🔬</div>
+      <div class="card-body">
+        <div class="card-name">Gene Expression</div>
+        <div class="card-desc">Animate DNA→mRNA→Protein. Click bases to mutate — see silent, missense, and nonsense mutations. Codon table included.</div>
       </div>
+      <span class="card-cta">Open →</span>
+    </a>
 
-      <div class="card">
-        <a href="/items/evolution-sim/" class="card-link">
-          <div class="card-icon" style="background:#22c55e">&#x1f33f;</div>
-          <div class="card-body">
-            <div class="card-name">Evolution Simulator</div>
-            <div class="card-desc">Natural selection in action. Creatures eat, reproduce with mutations, evolve traits. Add predators for selection pressure.</div>
-          </div>
-        </a>
-        <a href="/items/evolution-sim/" class="card-cta">Open &#x2192;</a>
+    <a href="/items/molecular-dynamics/" class="card">
+      <div class="card-icon" style="background:#10b981">⚛️</div>
+      <div class="card-body">
+        <div class="card-name">Molecular Dynamics</div>
+        <div class="card-desc">Atoms interacting via Lennard-Jones potential. Adjust temperature for phase transitions: solid → liquid → gas. Click to add energy.</div>
       </div>
+      <span class="card-cta">Open →</span>
+    </a>
 
-      <div class="card">
-        <a href="/items/protein-predictor/" class="card-link">
-          <div class="card-icon" style="background:#10b981">&#x1f9ec;</div>
-          <div class="card-body">
-            <div class="card-name">Protein Predictor</div>
-            <div class="card-desc">Paste an amino acid sequence, get secondary structure prediction. ESM-2 model (Meta) running in browser via WebGPU.</div>
-          </div>
-        </a>
-        <a href="/items/protein-predictor/" class="card-cta">Open &#x2192;</a>
+    <a href="/items/evolution-sim/" class="card">
+      <div class="card-icon" style="background:#22c55e">🌿</div>
+      <div class="card-body">
+        <div class="card-name">Evolution Simulator</div>
+        <div class="card-desc">Natural selection in action. Creatures eat, reproduce with mutations, evolve traits. Add predators for selection pressure.</div>
       </div>
+      <span class="card-cta">Open →</span>
+    </a>
 
-      <div class="card">
-        <a href="/items/molecule-predict/" class="card-link">
-          <div class="card-icon" style="background:#a855f7">&#x1f48a;</div>
-          <div class="card-body">
-            <div class="card-name">Molecule Analyzer</div>
-            <div class="card-desc">Enter SMILES notation, see 2D structure + molecular weight + LogP + drug-likeness (Lipinski Rule of 5). 10 preset molecules.</div>
-          </div>
-        </a>
-        <a href="/items/molecule-predict/" class="card-cta">Open &#x2192;</a>
+    <a href="/items/protein-predictor/" class="card">
+      <div class="card-icon" style="background:#10b981">🧬</div>
+      <div class="card-body">
+        <div class="card-name">Protein Predictor</div>
+        <div class="card-desc">Paste an amino acid sequence, get secondary structure prediction. ESM-2 model (Meta) running in browser via WebGPU.</div>
       </div>
-    </div>
-  </main>
+      <span class="card-cta">Open →</span>
+    </a>
 
-  <footer>
-    <div class="container">FreeBioStore -- free biotech simulations, open source.</div>
-  </footer>
+    <a href="/items/molecule-predict/" class="card">
+      <div class="card-icon" style="background:#a855f7">💊</div>
+      <div class="card-body">
+        <div class="card-name">Molecule Analyzer</div>
+        <div class="card-desc">Enter SMILES notation, see 2D structure + molecular weight + LogP + drug-likeness (Lipinski Rule of 5). 10 preset molecules.</div>
+      </div>
+      <span class="card-cta">Open →</span>
+    </a>
+</div>
+  <footer>FreeBioStore — Interactive biotech simulations</footer>
 </body>
 </html>

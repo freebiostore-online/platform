@@ -1,6 +1,18 @@
 {
   "robots": [
     {
+      "id": "protein-folder",
+      "name": "Protein Folder",
+      "description": "2D lattice HP model folding. Drag residues to minimize energy. Simulated annealing auto-fold. Known optimal energies.",
+      "storeType": "behavior",
+      "category": "proteins",
+      "icon": "\ud83e\uddec",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
       "id": "cell-counter",
       "name": "Cell Counter",
       "description": "Detect and classify blood cells in microscope view. RBC, WBC, platelets. Pie chart distribution. Manual vs AI count.",
