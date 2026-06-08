@@ -215,6 +215,30 @@
       "creator": "serge-ivo",
       "creatorName": "Serge",
       "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "virus-spread",
+      "name": "Epidemic Simulation",
+      "description": "SIR model with population dots. Adjust R0, recovery time, social distancing. Toggle masks, lockdown, vaccination. Flatten the curve.",
+      "storeType": "behavior",
+      "category": "ecology",
+      "icon": "🦠",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "photosynthesis",
+      "name": "Photosynthesis Simulator",
+      "description": "Animated chloroplast: light reactions + Calvin cycle. Adjust light intensity, CO2, temperature. Rate vs variable graphs. Day/night toggle.",
+      "storeType": "behavior",
+      "category": "cellular",
+      "icon": "🌿",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
     }
   ]
 }

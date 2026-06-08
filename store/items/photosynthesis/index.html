@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photosynthesis Simulator - FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--text:#fafafa;--muted:#888;--accent:#10b981;--panel:#111;--border:#1a1a1a}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+.back{position:absolute;top:16px;left:20px;font-size:13px;font-weight:600;opacity:.7}
+.back:hover{opacity:1}
+header{text-align:center;padding:20px 20px 10px;border-bottom:1px solid var(--border)}
+header h1{font-size:1.4rem;font-weight:700;color:var(--accent)}
+header p{font-size:.82rem;color:var(--muted);margin-top:4px}
+.layout{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 280px;gap:14px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px}
+h2{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+canvas{display:block;width:100%;border-radius:8px;background:#080808}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn:hover{background:#059669}
+.btn-sec{background:var(--border);color:var(--accent);border:1px solid #252525}
+.ctrl{margin-bottom:12px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:3px}
+.ctrl label span{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent)}
+.molecule{display:inline-block;background:#1a2e05;border:1px solid #365314;border-radius:4px;padding:2px 6px;font-size:.7rem;color:#86efac;margin:2px;font-weight:600}
+.info{font-size:.75rem;color:var(--muted);line-height:1.6;margin:8px 0}
+.info strong{color:var(--text)}
+.phase-indicator{display:flex;gap:8px;margin:10px 0;font-size:.78rem}
+.phase-indicator .active{color:var(--accent);font-weight:700;border-bottom:2px solid var(--accent);padding-bottom:2px}
+.phase-indicator span{color:var(--muted);cursor:pointer;padding-bottom:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.stat{background:#080808;border-radius:6px;padding:8px;text-align:center}
+.stat .val{font-size:1rem;font-weight:700;color:var(--accent)}
+.stat .lbl{font-size:.65rem;color:var(--muted)}
+footer{text-align:center;padding:12px;font-size:.7rem;color:#555}
+footer a{color:var(--accent)}
+</style>
+<meta name="description" content="Animated photosynthesis: light reactions, Calvin cycle. Adjust light, CO2, temperature. Rate graphs.">
+<meta property="og:title" content="Photosynthesis Simulator - FreeBioStore">
+<meta property="og:description" content="Animated photosynthesis: light reactions, Calvin cycle. Adjust light, CO2, temperature. Rate graphs.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freebiostore.pages.dev/items/photosynthesis/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Photosynthesis Simulator">
+<meta name="twitter:description" content="Light reactions + Calvin cycle. Interactive variables and rate graphs.">
+<link rel="canonical" href="https://freebiostore.pages.dev/items/photosynthesis/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+<a class="back" href="/items/">&larr; FreeBioStore</a>
+<header>
+  <h1>Photosynthesis Simulator</h1>
+  <p>Watch light energy convert CO2 + H2O into glucose. Adjust environmental factors and see how rate changes.</p>
+</header>
+<div class="layout">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="panel">
+      <h2>Chloroplast Cross-Section</h2>
+      <div class="phase-indicator">
+        <span id="tab-light" class="active" onclick="setPhase('light')">Light Reactions</span>
+        <span id="tab-calvin" onclick="setPhase('calvin')">Calvin Cycle</span>
+        <span id="tab-both" onclick="setPhase('both')">Both</span>
+      </div>
+      <canvas id="main-canvas" width="700" height="340"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Rate of Photosynthesis</h2>
+      <canvas id="graph-canvas" width="700" height="180"></canvas>
+      <div class="info">Graph shows rate vs the currently adjusted variable. <strong>Limiting factors</strong> determine the plateau.</div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="panel">
+      <h2>Environment</h2>
+      <div class="ctrl">
+        <label>Light Intensity <span id="light-v">70%</span></label>
+        <input type="range" id="light" min="0" max="100" value="70">
+      </div>
+      <div class="ctrl">
+        <label>CO2 Concentration <span id="co2-v">400 ppm</span></label>
+        <input type="range" id="co2" min="100" max="1000" step="50" value="400">
+      </div>
+      <div class="ctrl">
+        <label>Temperature <span id="temp-v">25C</span></label>
+        <input type="range" id="temp" min="5" max="45" step="1" value="25">
+      </div>
+      <div class="ctrl" style="margin-top:14px">
+        <label class="intervention" style="font-size:.78rem;color:var(--muted)">
+          <input type="checkbox" id="night" style="accent-color:var(--accent)"> Night Mode (no light)
+        </label>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Production</h2>
+      <div class="stats">
+        <div class="stat"><div class="val" id="s-atp">0</div><div class="lbl">ATP/s</div></div>
+        <div class="stat"><div class="val" id="s-nadph">0</div><div class="lbl">NADPH/s</div></div>
+        <div class="stat"><div class="val" id="s-o2">0</div><div class="lbl">O2/s</div></div>
+        <div class="stat"><div class="val" id="s-glucose">0</div><div class="lbl">Glucose/min</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Summary Equation</h2>
+      <div style="text-align:center;margin:8px 0">
+        <span class="molecule">6CO2</span> + <span class="molecule">6H2O</span> + <span class="molecule" style="background:#1b1b05;border-color:#854d0e;color:#fde047">Light</span>
+        <span style="color:var(--muted);margin:0 4px">&rarr;</span>
+        <span class="molecule">C6H12O6</span> + <span class="molecule">6O2</span>
+      </div>
+      <div class="info">
+        <strong>Light Reactions (Thylakoid):</strong> Photons excite chlorophyll, split H2O, produce ATP + NADPH + O2.<br>
+        <strong>Calvin Cycle (Stroma):</strong> CO2 fixed by RuBisCO into G3P, using ATP + NADPH. 6 turns = 1 glucose.
+      </div>
+    </div>
+  </div>
+</div>
+<footer><a href="/items/">FreeBioStore</a></footer>
+
+<script>
+const mainCanvas = document.getElementById('main-canvas');
+const mCtx = mainCanvas.getContext('2d');
+const graphCanvas = document.getElementById('graph-canvas');
+const gCtx = graphCanvas.getContext('2d');
+
+let phase = 'light'; // light, calvin, both
+let time = 0;
+
+function setPhase(p) {
+  phase = p;
+  document.querySelectorAll('.phase-indicator span').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-'+p).classList.add('active');
+}
+
+function getEnv() {
+  const night = document.getElementById('night').checked;
+  return {
+    light: night ? 0 : parseInt(document.getElementById('light').value)/100,
+    co2: parseInt(document.getElementById('co2').value),
+    temp: parseInt(document.getElementById('temp').value)
+  };
+}
+
+function calcRate(env) {
+  // Rate limited by min of light, CO2, and temperature (optimal at 25-30C)
+  const lightRate = env.light;
+  const co2Rate = Math.min(1, (env.co2 - 50) / 600);
+  const tempFactor = env.temp <= 30
+    ? Math.max(0, 1 - Math.pow((env.temp - 27.5)/15, 2))
+    : Math.max(0, 1 - (env.temp - 30)/10);
+  return Math.max(0, Math.min(lightRate, co2Rate) * tempFactor);
+}
+
+function drawChloroplast() {
+  const W = mainCanvas.width, H = mainCanvas.height;
+  const env = getEnv();
+  const rate = calcRate(env);
+  mCtx.clearRect(0,0,W,H);
+  time += 0.02;
+
+  // Chloroplast outline (oval)
+  mCtx.strokeStyle = '#365314'; mCtx.lineWidth = 3;
+  mCtx.beginPath(); mCtx.ellipse(W/2, H/2, W*0.44, H*0.42, 0, 0, Math.PI*2); mCtx.stroke();
+  mCtx.fillStyle = 'rgba(16,185,129,0.03)';
+  mCtx.fill();
+
+  // Thylakoid stacks (grana)
+  if (phase === 'light' || phase === 'both') {
+    drawThylakoids(env, rate);
+  }
+  if (phase === 'calvin' || phase === 'both') {
+    drawCalvinCycle(env, rate);
+  }
+
+  // Photons coming in
+  if (env.light > 0 && (phase === 'light' || phase === 'both')) {
+    const numPhotons = Math.floor(env.light * 8);
+    for (let i = 0; i < numPhotons; i++) {
+      const px = 50 + i * 80 + Math.sin(time*3 + i)*10;
+      const py = 20 + Math.sin(time*2 + i*0.5)*10;
+      const targetY = H*0.35 + Math.sin(time + i)*20;
+      const progress = ((time*0.5 + i*0.3) % 1);
+      const x = px + (W*0.3 - px)*progress;
+      const y = py + (targetY - py)*progress;
+      mCtx.fillStyle = `rgba(253,224,71,${1-progress})`;
+      mCtx.beginPath(); mCtx.arc(x, y, 3, 0, Math.PI*2); mCtx.fill();
+      // Wavy line
+      mCtx.strokeStyle = `rgba(253,224,71,${0.3*(1-progress)})`;
+      mCtx.lineWidth = 1;
+      mCtx.beginPath();
+      mCtx.moveTo(x-8, y+Math.sin(time*5+i)*3);
+      mCtx.lineTo(x+8, y-Math.sin(time*5+i)*3);
+      mCtx.stroke();
+    }
+  }
+
+  // Update stats
+  const atpRate = (rate * 34).toFixed(1);
+  const nadphRate = (rate * 12).toFixed(1);
+  const o2Rate = (rate * 6).toFixed(1);
+  const glucoseRate = (rate * 1).toFixed(2);
+  document.getElementById('s-atp').textContent = atpRate;
+  document.getElementById('s-nadph').textContent = nadphRate;
+  document.getElementById('s-o2').textContent = o2Rate;
+  document.getElementById('s-glucose').textContent = glucoseRate;
+}
+
+function drawThylakoids(env, rate) {
+  const W = mainCanvas.width, H = mainCanvas.height;
+  // Draw 3 stacked thylakoid discs
+  for (let i = 0; i < 3; i++) {
+    const y = H*0.3 + i*35;
+    const x = W*0.25;
+    mCtx.fillStyle = '#166534';
+    mCtx.strokeStyle = '#22c55e';
+    mCtx.lineWidth = 1.5;
+    mCtx.beginPath();
+    mCtx.ellipse(x, y, 60, 12, 0, 0, Math.PI*2);
+    mCtx.fill(); mCtx.stroke();
+
+    // Electron transport chain particles
+    if (rate > 0) {
+      for (let j = 0; j < 4; j++) {
+        const ex = x - 40 + j*25 + Math.sin(time*3+j+i)*5;
+        const ey = y + Math.cos(time*2+j)*4;
+        mCtx.fillStyle = '#60a5fa';
+        mCtx.beginPath(); mCtx.arc(ex, ey, 2.5, 0, Math.PI*2); mCtx.fill();
+      }
+    }
+  }
+
+  // Labels
+  mCtx.fillStyle = '#86efac'; mCtx.font = '10px Manrope'; mCtx.textAlign = 'center';
+  mCtx.fillText('Thylakoid', W*0.25, H*0.3 - 25);
+  mCtx.fillText('(Light Reactions)', W*0.25, H*0.3 - 12);
+
+  // Products flowing out
+  if (rate > 0) {
+    const products = ['ATP', 'NADPH', 'O2'];
+    products.forEach((p, i) => {
+      const px = W*0.25 + 80 + i*40;
+      const py = H*0.35 + Math.sin(time+i)*8;
+      mCtx.fillStyle = p==='O2' ? '#3b82f6' : '#fde047';
+      mCtx.font = 'bold 9px Manrope';
+      mCtx.fillText(p, px, py);
+    });
+
+    // H2O splitting
+    mCtx.fillStyle = '#60a5fa'; mCtx.font = '9px Manrope';
+    mCtx.fillText('H2O → 2H+ + O2', W*0.25, H*0.62);
+  }
+}
+
+function drawCalvinCycle(env, rate) {
+  const W = mainCanvas.width, H = mainCanvas.height;
+  const cx = W*0.65, cy = H*0.5, r = 70;
+
+  // Cycle circle
+  mCtx.strokeStyle = rate > 0 ? '#10b981' : '#333';
+  mCtx.lineWidth = 2;
+  mCtx.setLineDash([4,4]);
+  mCtx.beginPath(); mCtx.arc(cx, cy, r, 0, Math.PI*2); mCtx.stroke();
+  mCtx.setLineDash([]);
+
+  // Steps around the cycle
+  const steps = ['CO2\nFixation', 'RuBisCO', '3-PGA', 'G3P', 'RuBP\nRegen'];
+  steps.forEach((s, i) => {
+    const angle = -Math.PI/2 + (i/steps.length)*Math.PI*2;
+    const sx = cx + r*Math.cos(angle);
+    const sy = cy + r*Math.sin(angle);
+
+    // Rotating indicator
+    const activeIdx = Math.floor((time*0.5) % steps.length);
+    mCtx.fillStyle = i === activeIdx && rate > 0 ? '#10b981' : '#555';
+    mCtx.beginPath(); mCtx.arc(sx, sy, 8, 0, Math.PI*2); mCtx.fill();
+
+    mCtx.fillStyle = '#ccc'; mCtx.font = '8px Manrope'; mCtx.textAlign = 'center';
+    const lines = s.split('\n');
+    lines.forEach((l, li) => mCtx.fillText(l, sx, sy + 20 + li*10));
+  });
+
+  // Labels
+  mCtx.fillStyle = '#86efac'; mCtx.font = '10px Manrope'; mCtx.textAlign = 'center';
+  mCtx.fillText('Calvin Cycle', cx, cy-r-15);
+  mCtx.fillText('(Stroma)', cx, cy-r-3);
+
+  // CO2 entering
+  if (rate > 0) {
+    mCtx.fillStyle = '#a3a3a3'; mCtx.font = '9px Manrope';
+    mCtx.fillText('CO2 →', cx - r - 30, cy - 10);
+    mCtx.fillStyle = '#fde047';
+    mCtx.fillText('← ATP, NADPH', cx - r - 10, cy + 15);
+
+    // Glucose output
+    mCtx.fillStyle = '#10b981'; mCtx.font = 'bold 10px Manrope';
+    mCtx.fillText('→ Glucose (C6H12O6)', cx + r + 50, cy);
+  }
+}
+
+function drawGraph() {
+  const W = graphCanvas.width, H = graphCanvas.height;
+  gCtx.clearRect(0,0,W,H);
+  const env = getEnv();
+
+  // Draw rate vs each variable
+  const padding = 40;
+  const graphW = (W-padding*2)/3 - 10;
+  const graphH = H - 50;
+
+  const variables = [
+    {name:'Light', range:[0,1], current:env.light, fn: l => calcRate({...env, light:l})},
+    {name:'CO2 (ppm)', range:[100,1000], current:env.co2, fn: c => calcRate({...env, co2:c})},
+    {name:'Temp (C)', range:[5,45], current:env.temp, fn: t => calcRate({...env, temp:t})}
+  ];
+
+  variables.forEach((v, vi) => {
+    const ox = padding + vi*(graphW+20);
+    const oy = 20;
+
+    // Axes
+    gCtx.strokeStyle = '#333'; gCtx.lineWidth = 1;
+    gCtx.beginPath(); gCtx.moveTo(ox, oy); gCtx.lineTo(ox, oy+graphH); gCtx.lineTo(ox+graphW, oy+graphH); gCtx.stroke();
+
+    // Curve
+    gCtx.strokeStyle = '#10b981'; gCtx.lineWidth = 2;
+    gCtx.beginPath();
+    for (let i = 0; i <= 50; i++) {
+      const x = ox + (i/50)*graphW;
+      const val = v.range[0] + (i/50)*(v.range[1]-v.range[0]);
+      const rate = v.fn(val);
+      const y = oy + graphH - rate*graphH;
+      if (i === 0) gCtx.moveTo(x,y); else gCtx.lineTo(x,y);
+    }
+    gCtx.stroke();
+
+    // Current value marker
+    const currNorm = (v.current - v.range[0])/(v.range[1]-v.range[0]);
+    const cx = ox + currNorm*graphW;
+    const cy = oy + graphH - v.fn(v.current)*graphH;
+    gCtx.fillStyle = '#fde047';
+    gCtx.beginPath(); gCtx.arc(cx, cy, 4, 0, Math.PI*2); gCtx.fill();
+
+    // Label
+    gCtx.fillStyle = '#888'; gCtx.font = '10px Manrope'; gCtx.textAlign = 'center';
+    gCtx.fillText(v.name, ox+graphW/2, oy+graphH+16);
+  });
+
+  // Y-axis label
+  gCtx.save();
+  gCtx.fillStyle = '#555'; gCtx.font = '9px Manrope';
+  gCtx.translate(12, H/2);
+  gCtx.rotate(-Math.PI/2);
+  gCtx.textAlign = 'center';
+  gCtx.fillText('Rate', 0, 0);
+  gCtx.restore();
+}
+
+function loop() {
+  drawChloroplast();
+  drawGraph();
+  requestAnimationFrame(loop);
+}
+
+// Bindings
+document.getElementById('light').addEventListener('input', e => {
+  document.getElementById('light-v').textContent = e.target.value + '%';
+});
+document.getElementById('co2').addEventListener('input', e => {
+  document.getElementById('co2-v').textContent = e.target.value + ' ppm';
+});
+document.getElementById('temp').addEventListener('input', e => {
+  document.getElementById('temp-v').textContent = e.target.value + 'C';
+});
+document.getElementById('night').addEventListener('change', () => {
+  if (document.getElementById('night').checked) {
+    document.getElementById('light').value = 0;
+    document.getElementById('light-v').textContent = '0%';
+  }
+});
+
+loop();
+</script>
+<script src="/related.js"></script>
+</body>
+</html>

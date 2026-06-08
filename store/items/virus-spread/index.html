@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epidemic Simulation - FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--text:#fafafa;--muted:#888;--accent:#10b981;--panel:#111;--border:#1a1a1a}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+.back{position:absolute;top:16px;left:20px;font-size:13px;font-weight:600;opacity:.7}
+.back:hover{opacity:1}
+header{text-align:center;padding:20px 20px 10px;border-bottom:1px solid var(--border)}
+header h1{font-size:1.4rem;font-weight:700;color:var(--accent)}
+header p{font-size:.82rem;color:var(--muted);margin-top:4px}
+.layout{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 280px;gap:14px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px}
+h2{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+canvas{display:block;width:100%;border-radius:8px;background:#080808}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn:hover{background:#059669}
+.btn-sec{background:var(--border);color:var(--accent);border:1px solid #252525}
+.btn-sec:hover{background:#1f1f1f}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.ctrl{margin-bottom:12px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:3px}
+.ctrl label span{color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent)}
+.legend{display:flex;gap:12px;font-size:.72rem;margin:8px 0;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend .dot{width:10px;height:10px;border-radius:50%}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.stat{background:#080808;border-radius:6px;padding:8px;text-align:center}
+.stat .val{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.stat .lbl{font-size:.68rem;color:var(--muted)}
+.interventions{margin:10px 0}
+.intervention{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:.78rem;color:var(--muted)}
+.intervention input[type=checkbox]{accent-color:var(--accent)}
+footer{text-align:center;padding:12px;font-size:.7rem;color:#555}
+footer a{color:var(--accent)}
+</style>
+<meta name="description" content="SIR epidemic simulation. Adjust R0, toggle masks/lockdown/vaccination. Flatten the curve.">
+<meta property="og:title" content="Epidemic Simulation - FreeBioStore">
+<meta property="og:description" content="SIR epidemic simulation. Adjust R0, toggle masks/lockdown/vaccination. Flatten the curve.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://freebiostore.pages.dev/items/virus-spread/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Epidemic Simulation (SIR Model)">
+<meta name="twitter:description" content="SIR epidemic model with interventions. Flatten the curve.">
+<link rel="canonical" href="https://freebiostore.pages.dev/items/virus-spread/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+<a class="back" href="/items/">&larr; FreeBioStore</a>
+<header>
+  <h1>Epidemic Simulation</h1>
+  <p>SIR model: Susceptible, Infected, Recovered. Adjust parameters and toggle interventions.</p>
+</header>
+<div class="layout">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="panel">
+      <h2>Population</h2>
+      <canvas id="pop-canvas" width="700" height="320"></canvas>
+      <div class="legend">
+        <span><span class="dot" style="background:#3b82f6"></span> Susceptible</span>
+        <span><span class="dot" style="background:#ef4444"></span> Infected</span>
+        <span><span class="dot" style="background:#10b981"></span> Recovered</span>
+        <span><span class="dot" style="background:#6b7280"></span> Vaccinated</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>SIR Curve</h2>
+      <canvas id="chart-canvas" width="700" height="200"></canvas>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="panel">
+      <h2>Parameters</h2>
+      <div class="ctrl">
+        <label>R0 (Basic Reproduction Number) <span id="r0-v">2.5</span></label>
+        <input type="range" id="r0" min="0.5" max="8" step="0.1" value="2.5">
+      </div>
+      <div class="ctrl">
+        <label>Recovery Time (days) <span id="rec-v">14</span></label>
+        <input type="range" id="rec" min="5" max="30" step="1" value="14">
+      </div>
+      <div class="ctrl">
+        <label>Population <span id="pop-v">300</span></label>
+        <input type="range" id="pop" min="100" max="600" step="50" value="300">
+      </div>
+      <div class="ctrl">
+        <label>Social Distancing <span id="dist-v">0%</span></label>
+        <input type="range" id="dist" min="0" max="80" step="5" value="0">
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Interventions</h2>
+      <div class="interventions">
+        <label class="intervention"><input type="checkbox" id="masks"> Masks (reduce transmission 50%)</label>
+        <label class="intervention"><input type="checkbox" id="lockdown"> Lockdown (reduce movement 70%)</label>
+        <label class="intervention"><input type="checkbox" id="vaccine"> Vaccination (immunize 30%)</label>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Statistics</h2>
+      <div class="stats">
+        <div class="stat"><div class="val" id="s-sus">0</div><div class="lbl">Susceptible</div></div>
+        <div class="stat"><div class="val" id="s-inf" style="color:#ef4444">0</div><div class="lbl">Infected</div></div>
+        <div class="stat"><div class="val" id="s-rec">0</div><div class="lbl">Recovered</div></div>
+        <div class="stat"><div class="val" id="s-peak" style="color:#f59e0b">0</div><div class="lbl">Peak Infected</div></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="restart">Restart</button>
+      <button class="btn btn-sec" id="pause">Pause</button>
+    </div>
+  </div>
+</div>
+<footer><a href="/items/">FreeBioStore</a></footer>
+
+<script>
+const popCanvas = document.getElementById('pop-canvas');
+const pCtx = popCanvas.getContext('2d');
+const chartCanvas = document.getElementById('chart-canvas');
+const cCtx = chartCanvas.getContext('2d');
+
+let people = [], paused = false, day = 0, peakInfected = 0;
+let history = {S:[], I:[], R:[]};
+const FPS = 30;
+
+function getParams() {
+  const r0 = parseFloat(document.getElementById('r0').value);
+  const recDays = parseInt(document.getElementById('rec').value);
+  const popSize = parseInt(document.getElementById('pop').value);
+  const distancing = parseInt(document.getElementById('dist').value)/100;
+  const masks = document.getElementById('masks').checked;
+  const lockdown = document.getElementById('lockdown').checked;
+  const vaccine = document.getElementById('vaccine').checked;
+  return {r0, recDays, popSize, distancing, masks, lockdown, vaccine};
+}
+
+function initSim() {
+  const p = getParams();
+  people = [];
+  history = {S:[], I:[], R:[]};
+  day = 0; peakInfected = 0;
+  const W = popCanvas.width, H = popCanvas.height;
+
+  for (let i = 0; i < p.popSize; i++) {
+    people.push({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      vx: (Math.random()-0.5)*2,
+      vy: (Math.random()-0.5)*2,
+      state: 'S', // S, I, R, V
+      infectedDay: 0
+    });
+  }
+  // Vaccinate
+  if (p.vaccine) {
+    const numVax = Math.floor(p.popSize * 0.3);
+    for (let i = 0; i < numVax; i++) {
+      people[i].state = 'V';
+    }
+  }
+  // Patient zero
+  const sus = people.filter(p => p.state === 'S');
+  if (sus.length > 0) sus[0].state = 'I';
+}
+
+function update() {
+  const p = getParams();
+  const W = popCanvas.width, H = popCanvas.height;
+  const transmissionRate = p.r0 / (p.recDays * FPS);
+  let maskMul = p.masks ? 0.5 : 1;
+  let moveMul = p.lockdown ? 0.3 : (1 - p.distancing);
+  const infectionRadius = 18;
+
+  for (const person of people) {
+    // Movement
+    person.x += person.vx * moveMul;
+    person.y += person.vy * moveMul;
+
+    // Bounce off walls
+    if (person.x < 0 || person.x > W) person.vx *= -1;
+    if (person.y < 0 || person.y > H) person.vy *= -1;
+    person.x = Math.max(0, Math.min(W, person.x));
+    person.y = Math.max(0, Math.min(H, person.y));
+
+    // Random direction change
+    if (Math.random() < 0.02) {
+      person.vx = (Math.random()-0.5)*2;
+      person.vy = (Math.random()-0.5)*2;
+    }
+
+    // Recovery
+    if (person.state === 'I') {
+      person.infectedDay++;
+      if (person.infectedDay > p.recDays * FPS) {
+        person.state = 'R';
+      }
+    }
+  }
+
+  // Infection
+  const infected = people.filter(p => p.state === 'I');
+  const susceptible = people.filter(p => p.state === 'S');
+  for (const inf of infected) {
+    for (const sus of susceptible) {
+      const dx = inf.x - sus.x, dy = inf.y - sus.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < infectionRadius && Math.random() < transmissionRate * maskMul) {
+        sus.state = 'I';
+        sus.infectedDay = 0;
+      }
+    }
+  }
+
+  // Stats
+  day += 1/FPS;
+  const sCount = people.filter(p => p.state === 'S').length;
+  const iCount = people.filter(p => p.state === 'I').length;
+  const rCount = people.filter(p => p.state === 'R').length;
+  peakInfected = Math.max(peakInfected, iCount);
+
+  if (Math.floor(day*10) % 3 === 0) {
+    history.S.push(sCount);
+    history.I.push(iCount);
+    history.R.push(rCount);
+    if (history.S.length > 300) {
+      history.S.shift(); history.I.shift(); history.R.shift();
+    }
+  }
+
+  document.getElementById('s-sus').textContent = sCount;
+  document.getElementById('s-inf').textContent = iCount;
+  document.getElementById('s-rec').textContent = rCount;
+  document.getElementById('s-peak').textContent = peakInfected;
+}
+
+function drawPop() {
+  const W = popCanvas.width, H = popCanvas.height;
+  pCtx.clearRect(0,0,W,H);
+
+  const colors = {S:'#3b82f6', I:'#ef4444', R:'#10b981', V:'#6b7280'};
+  for (const p of people) {
+    pCtx.fillStyle = colors[p.state];
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, p.state === 'I' ? 5 : 4, 0, Math.PI*2);
+    pCtx.fill();
+    if (p.state === 'I') {
+      pCtx.strokeStyle = 'rgba(239,68,68,0.2)';
+      pCtx.lineWidth = 1;
+      pCtx.beginPath();
+      pCtx.arc(p.x, p.y, 18, 0, Math.PI*2);
+      pCtx.stroke();
+    }
+  }
+
+  // Day counter
+  pCtx.fillStyle = '#555'; pCtx.font = '11px Manrope';
+  pCtx.fillText(`Day ${Math.floor(day)}`, 10, 16);
+}
+
+function drawChart() {
+  const W = chartCanvas.width, H = chartCanvas.height;
+  cCtx.clearRect(0,0,W,H);
+  if (history.S.length < 2) return;
+
+  const maxVal = getParams().popSize;
+  const len = history.S.length;
+  const dx = W / len;
+
+  function plotLine(data, color) {
+    cCtx.strokeStyle = color; cCtx.lineWidth = 2;
+    cCtx.beginPath();
+    for (let i = 0; i < data.length; i++) {
+      const x = i * dx;
+      const y = H - (data[i]/maxVal)*H;
+      if (i === 0) cCtx.moveTo(x,y); else cCtx.lineTo(x,y);
+    }
+    cCtx.stroke();
+  }
+
+  // Grid
+  cCtx.strokeStyle = '#1a1a1a'; cCtx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = (i/4)*H;
+    cCtx.beginPath(); cCtx.moveTo(0,y); cCtx.lineTo(W,y); cCtx.stroke();
+  }
+
+  plotLine(history.S, '#3b82f6');
+  plotLine(history.I, '#ef4444');
+  plotLine(history.R, '#10b981');
+
+  // Labels
+  cCtx.fillStyle = '#555'; cCtx.font = '10px Manrope';
+  cCtx.fillText('100%', 2, 12);
+  cCtx.fillText('0%', 2, H-4);
+}
+
+function loop() {
+  if (!paused) {
+    update();
+    drawPop();
+    drawChart();
+  }
+  requestAnimationFrame(loop);
+}
+
+// Bindings
+['r0','rec','pop','dist'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    document.getElementById(id+'-v').textContent = id === 'dist' ? e.target.value+'%' : e.target.value;
+  });
+});
+document.getElementById('restart').addEventListener('click', initSim);
+document.getElementById('pause').addEventListener('click', () => {
+  paused = !paused;
+  document.getElementById('pause').textContent = paused ? 'Resume' : 'Pause';
+});
+['masks','lockdown'].addEventListener && ['masks','lockdown','vaccine'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    if (id === 'vaccine') initSim();
+  });
+});
+
+initSim();
+loop();
+</script>
+<script src="/related.js"></script>
+</body>
+</html>
