@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biological Neural Network - FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--text:#fafafa;--muted:#888;--accent:#10b981;--panel:#111;--border:#1a1a1a;--dark:#080808;--excite:#22c55e;--inhibit:#ef4444}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+.back{position:fixed;top:12px;left:14px;color:var(--muted);font-size:.82rem;text-decoration:none;z-index:100;font-weight:600}
+.back:hover{color:var(--accent)}
+header{text-align:center;padding:2rem 1rem 1rem}
+header h1{font-size:1.5rem;font-weight:700;color:var(--accent)}
+header p{color:var(--muted);font-size:.85rem;max-width:620px;margin:.4rem auto 0}
+.layout{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 300px;gap:14px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+.panel h2{font-size:.8rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+canvas{display:block;width:100%;border-radius:8px;background:var(--dark);cursor:pointer}
+button{background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:600;font-family:inherit;transition:background .15s}
+button:hover{background:#059669}
+button.secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+button.secondary:hover{border-color:var(--accent);color:var(--text)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.ctrl{margin-bottom:10px}
+.ctrl label{display:block;font-size:.7rem;color:var(--muted);font-weight:600;margin-bottom:3px}
+.ctrl .row{display:flex;align-items:center;gap:8px}
+.ctrl input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.ctrl .val{font-size:.75rem;font-weight:700;color:var(--accent);min-width:40px;text-align:right}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.7rem;color:var(--muted);margin-top:8px}
+.legend span{display:flex;align-items:center;gap:4px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.info{font-size:.68rem;color:var(--muted);line-height:1.6;margin-top:10px;background:var(--dark);padding:10px;border-radius:6px;border:1px solid var(--border)}
+.info strong{color:var(--text)}
+.graph-container{position:relative;margin-top:10px}
+.graph-label{font-size:.6rem;color:var(--muted);position:absolute;top:2px;left:6px}
+select{background:var(--panel);color:var(--text);border:1px solid var(--border);padding:4px 8px;border-radius:4px;font-size:.72rem;font-family:inherit}
+.neuron-id{font-size:.7rem;color:var(--accent);font-weight:600;margin-bottom:4px}
+</style>
+</head>
+<body>
+<a href="/" class="back">FreeBioStore</a>
+<header>
+<h1>Biological Neural Network</h1>
+<p>Simulate action potentials propagating through a network of interconnected neurons. Click any neuron to stimulate it.</p>
+</header>
+
+<div class="layout">
+<div>
+  <div class="panel">
+    <h2>Neural Network</h2>
+    <canvas id="netCanvas" width="800" height="420"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--excite)"></span> Excitatory synapse</span>
+      <span><span class="dot" style="background:var(--inhibit)"></span> Inhibitory synapse</span>
+      <span><span class="dot" style="background:#f59e0b"></span> Firing</span>
+      <span><span class="dot" style="background:#555"></span> Resting</span>
+    </div>
+  </div>
+  <div class="panel graph-container" style="margin-top:14px">
+    <h2>Voltage Trace</h2>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <label style="font-size:.7rem;color:var(--muted)">Neuron:</label>
+      <select id="traceSelect"></select>
+      <label style="font-size:.7rem;color:var(--muted);margin-left:auto">Show all:</label>
+      <input type="checkbox" id="showAll" style="accent-color:var(--accent)">
+    </div>
+    <canvas id="graphCanvas" width="800" height="160"></canvas>
+  </div>
+</div>
+<div>
+  <div class="panel">
+    <h2>Controls</h2>
+    <div class="btn-row">
+      <button onclick="stimulateRandom()">Stimulate Random</button>
+      <button onclick="stimulateAll()">Burst All</button>
+      <button class="secondary" onclick="resetNetwork()">Reset</button>
+    </div>
+    <div class="ctrl">
+      <label>Threshold (mV)</label>
+      <div class="row"><input type="range" id="threshold" min="-60" max="-30" value="-55"><span class="val" id="thresholdV">-55</span></div>
+    </div>
+    <div class="ctrl">
+      <label>Refractory Period (ms)</label>
+      <div class="row"><input type="range" id="refractory" min="1" max="20" value="5"><span class="val" id="refractoryV">5</span></div>
+    </div>
+    <div class="ctrl">
+      <label>Synapse Strength</label>
+      <div class="row"><input type="range" id="synapseStr" min="1" max="30" value="15"><span class="val" id="synapseStrV">15</span></div>
+    </div>
+    <div class="ctrl">
+      <label>Decay Rate</label>
+      <div class="row"><input type="range" id="decay" min="1" max="20" value="5"><span class="val" id="decayV">5</span></div>
+    </div>
+    <div class="ctrl">
+      <label>Speed</label>
+      <div class="row"><input type="range" id="speed" min="1" max="5" value="2"><span class="val" id="speedV">2</span></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h2>Network Topology</h2>
+    <div class="btn-row">
+      <button onclick="setTopology('random')">Random</button>
+      <button onclick="setTopology('chain')">Chain</button>
+      <button onclick="setTopology('ring')">Ring</button>
+      <button onclick="setTopology('star')">Star</button>
+    </div>
+    <div class="ctrl" style="margin-top:8px">
+      <label>Neuron Count</label>
+      <div class="row"><input type="range" id="neuronCount" min="6" max="20" value="12"><span class="val" id="neuronCountV">12</span></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h2>About</h2>
+    <div class="info">
+      <strong>Model:</strong> Simplified Hodgkin-Huxley (leaky integrate-and-fire).<br><br>
+      <strong>Action potential:</strong> When membrane voltage crosses threshold, the neuron fires (+40mV spike), then enters refractory period (-70mV).<br><br>
+      <strong>Synapses:</strong> Excitatory (green) depolarizes the postsynaptic neuron. Inhibitory (red) hyperpolarizes it. Signal travels with a small delay.
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const netCanvas = document.getElementById('netCanvas');
+const netCtx = netCanvas.getContext('2d');
+const graphCanvas = document.getElementById('graphCanvas');
+const graphCtx = graphCanvas.getContext('2d');
+const NW = 800, NH = 420, GW = 800, GH = 160;
+
+// Parameters
+let params = {
+  threshold: -55,
+  refractory: 5,
+  synapseStr: 15,
+  decay: 5,
+  speed: 2
+};
+
+// Neuron model
+const RESTING = -70;
+const PEAK = 40;
+const RESET = -80;
+
+let neurons = [];
+let synapses = [];
+let voltageHistory = [];
+let historyLen = 200;
+let selectedNeuron = 0;
+let time = 0;
+
+function createNeurons(count) {
+  neurons = [];
+  const cx = NW / 2, cy = NH / 2;
+  const radius = Math.min(NW, NH) * 0.35;
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+    const r = radius * (0.6 + Math.random() * 0.4);
+    neurons.push({
+      id: i,
+      x: cx + Math.cos(angle) * r,
+      y: cy + Math.sin(angle) * r,
+      voltage: RESTING,
+      refractoryTimer: 0,
+      firing: false,
+      lastFired: -100
+    });
+  }
+  voltageHistory = neurons.map(() => []);
+}
+
+function createSynapses(topology) {
+  synapses = [];
+  const n = neurons.length;
+  if (topology === 'random') {
+    const numSyn = Math.floor(n * 1.8);
+    for (let s = 0; s < numSyn; s++) {
+      let from = Math.floor(Math.random() * n);
+      let to = Math.floor(Math.random() * n);
+      if (from === to) to = (to + 1) % n;
+      synapses.push({ from, to, type: Math.random() < 0.75 ? 'excitatory' : 'inhibitory', delay: 2 + Math.random() * 3, pending: [] });
+    }
+  } else if (topology === 'chain') {
+    for (let i = 0; i < n - 1; i++) {
+      synapses.push({ from: i, to: i + 1, type: 'excitatory', delay: 2, pending: [] });
+    }
+  } else if (topology === 'ring') {
+    for (let i = 0; i < n; i++) {
+      synapses.push({ from: i, to: (i + 1) % n, type: 'excitatory', delay: 2, pending: [] });
+      if (Math.random() < 0.3) {
+        synapses.push({ from: i, to: (i + 2) % n, type: 'inhibitory', delay: 3, pending: [] });
+      }
+    }
+  } else if (topology === 'star') {
+    for (let i = 1; i < n; i++) {
+      synapses.push({ from: 0, to: i, type: 'excitatory', delay: 2, pending: [] });
+      synapses.push({ from: i, to: 0, type: Math.random() < 0.5 ? 'excitatory' : 'inhibitory', delay: 3, pending: [] });
+    }
+  }
+}
+
+function setTopology(t) {
+  const count = parseInt(document.getElementById('neuronCount').value);
+  createNeurons(count);
+  createSynapses(t);
+  updateTraceSelect();
+}
+
+function updateTraceSelect() {
+  const sel = document.getElementById('traceSelect');
+  sel.innerHTML = '';
+  neurons.forEach((n, i) => {
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = `Neuron ${i}`;
+    sel.appendChild(opt);
+  });
+  sel.value = selectedNeuron = 0;
+}
+
+function stimulateNeuron(idx) {
+  if (neurons[idx].refractoryTimer <= 0) {
+    neurons[idx].voltage = PEAK;
+    neurons[idx].firing = true;
+    neurons[idx].lastFired = time;
+    neurons[idx].refractoryTimer = params.refractory;
+    // Queue signals to downstream synapses
+    synapses.filter(s => s.from === idx).forEach(s => {
+      s.pending.push({ arriveAt: time + s.delay });
+    });
+  }
+}
+
+function stimulateRandom() {
+  stimulateNeuron(Math.floor(Math.random() * neurons.length));
+}
+
+function stimulateAll() {
+  neurons.forEach((_, i) => stimulateNeuron(i));
+}
+
+function resetNetwork() {
+  neurons.forEach(n => { n.voltage = RESTING; n.refractoryTimer = 0; n.firing = false; });
+  synapses.forEach(s => { s.pending = []; });
+  voltageHistory = neurons.map(() => []);
+}
+
+function update() {
+  const dt = params.speed * 0.5;
+  time += dt;
+
+  for (const neuron of neurons) {
+    // Refractory countdown
+    if (neuron.refractoryTimer > 0) {
+      neuron.refractoryTimer -= dt;
+      if (neuron.refractoryTimer <= 0) {
+        neuron.voltage = RESTING;
+        neuron.firing = false;
+      } else if (neuron.firing && neuron.refractoryTimer < params.refractory * 0.7) {
+        neuron.voltage = RESET + (RESTING - RESET) * (1 - neuron.refractoryTimer / (params.refractory * 0.7));
+        neuron.firing = false;
+      }
+      continue;
+    }
+
+    // Leak toward resting
+    neuron.voltage += (RESTING - neuron.voltage) * params.decay * 0.01 * dt;
+
+    // Check threshold
+    if (neuron.voltage >= params.threshold) {
+      stimulateNeuron(neuron.id);
+    }
+  }
+
+  // Process synaptic signals
+  for (const syn of synapses) {
+    const arrived = syn.pending.filter(p => time >= p.arriveAt);
+    syn.pending = syn.pending.filter(p => time < p.arriveAt);
+    for (const _ of arrived) {
+      const target = neurons[syn.to];
+      if (target.refractoryTimer <= 0) {
+        if (syn.type === 'excitatory') {
+          target.voltage += params.synapseStr;
+        } else {
+          target.voltage -= params.synapseStr * 0.8;
+        }
+      }
+    }
+  }
+
+  // Record history
+  for (let i = 0; i < neurons.length; i++) {
+    voltageHistory[i].push(neurons[i].voltage);
+    if (voltageHistory[i].length > historyLen) voltageHistory[i].shift();
+  }
+}
+
+function drawNetwork() {
+  netCtx.fillStyle = '#080808';
+  netCtx.fillRect(0, 0, NW, NH);
+
+  // Draw synapses
+  for (const syn of synapses) {
+    const from = neurons[syn.from];
+    const to = neurons[syn.to];
+    const hasPending = syn.pending.length > 0;
+
+    netCtx.strokeStyle = syn.type === 'excitatory' ? (hasPending ? '#22c55e' : '#22c55e44') : (hasPending ? '#ef4444' : '#ef444444');
+    netCtx.lineWidth = hasPending ? 2 : 1;
+    netCtx.beginPath();
+    netCtx.moveTo(from.x, from.y);
+    netCtx.lineTo(to.x, to.y);
+    netCtx.stroke();
+
+    // Arrow head
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    if (len > 0) {
+      const nx = dx/len, ny = dy/len;
+      const arrowX = to.x - nx * 14, arrowY = to.y - ny * 14;
+      netCtx.fillStyle = netCtx.strokeStyle;
+      netCtx.beginPath();
+      netCtx.moveTo(arrowX + ny*4, arrowY - nx*4);
+      netCtx.lineTo(arrowX - ny*4, arrowY + nx*4);
+      netCtx.lineTo(to.x - nx*10, to.y - ny*10);
+      netCtx.fill();
+    }
+
+    // Traveling signal dot
+    for (const p of syn.pending) {
+      const progress = 1 - (p.arriveAt - time) / syn.delay;
+      if (progress >= 0 && progress <= 1) {
+        const sx = from.x + dx * progress;
+        const sy = from.y + dy * progress;
+        netCtx.fillStyle = syn.type === 'excitatory' ? '#22c55e' : '#ef4444';
+        netCtx.beginPath();
+        netCtx.arc(sx, sy, 4, 0, Math.PI * 2);
+        netCtx.fill();
+      }
+    }
+  }
+
+  // Draw neurons
+  for (const neuron of neurons) {
+    const firing = neuron.voltage > params.threshold || neuron.firing;
+    const v = (neuron.voltage - RESET) / (PEAK - RESET); // 0-1 normalized
+    const radius = 12 + v * 6;
+
+    // Glow when firing
+    if (firing) {
+      const grad = netCtx.createRadialGradient(neuron.x, neuron.y, 0, neuron.x, neuron.y, radius * 2.5);
+      grad.addColorStop(0, '#f59e0b55');
+      grad.addColorStop(1, 'transparent');
+      netCtx.fillStyle = grad;
+      netCtx.beginPath();
+      netCtx.arc(neuron.x, neuron.y, radius * 2.5, 0, Math.PI * 2);
+      netCtx.fill();
+    }
+
+    // Neuron body
+    const hue = firing ? '#f59e0b' : (neuron.refractoryTimer > 0 ? '#6366f1' : '#555');
+    netCtx.fillStyle = hue;
+    netCtx.beginPath();
+    netCtx.arc(neuron.x, neuron.y, radius, 0, Math.PI * 2);
+    netCtx.fill();
+
+    // Border
+    netCtx.strokeStyle = neuron.id === selectedNeuron ? '#10b981' : '#333';
+    netCtx.lineWidth = neuron.id === selectedNeuron ? 2 : 1;
+    netCtx.stroke();
+
+    // Label
+    netCtx.fillStyle = '#fafafa';
+    netCtx.font = 'bold 9px Manrope';
+    netCtx.textAlign = 'center';
+    netCtx.fillText(neuron.id, neuron.x, neuron.y + 3);
+
+    // Voltage label
+    netCtx.fillStyle = '#888';
+    netCtx.font = '7px Manrope';
+    netCtx.fillText(Math.round(neuron.voltage) + 'mV', neuron.x, neuron.y + radius + 10);
+  }
+}
+
+function drawGraph() {
+  graphCtx.fillStyle = '#080808';
+  graphCtx.fillRect(0, 0, GW, GH);
+
+  const showAll = document.getElementById('showAll').checked;
+  const pad = { l: 40, r: 10, t: 10, b: 20 };
+  const plotW = GW - pad.l - pad.r;
+  const plotH = GH - pad.t - pad.b;
+
+  // Y axis (voltage)
+  graphCtx.strokeStyle = '#333';
+  graphCtx.lineWidth = 1;
+  graphCtx.beginPath();
+  graphCtx.moveTo(pad.l, pad.t);
+  graphCtx.lineTo(pad.l, pad.t + plotH);
+  graphCtx.lineTo(pad.l + plotW, pad.t + plotH);
+  graphCtx.stroke();
+
+  // Y labels
+  graphCtx.fillStyle = '#555';
+  graphCtx.font = '8px Manrope';
+  graphCtx.textAlign = 'right';
+  graphCtx.fillText('+40', pad.l - 4, pad.t + 8);
+  graphCtx.fillText('-70', pad.l - 4, pad.t + plotH);
+  graphCtx.fillText('mV', pad.l - 4, pad.t + plotH / 2);
+
+  // Threshold line
+  const threshY = pad.t + plotH * (1 - (params.threshold - RESET) / (PEAK - RESET));
+  graphCtx.strokeStyle = '#10b98144';
+  graphCtx.setLineDash([4, 4]);
+  graphCtx.beginPath();
+  graphCtx.moveTo(pad.l, threshY);
+  graphCtx.lineTo(pad.l + plotW, threshY);
+  graphCtx.stroke();
+  graphCtx.setLineDash([]);
+  graphCtx.fillStyle = '#10b981';
+  graphCtx.font = '7px Manrope';
+  graphCtx.textAlign = 'left';
+  graphCtx.fillText('threshold', pad.l + plotW - 50, threshY - 3);
+
+  // Draw traces
+  const colors = ['#10b981','#3b82f6','#ef4444','#f59e0b','#a855f7','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#06b6d4','#e11d48','#8b5cf6','#22d3ee','#facc15','#4ade80','#fb923c','#c084fc','#38bdf8','#fbbf24'];
+  const toDraw = showAll ? neurons.map((_, i) => i) : [selectedNeuron];
+
+  for (const idx of toDraw) {
+    const history = voltageHistory[idx];
+    if (!history || history.length < 2) continue;
+
+    graphCtx.strokeStyle = colors[idx % colors.length];
+    graphCtx.lineWidth = idx === selectedNeuron ? 2 : 1;
+    graphCtx.globalAlpha = idx === selectedNeuron ? 1 : 0.4;
+    graphCtx.beginPath();
+    for (let i = 0; i < history.length; i++) {
+      const x = pad.l + (i / historyLen) * plotW;
+      const y = pad.t + plotH * (1 - (history[i] - RESET) / (PEAK - RESET));
+      i === 0 ? graphCtx.moveTo(x, y) : graphCtx.lineTo(x, y);
+    }
+    graphCtx.stroke();
+    graphCtx.globalAlpha = 1;
+  }
+}
+
+// Click to stimulate
+netCanvas.addEventListener('click', (e) => {
+  const rect = netCanvas.getBoundingClientRect();
+  const scaleX = NW / rect.width;
+  const scaleY = NH / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  for (const neuron of neurons) {
+    const dx = mx - neuron.x, dy = my - neuron.y;
+    if (dx*dx + dy*dy < 400) {
+      stimulateNeuron(neuron.id);
+      selectedNeuron = neuron.id;
+      document.getElementById('traceSelect').value = neuron.id;
+      return;
+    }
+  }
+});
+
+document.getElementById('traceSelect').addEventListener('change', (e) => {
+  selectedNeuron = parseInt(e.target.value);
+});
+
+// Parameter controls
+['threshold','refractory','synapseStr','decay','speed'].forEach(key => {
+  const el = document.getElementById(key);
+  el.addEventListener('input', () => {
+    params[key] = parseFloat(el.value);
+    document.getElementById(key + 'V').textContent = el.value;
+  });
+});
+
+document.getElementById('neuronCount').addEventListener('input', (e) => {
+  document.getElementById('neuronCountV').textContent = e.target.value;
+});
+
+// Main loop
+function loop() {
+  update();
+  drawNetwork();
+  drawGraph();
+  requestAnimationFrame(loop);
+}
+
+// Initialize
+createNeurons(12);
+createSynapses('random');
+updateTraceSelect();
+loop();
+</script>
+<script src="/related.js"></script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRISPR Gene Editing Simulator - FreeBioStore</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--text:#fafafa;--muted:#888;--accent:#10b981;--panel:#111;--border:#1a1a1a;--dark:#080808}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+.back{position:fixed;top:12px;left:14px;color:var(--muted);font-size:.82rem;text-decoration:none;z-index:100;font-weight:600}
+.back:hover{color:var(--accent)}
+header{text-align:center;padding:2rem 1rem 1rem}
+header h1{font-size:1.5rem;font-weight:700;color:var(--accent)}
+header p{color:var(--muted);font-size:.85rem;max-width:600px;margin:.4rem auto 0}
+.layout{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1fr 280px;gap:14px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+.panel h2{font-size:.8rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+canvas{display:block;width:100%;border-radius:8px;background:var(--dark)}
+button{background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:600;font-family:inherit;transition:background .15s}
+button:hover{background:#059669}
+button.secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+button.secondary:hover{border-color:var(--accent);color:var(--text)}
+button.active{background:#059669;box-shadow:0 0 6px #10b98155}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.sequence{font-family:'Courier New',monospace;font-size:.72rem;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:8px;overflow-x:auto;line-height:1.8;margin:8px 0;word-break:break-all}
+.base-A{color:#ef4444}.base-T{color:#3b82f6}.base-C{color:#22c55e}.base-G{color:#f59e0b}
+.base-btn{width:32px;height:28px;border-radius:4px;font-weight:700;font-size:.75rem;border:1px solid var(--border);background:var(--dark);cursor:pointer;transition:all .15s}
+.base-btn:hover{transform:scale(1.1)}
+.base-btn.A{color:#ef4444;border-color:#ef4444}.base-btn.T{color:#3b82f6;border-color:#3b82f6}
+.base-btn.C{color:#22c55e;border-color:#22c55e}.base-btn.G{color:#f59e0b;border-color:#f59e0b}
+.info{font-size:.7rem;color:var(--muted);line-height:1.6;margin-top:8px;background:var(--dark);padding:10px;border-radius:6px;border:1px solid var(--border)}
+.info strong{color:var(--text)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.stat{background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:6px;text-align:center}
+.stat .val{font-size:1rem;font-weight:700;color:var(--accent)}
+.stat .lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase}
+.progress-bar{height:6px;background:var(--dark);border-radius:3px;margin:6px 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+.step-label{font-size:.7rem;color:var(--accent);font-weight:600;margin-bottom:6px}
+select{background:var(--panel);color:var(--text);border:1px solid var(--border);padding:5px 8px;border-radius:4px;font-size:.75rem;font-family:inherit}
+</style>
+</head>
+<body>
+<a href="/" class="back">FreeBioStore</a>
+<header>
+<h1>CRISPR Gene Editing Simulator</h1>
+<p>Design a guide RNA, watch Cas9 cut DNA at the target site, and choose a repair mechanism to see the outcome.</p>
+</header>
+
+<div class="layout">
+<div>
+  <div class="panel">
+    <h2>DNA Double Helix</h2>
+    <canvas id="helixCanvas" width="760" height="320"></canvas>
+    <div class="step-label" id="stepLabel">Step 1: Design Guide RNA</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h2>Protein Product</h2>
+    <div class="sequence" id="proteinDisplay">Start by selecting a target sequence...</div>
+  </div>
+</div>
+<div>
+  <div class="panel">
+    <h2>Guide RNA Design</h2>
+    <p style="font-size:.7rem;color:var(--muted);margin-bottom:8px">Click bases to build your 20nt guide sequence (or use preset):</p>
+    <div class="btn-row">
+      <button class="base-btn A" onclick="addBase('A')">A</button>
+      <button class="base-btn T" onclick="addBase('T')">T</button>
+      <button class="base-btn C" onclick="addBase('C')">C</button>
+      <button class="base-btn G" onclick="addBase('G')">G</button>
+      <button class="secondary" onclick="clearGuide()">Clear</button>
+    </div>
+    <div class="sequence" id="guideDisplay" style="min-height:24px">Guide RNA: <span id="guideSeq"></span></div>
+    <div class="btn-row">
+      <button onclick="usePreset(0)">Preset 1</button>
+      <button onclick="usePreset(1)">Preset 2</button>
+      <button onclick="randomGuide()">Random</button>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h2>Controls</h2>
+    <div class="btn-row">
+      <button id="bindBtn" onclick="startBinding()" disabled>Bind Cas9</button>
+      <button id="cutBtn" onclick="doCut()" disabled>Cut DNA</button>
+    </div>
+    <p style="font-size:.7rem;color:var(--muted);margin:8px 0">Repair method:</p>
+    <div class="btn-row">
+      <button id="nhejBtn" onclick="doRepair('nhej')" disabled>NHEJ</button>
+      <button id="hdrBtn" onclick="doRepair('hdr')" disabled>HDR</button>
+    </div>
+    <select id="hdrTemplate" style="margin-top:6px;width:100%" disabled>
+      <option value="0">HDR Template: Fix mutation (GTC->GAC)</option>
+      <option value="1">HDR Template: Insert GFP tag</option>
+      <option value="2">HDR Template: Knock-in reporter</option>
+    </select>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="secondary" onclick="resetAll()">Reset All</button>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h2>Statistics</h2>
+    <div class="stats">
+      <div class="stat"><div class="val" id="onTarget">0%</div><div class="lbl">On-target</div></div>
+      <div class="stat"><div class="val" id="offTarget">0</div><div class="lbl">Off-target</div></div>
+      <div class="stat"><div class="val" id="editCount">0</div><div class="lbl">Edits Done</div></div>
+      <div class="stat"><div class="val" id="successRate">-</div><div class="lbl">Success Rate</div></div>
+    </div>
+    <div class="info">
+      <strong>NHEJ:</strong> Non-homologous end joining. Fast but error-prone; causes random insertions/deletions (indels).<br><br>
+      <strong>HDR:</strong> Homology-directed repair. Uses a template for precise editing but is less efficient (~10-50% of cells).
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const canvas = document.getElementById('helixCanvas');
+const ctx = canvas.getContext('2d');
+const W = 760, H = 320;
+
+// DNA sequence (40 bases shown)
+const templateDNA = 'ATCGATCGAATGGTCAAGGCCTACGTAGCATCGATCGAT'.split('');
+const complementMap = {A:'T',T:'A',C:'G',G:'C'};
+const basePalette = {A:'#ef4444',T:'#3b82f6',C:'#22c55e',G:'#f59e0b'};
+
+let guideRNA = [];
+let state = 'design'; // design, binding, bound, cutting, cut, repaired
+let bindProgress = 0;
+let cutProgress = 0;
+let cas9X = -60;
+let targetStart = -1;
+let repairType = null;
+let editedDNA = null;
+let indelText = '';
+let totalEdits = 0;
+let successEdits = 0;
+let offTargetCount = 0;
+let animFrame = null;
+let time = 0;
+
+const presets = [
+  'ATGGTCAAGGCCTACGTAG'.split('').map(b=>complementMap[b]),
+  'TCGATCGAATGGTCAAGGC'.split('').map(b=>complementMap[b])
+];
+
+function addBase(b) {
+  if (guideRNA.length >= 20 || state !== 'design') return;
+  guideRNA.push(b);
+  updateGuideDisplay();
+  if (guideRNA.length === 20) document.getElementById('bindBtn').disabled = false;
+}
+
+function clearGuide() {
+  if (state !== 'design') return;
+  guideRNA = [];
+  updateGuideDisplay();
+  document.getElementById('bindBtn').disabled = true;
+}
+
+function usePreset(i) {
+  if (state !== 'design') return;
+  guideRNA = [...presets[i]];
+  updateGuideDisplay();
+  document.getElementById('bindBtn').disabled = false;
+}
+
+function randomGuide() {
+  if (state !== 'design') return;
+  guideRNA = Array.from({length:20}, () => 'ATCG'[Math.floor(Math.random()*4)].split('')).map(()=>'ATCG'[Math.floor(Math.random()*4)]);
+  updateGuideDisplay();
+  document.getElementById('bindBtn').disabled = false;
+}
+
+function updateGuideDisplay() {
+  const span = document.getElementById('guideSeq');
+  span.innerHTML = guideRNA.map(b => `<span class="base-${b}">${b}</span>`).join('');
+}
+
+function findTarget() {
+  // Find best match in template strand
+  const guideComplement = guideRNA.map(b => complementMap[b]);
+  let bestScore = -1, bestPos = 0;
+  for (let i = 0; i <= templateDNA.length - 20; i++) {
+    let score = 0;
+    for (let j = 0; j < 20; j++) {
+      if (templateDNA[i+j] === guideComplement[j]) score++;
+    }
+    if (score > bestScore) { bestScore = score; bestPos = i; }
+  }
+  targetStart = bestPos;
+  const efficiency = bestScore / 20;
+  document.getElementById('onTarget').textContent = Math.round(efficiency * 100) + '%';
+  // Off-target: random based on specificity
+  offTargetCount = Math.max(0, Math.floor((1 - efficiency) * 5));
+  document.getElementById('offTarget').textContent = offTargetCount;
+  return efficiency;
+}
+
+function startBinding() {
+  if (state !== 'design' || guideRNA.length < 20) return;
+  findTarget();
+  state = 'binding';
+  document.getElementById('bindBtn').disabled = true;
+  document.getElementById('stepLabel').textContent = 'Step 2: Cas9 Scanning & Binding...';
+  document.getElementById('progressBar').style.width = '33%';
+}
+
+function doCut() {
+  if (state !== 'bound') return;
+  state = 'cutting';
+  document.getElementById('cutBtn').disabled = true;
+  document.getElementById('stepLabel').textContent = 'Step 3: Double-Strand Break';
+  document.getElementById('progressBar').style.width = '66%';
+}
+
+function doRepair(type) {
+  if (state !== 'cut') return;
+  repairType = type;
+  state = 'repaired';
+  document.getElementById('nhejBtn').disabled = true;
+  document.getElementById('hdrBtn').disabled = true;
+  document.getElementById('hdrTemplate').disabled = true;
+  document.getElementById('stepLabel').textContent = 'Step 4: Repair Complete (' + (type==='nhej'?'NHEJ':'HDR') + ')';
+  document.getElementById('progressBar').style.width = '100%';
+
+  totalEdits++;
+  editedDNA = [...templateDNA];
+  if (type === 'nhej') {
+    // Random indels at cut site
+    const cutSite = targetStart + 10;
+    const indelType = Math.random();
+    if (indelType < 0.4) {
+      // Deletion (1-5 bp)
+      const delLen = 1 + Math.floor(Math.random() * 5);
+      editedDNA.splice(cutSite, delLen);
+      indelText = `-${delLen}bp deletion`;
+    } else if (indelType < 0.8) {
+      // Insertion (1-4 bp)
+      const insLen = 1 + Math.floor(Math.random() * 4);
+      const ins = Array.from({length:insLen}, () => 'ATCG'[Math.floor(Math.random()*4)]);
+      editedDNA.splice(cutSite, 0, ...ins);
+      indelText = `+${insLen}bp insertion`;
+    } else {
+      // Both
+      editedDNA.splice(cutSite, 2);
+      editedDNA.splice(cutSite, 0, 'ATCG'[Math.floor(Math.random()*4)]);
+      indelText = 'complex indel';
+    }
+    // ~30% chance it's a successful knockout
+    if (Math.random() < 0.7) successEdits++;
+  } else {
+    // HDR - precise edit
+    const cutSite = targetStart + 10;
+    const templateIdx = parseInt(document.getElementById('hdrTemplate').value);
+    if (templateIdx === 0) {
+      editedDNA[cutSite] = 'A'; // Fix GTC->GAC
+      indelText = 'GTC\u2192GAC (precise)';
+    } else if (templateIdx === 1) {
+      editedDNA.splice(cutSite, 0, 'G','F','P');
+      indelText = '+GFP tag inserted';
+    } else {
+      editedDNA.splice(cutSite, 0, 'R','E','P');
+      indelText = '+Reporter knock-in';
+    }
+    if (Math.random() < 0.4) successEdits++;
+  }
+  document.getElementById('editCount').textContent = totalEdits;
+  document.getElementById('successRate').textContent = Math.round(successEdits/totalEdits*100)+'%';
+  updateProteinDisplay();
+}
+
+function updateProteinDisplay() {
+  const codons = {'ATG':'Met','GTC':'Val','AAG':'Lys','GCC':'Ala','TAC':'Tyr','GTA':'Val','GCA':'Ala','TCG':'Ser','ATC':'Ile','GAT':'Asp','CGA':'Arg','TGG':'Trp','CCT':'Pro','ACG':'Thr'};
+  function translate(dna) {
+    let protein = [];
+    for (let i = 0; i < dna.length - 2; i += 3) {
+      const codon = dna.slice(i, i+3).join('');
+      protein.push(codons[codon] || '???');
+      if (codon === 'TAA' || codon === 'TAG' || codon === 'TGA') { protein.push('STOP'); break; }
+    }
+    return protein.join('-');
+  }
+  const before = translate(templateDNA);
+  const after = editedDNA ? translate(editedDNA) : '';
+  let html = `<strong style="color:var(--muted);font-size:.65rem">BEFORE:</strong> <span style="color:#888">${before}</span>`;
+  if (editedDNA) {
+    html += `<br><strong style="color:var(--accent);font-size:.65rem">AFTER (${indelText}):</strong> <span style="color:var(--accent)">${after}</span>`;
+  }
+  document.getElementById('proteinDisplay').innerHTML = html;
+}
+
+function resetAll() {
+  state = 'design';
+  guideRNA = [];
+  bindProgress = 0;
+  cutProgress = 0;
+  cas9X = -60;
+  targetStart = -1;
+  repairType = null;
+  editedDNA = null;
+  indelText = '';
+  updateGuideDisplay();
+  document.getElementById('bindBtn').disabled = true;
+  document.getElementById('cutBtn').disabled = true;
+  document.getElementById('nhejBtn').disabled = true;
+  document.getElementById('hdrBtn').disabled = true;
+  document.getElementById('hdrTemplate').disabled = true;
+  document.getElementById('stepLabel').textContent = 'Step 1: Design Guide RNA';
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('proteinDisplay').innerHTML = 'Start by selecting a target sequence...';
+}
+
+// Drawing
+function drawHelix() {
+  ctx.fillStyle = '#080808';
+  ctx.fillRect(0, 0, W, H);
+  time += 0.02;
+
+  const midY = H / 2;
+  const startX = 40;
+  const bpSpacing = 17;
+  const helixAmp = 40;
+  const numBases = templateDNA.length;
+
+  // Draw DNA double helix
+  for (let i = 0; i < numBases; i++) {
+    const x = startX + i * bpSpacing;
+    const phase = time + i * 0.3;
+    const yOff = Math.sin(phase) * helixAmp;
+    const depth = Math.cos(phase);
+
+    const topY = midY - 15 + yOff * 0.3;
+    const botY = midY + 15 - yOff * 0.3;
+    const alpha = 0.4 + Math.abs(depth) * 0.6;
+
+    // Cut visualization
+    let gapTop = 0, gapBot = 0;
+    if ((state === 'cut' || state === 'repaired') && targetStart >= 0 && i >= targetStart + 9 && i <= targetStart + 11) {
+      gapTop = (state === 'cut') ? 12 : 3;
+      gapBot = (state === 'cut') ? -12 : -3;
+    }
+
+    // Base pair lines (backbone)
+    if (depth > 0) {
+      ctx.globalAlpha = alpha * 0.3;
+      ctx.strokeStyle = '#555';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, topY + gapTop);
+      ctx.lineTo(x, botY + gapBot);
+      ctx.stroke();
+    }
+
+    // Top strand base
+    ctx.globalAlpha = alpha;
+    const base = templateDNA[i];
+    ctx.fillStyle = basePalette[base];
+    ctx.beginPath();
+    ctx.arc(x, topY + gapTop, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bottom strand (complement)
+    const comp = complementMap[base];
+    ctx.fillStyle = basePalette[comp];
+    ctx.beginPath();
+    ctx.arc(x, botY + gapBot, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Highlight target region
+    if (targetStart >= 0 && i >= targetStart && i < targetStart + 20 && state !== 'design') {
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(x - 8, midY - 60, 16, 120);
+    }
+  }
+  ctx.globalAlpha = 1;
+
+  // Draw Cas9 protein
+  if (state === 'binding' || state === 'bound' || state === 'cutting' || state === 'cut' || state === 'repaired') {
+    const targetX = startX + (targetStart + 10) * bpSpacing;
+    if (state === 'binding') {
+      cas9X += (targetX - cas9X) * 0.03;
+      bindProgress += 0.01;
+      if (bindProgress >= 1) {
+        state = 'bound';
+        cas9X = targetX;
+        document.getElementById('cutBtn').disabled = false;
+        document.getElementById('stepLabel').textContent = 'Step 2: Cas9 Bound - Ready to Cut';
+      }
+    } else {
+      cas9X = targetX;
+    }
+
+    // Cas9 body
+    ctx.fillStyle = '#10b981';
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath();
+    ctx.ellipse(cas9X, midY - 55, 30, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#fafafa';
+    ctx.font = 'bold 10px Manrope';
+    ctx.textAlign = 'center';
+    ctx.fillText('Cas9', cas9X, midY - 52);
+
+    // Guide RNA visualization
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(cas9X - 25, midY - 38);
+    ctx.lineTo(cas9X - 25, midY - 10);
+    ctx.lineTo(cas9X + 25, midY - 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = '8px Manrope';
+    ctx.fillText('gRNA', cas9X, midY - 6);
+
+    // Cut animation
+    if (state === 'cutting') {
+      cutProgress += 0.02;
+      if (cutProgress >= 1) {
+        state = 'cut';
+        document.getElementById('nhejBtn').disabled = false;
+        document.getElementById('hdrBtn').disabled = false;
+        document.getElementById('hdrTemplate').disabled = false;
+      }
+      // Scissors effect
+      const scissorY = midY + Math.sin(cutProgress * Math.PI * 4) * 5;
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(cas9X, scissorY, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // PAM site indicator
+  if (targetStart >= 0 && state !== 'design') {
+    const pamX = startX + (targetStart + 20) * bpSpacing;
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 9px Manrope';
+    ctx.textAlign = 'center';
+    ctx.fillText('PAM', pamX, midY + 70);
+    ctx.fillText('NGG', pamX, midY + 82);
+  }
+
+  // Legend
+  ctx.textAlign = 'left';
+  ctx.font = '9px Manrope';
+  ctx.fillStyle = '#ef4444'; ctx.fillText('A', 10, H - 30);
+  ctx.fillStyle = '#3b82f6'; ctx.fillText('T', 24, H - 30);
+  ctx.fillStyle = '#22c55e'; ctx.fillText('C', 38, H - 30);
+  ctx.fillStyle = '#f59e0b'; ctx.fillText('G', 52, H - 30);
+  ctx.fillStyle = '#555'; ctx.fillText('| bases', 64, H - 30);
+
+  if (state === 'repaired') {
+    ctx.fillStyle = '#10b981';
+    ctx.font = 'bold 11px Manrope';
+    ctx.textAlign = 'center';
+    ctx.fillText(repairType === 'nhej' ? 'NHEJ Repair: ' + indelText : 'HDR Repair: ' + indelText, W/2, H - 10);
+  }
+}
+
+function animate() {
+  drawHelix();
+  animFrame = requestAnimationFrame(animate);
+}
+
+animate();
+updateProteinDisplay();
+</script>
+<script src="/related.js"></script>
+</body>
+</html>
