@@ -191,6 +191,30 @@
       "creator": "serge-ivo",
       "creatorName": "Serge",
       "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "crispr-sim",
+      "name": "CRISPR Gene Editing",
+      "description": "Design guide RNA, watch Cas9 bind and cut DNA. Choose NHEJ or HDR repair. Animated double helix, off-target analysis, protein product comparison.",
+      "storeType": "behavior",
+      "category": "genetics",
+      "icon": "✂️",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
+    },
+    {
+      "id": "neural-network-bio",
+      "name": "Biological Neural Network",
+      "description": "Hodgkin-Huxley neurons with excitatory/inhibitory synapses. Stimulate and watch action potentials propagate. Voltage traces, adjustable parameters.",
+      "storeType": "behavior",
+      "category": "neuroscience",
+      "icon": "🧠",
+      "iconBg": "#10b981",
+      "creator": "serge-ivo",
+      "creatorName": "Serge",
+      "creatorAvatar": "https://github.com/serge-ivo.png?size=96"
     }
   ]
 }
